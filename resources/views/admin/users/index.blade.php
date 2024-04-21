@@ -5,7 +5,7 @@
 <div class="card">
     <div class="card-header">
         <div class="float-start">
-            Manage Users  222
+            Manage Users
          </div>
          @can('delete-user')
          <div class="float-end">
