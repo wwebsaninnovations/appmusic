@@ -2,7 +2,8 @@
 
 @section('content')
 
-<div class="card">
+
+<div class="content-wrapper" >
     <div class="card-header">Manage Roles</div>
     <div class="card-body">
         @can('create-role')
