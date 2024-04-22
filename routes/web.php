@@ -16,12 +16,14 @@ use App\Http\Controllers\Admin\BookController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('home');
 });
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::get('/users/trashed', [UserController::class, 'trashedUsers'])->name('users.trashed');
 Route::post('/users/{id}/restore', [UserController::class, 'restoreUser'])->name('users.restore');

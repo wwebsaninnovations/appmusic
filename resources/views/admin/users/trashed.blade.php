@@ -2,7 +2,7 @@
 
 @section('content')
 
-<div class="card">
+<div class="">
     <div class="card-header">
          <div class="float-start">
             Trashed Users

@@ -1,6 +1,6 @@
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
           <div class="app-brand demo">
-            <a href="index.html" class="app-brand-link">
+            <a href="{{route('home')}}" class="app-brand-link">
               <span class="app-brand-logo demo">
                 <svg
                   width="25"
@@ -56,7 +56,7 @@
                   </g>
                 </svg>
               </span>
-              <span class="app-brand-text demo menu-text fw-bolder ms-2">Sneat</span>
+              <span class="app-brand-text demo menu-text fw-bolder ms-2"> {{ config('app.name', 'Music ') }} </span>
             </a>
 
             <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
@@ -68,17 +68,23 @@
 
           <ul class="menu-inner py-1">
             <!-- Page -->
+            @canany(['create-role', 'edit-role', 'delete-role'])
             <li class="menu-item">
-              <a href="index.php" class="menu-link">
+              <a href="{{ route('roles.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div data-i18n="Page 1">Page 1</div>
+                <div data-i18n="Manage Roles">Manage Roles</div>
               </a>
             </li>
+            @endcanany
+            @canany(['create-user', 'edit-user', 'delete-user','view-user'])
             <li class="menu-item active">
-              <a href="page-2.php" class="menu-link">
+              <a href="{{ route('users.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-detail"></i>
-                <div data-i18n="Page 2">Page 2</div>
+                <div data-i18n="Manage User">Manage User</div>
               </a>
             </li>
+            @endcanany
+          
+       
           </ul>
         </aside>

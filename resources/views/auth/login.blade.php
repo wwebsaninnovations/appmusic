@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('admin.layouts.app')
 @section('content')
 <div class="authentication-wrapper authentication-cover">
       <div class="authentication-inner row m-0">
