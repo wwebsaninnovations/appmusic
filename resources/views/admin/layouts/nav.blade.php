@@ -2,7 +2,7 @@
             id="layout-navbar">
             <div class="navbar-nav align-items-center">
               <a class="nav-link style-switcher-toggle hide-arrow" href="javascript:void(0);">
-                <i class="bx bx-sm bx-moon"></i>
+                <i class="bx bx-sm "></i>
               </a>
             </div>
             <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
