@@ -1,6 +1,5 @@
 
 $(document).ready(function() {
-    // Function to change the theme
     function changeTheme(darkMode) {
         if (darkMode) {
             $('html').addClass('dark-style');
@@ -10,23 +9,18 @@ $(document).ready(function() {
             document.cookie = "theme=dark;path=/";
         } else {
             $('html').removeClass('dark-style');
-            $('.template-customizer-core-css').attr('href', '#'); // Ensure you have a light version
-            $('.template-customizer-theme-css').attr('href', '#'); // Ensure you have a light version
+            $('.template-customizer-core-css').attr('href', '#'); 
+            $('.template-customizer-theme-css').attr('href', '#'); 
             $('.style-switcher-toggle i').removeClass('bx-sun').addClass('bx-moon');
             document.cookie = "theme=light;path=/";
         }
     }
-
-    // Check cookie and set theme on page load
     var theme = document.cookie.replace(/(?:(?:^|.*;\s*)theme\s*\=\s*([^;]*).*$)|^.*$/, "$1");
     if (theme === 'dark') {
         changeTheme(true);
     } else {
-        // If not set to dark, explicitly set to light to avoid any CSS misapplication
         changeTheme(false);
     }
-
-    // Click event handler for the toggle
     $('.style-switcher-toggle').click(function() {
         var isDarkMode = $('html').hasClass('dark-style');
         changeTheme(!isDarkMode);
