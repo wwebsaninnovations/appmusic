@@ -24,11 +24,33 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::latest('id')->paginate(3);
-        $total_trashed = User::onlyTrashed()->get()->count();
-        return view('admin.users.index',['users'=>$users, 'total_trashed'=>$total_trashed]);
+        if(Auth::user()->hasRole('Super Admin')) {
+            $filter_role = $request->role;
+
+            $users = User::latest('id')->paginate(10);
+            
+            if ($filter_role != "") {
+                $users = User::whereHas('roles', function ($query) use ($filter_role) {
+                    $query->where('name', $filter_role);
+                })->latest('id')->paginate(10);
+            }
+            
+            $total_trashed = User::onlyTrashed()->get()->count();
+            $roles = Role::pluck('name')->all();
+            return view('admin.users.index',['users'=>$users,'roles'=>$roles, 'total_trashed'=>$total_trashed]);
+
+         }else{
+            
+            $users = User::latest('id')
+            ->where('created_by', Auth::user()->id)
+            ->orWhere('id', Auth::user()->id)
+            ->paginate(10);
+            $total_trashed = User::onlyTrashed()->get()->count();
+            return view('admin.users.index',['users'=>$users, 'total_trashed'=>$total_trashed]);
+         }
+
     }
 
     /**
@@ -52,11 +74,15 @@ class UserController extends Controller
             'email' => 'required|string|email:rfc,dns|max:250|unique:users,email',
             'mobile' => 'required|digits:10|unique:users,mobile',
             'password' => 'required|string|min:8|confirmed',
-            'roles' => 'required'
+            'roles' => 'required',
+            'full_address' => 'required|string', 
+            'company_label' => 'required|string'
          ]);
          $input = $request->all();
          $input['password'] = Hash::make($request->password);
          $input['created_by'] = Auth::user()->id;
+         $lastClientId = User::latest('id')->first()->client_id;
+         $input['client_id'] = $lastClientId + 1;         
          $user = User::create($input);
          $user->assignRole($request->roles);
 
@@ -94,7 +120,9 @@ class UserController extends Controller
             'email' => 'required|string|email:rfc,dns|max:250|unique:users,email,'.$user->id,
             'mobile' => 'required|digits:10|unique:users,mobile,'.$user->id,
             'password' => 'nullable|string|min:8|confirmed',
-            'roles' => 'required'
+            'roles' => 'required',
+            'full_address' => 'required|string', 
+            'company_label' => 'required|string'
          ]);
         
          $input = $request->all();
@@ -140,16 +168,29 @@ class UserController extends Controller
      }
   
      public function deleteUser(Request $request, $id) {
-
+        $user = User::withTrashed()->find($id);
         // About if user is Super Admin or User ID belongs to Auth User
         if ($user->hasRole('Super Admin') || $id == auth()->user()->id)
         {
             abort(403, 'USER DOES NOT HAVE THE RIGHT PERMISSIONS');
         }
-        $user = User::withTrashed()->find($id);
+        
         $user->syncRoles([]);
         $user->forceDelete();
         return redirect()->route('users.trashed')->with('success', 'User deleted successfully.');
      }
+
+    //  public static function generate_client_id() {
+    //     $number = mt_rand(1000000, 99999999); // 8 digit
+    
+    //     if (self::client_idExists($number)) {
+    //         return self::generate_client_id();
+    //     }
+    //     return $number;
+    // }
+
+    // public static function client_idExists($number) {
+    //     return User::where('client_id',$number)->exists();
+    // }
 
 }

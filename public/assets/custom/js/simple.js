@@ -1,4 +1,3 @@
-
 $(document).ready(function() {
     function changeTheme(darkMode) {
         if (darkMode) {
@@ -9,8 +8,8 @@ $(document).ready(function() {
             document.cookie = "theme=dark;path=/";
         } else {
             $('html').removeClass('dark-style');
-            $('.template-customizer-core-css').attr('href', '#'); 
-            $('.template-customizer-theme-css').attr('href', '#'); 
+            $('.template-customizer-core-css').attr('href', 'http://127.0.0.1:8000/assets/vendor/css/rtl/core.css'); 
+            $('.template-customizer-theme-css').attr('href', 'http://127.0.0.1:8000/assets/vendor/css/rtl/theme-default.css'); 
             $('.style-switcher-toggle i').removeClass('bx-sun').addClass('bx-moon');
             document.cookie = "theme=light;path=/";
         }
@@ -26,5 +25,6 @@ $(document).ready(function() {
         changeTheme(!isDarkMode);
     });
 });
+
 
 

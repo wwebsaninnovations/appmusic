@@ -1,0 +1,38 @@
+body{
+    overflow-x: hidden;
+}
+.layout-menu-collapsed{
+    &.layout-menu-hover{
+        .app-brand{
+            justify-content: center;
+            .app-brand-logo{
+                display: flex;
+                justify-content: center;
+                margin: auto;
+                width: 150px!important;
+                margin: auto;
+                img{
+                    width: 150px!important;
+                    margin: auto;
+                
+                }
+            } 
+        }
+    }
+    .app-brand{
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        .app-brand-logo{
+            img{
+                width: 80px!important;
+            }
+        } 
+    }
+  
+}
+.user-profile-header{
+    img{
+        padding-top: 30px;
+    }
+}

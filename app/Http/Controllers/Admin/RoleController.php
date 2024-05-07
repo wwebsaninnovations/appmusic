@@ -21,12 +21,11 @@ class RoleController extends Controller
  
     public function index()
     {
-        $roles = Role::orderBy('id','DESC')->paginate(3);
+        $roles = Role::orderBy('id','DESC')->paginate(10);
         return view('admin.roles.index', [
             'roles' => $roles 
         ]);
     }
-
     public function create()
     {
        return view('admin.roles.create', [
@@ -43,7 +42,11 @@ class RoleController extends Controller
          ]);
 
          $role = Role::create(['name' => $request->name]);
-         $permissions = Permission::whereIn('id', $request->permissions)->get(['name'])->toArray();
+        
+         $permissions = Permission::whereIn('id', $request->permissions)->pluck('name')->toArray();
+         if (in_array('edit-role', $permissions) || in_array('create-role', $permissions) || in_array('delete-role', $permissions)) {
+             abort(403, 'YOU DO NOT HAVE PERMISSION TO ADD ROLE PERMISSIONS');
+         }
          $role ->syncPermissions($permissions);
 
          return redirect()->route('roles.index')
@@ -53,8 +56,6 @@ class RoleController extends Controller
 
     public function show(Role $role)
     {
-
-
         $rolePermissions = Permission::join("role_has_permissions","permission_id","=","id")
         ->where("role_id",$role->id)
         ->select('name')
@@ -73,7 +74,7 @@ class RoleController extends Controller
         
     
         if($role->name=='Super Admin'){
-            abort(403, 'SUPER ADMIN ROLE CAN NOT BE EDITED');
+            abort(403, 'SUPER ADMIN ROLE CAN NOT BE DELETED');
         }
 
         $rolePermissions = DB::table("role_has_permissions")->where("role_id",$role->id)
@@ -100,10 +101,15 @@ class RoleController extends Controller
 
         $input = $request->only('name');
 
-        $role->update($input);
+        if($role->name != "User") {
+            $role->update($input); 
+        }
 
-        $permissions = Permission::whereIn('id', $request->permissions)->get(['name'])->toArray();
+        $permissions = Permission::whereIn('id', $request->permissions)->pluck('name')->toArray();
 
+        if (in_array('edit-role', $permissions) || in_array('create-role', $permissions) || in_array('delete-role', $permissions)) {
+            abort(403, 'YOU DO NOT HAVE PERMISSION TO ADD ROLE PERMISSIONS');
+        }
         $role->syncPermissions($permissions);    
         
         return redirect()->route('roles.index')
@@ -116,14 +122,16 @@ class RoleController extends Controller
     public function destroy(Role $role)
     {
        
-        if($role->name=='Super Admin'){
-            abort(403, 'SUPER ADMIN ROLE CAN NOT BE DELETED');
+        if ($role->name === 'Super Admin' || $role->name === 'User' || auth()->user()->hasRole($role->name)) {
+            abort(403, 'YOU CAN NOT DELETE THIS ROLE');
         }
-        if(auth()->user()->hasRole($role->name)){
-            abort(403, 'CAN NOT DELETE SELF ASSIGNED ROLE');
+        
+        if (!auth()->user()->hasRole('Super Admin')) {
+            abort(403, 'YOU DO NOT HAVE PERMISSION TO DELETE ROLE');
         }
+        
         $role->delete();
-        return redirect()->route('roles.index')
-                ->withSuccess('Role is deleted successfully.');
+        
+        return redirect()->route('roles.index')->withSuccess('Role deleted successfully.');
     }
 }

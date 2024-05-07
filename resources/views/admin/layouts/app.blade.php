@@ -36,6 +36,7 @@
 
   <!-- Vendors CSS -->
 <link rel="stylesheet" href="{{ asset('assets/vendor/libs/typeahead-js/typeahead.css')}}" />
+<!-- <link rel="stylesheet" href="{{ asset('assets/vendor/libs/apex-charts/apex-charts.css')}}"> -->
 <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
 <!-- Vendor -->
 <link rel="stylesheet" href="{{ asset('assets/vendor/libs/formvalidation/dist/css/formValidation.min.css')}}" />
@@ -51,77 +52,29 @@
 layout-navbar-fixed dark-style layout-menu-fixed layout-menu-collapsed
 -->
 <!-- Core CSS -->
-<link rel="stylesheet" href="{{ asset('assets/vendor/css/rtl/core.css') }}"  />
-<link rel="stylesheet" href="{{ asset('assets/vendor/css/rtl/theme-default.css') }}" />
-<link rel="stylesheet" type="text/css" href="{{ asset('assets/vendor/css/rtl/core-dark.css') }}" class="template-customizer-core-css">
-<link rel="stylesheet" type="text/css" href="{{ asset('assets/vendor/css/rtl/theme-default-dark.css') }}" class="template-customizer-theme-css">
 
+@auth
+    @if(Auth::user()->theme_mode =='dark')
+        <link rel="stylesheet"  type="text/css" href="{{ asset('assets/vendor/css/rtl/core-dark.css') }}"  />
+        <link rel="stylesheet"  type="text/css" href="{{ asset('assets/vendor/css/rtl/theme-default-dark.css') }}" />
+    @else
+        <link rel="stylesheet"  type="text/css" href="{{ asset('assets/vendor/css/rtl/core.css') }}"  />
+        <link rel="stylesheet"  type="text/css" href="{{ asset('assets/vendor/css/rtl/theme-default.css') }}" />
+    @endif
+
+    @else
+       <link rel="stylesheet"  type="text/css" href="{{ asset('assets/vendor/css/rtl/core.css') }}" class="template-customizer-core-css" />
+       <link rel="stylesheet"  type="text/css" href="{{ asset('assets/vendor/css/rtl/theme-default.css') }}" class="template-customizer-theme-css" />
+@endauth
+
+      <link rel="stylesheet"  type="text/css" href="{{ asset('assets/custom/css/custom.css') }}"/>
 
 </head>
 <body>
     <div id="app">
-        <!-- <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-            <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ config('app.name', 'MusicApp ') }} 
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                
-                    <ul class="navbar-nav me-auto">
-
-                    </ul>
-
-                 
-                    <ul class="navbar-nav ms-auto">
-                    
-                        @guest
-                            @if (Route::has('admin.login'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('admin.login') }}">{{ __('Admin Login') }}</a>
-                                </li>
-                            @endif
-                        @else
-                            @canany(['create-role', 'edit-role', 'delete-role'])
-                                <li><a class="nav-link" href="{{ route('roles.index') }}">Manage Roles</a></li>
-                            @endcanany
-                            @canany(['create-user', 'edit-user', 'delete-user','view-user'])
-                                <li><a class="nav-link" href="{{ route('users.index') }}">Manage Users</a></li>
-                            @endcanany
-
-                            @canany(['create-book', 'edit-book', 'delete-book', 'view-book'])
-                                <li><a class="nav-link" href="{{ route('books.index') }}">Manage Books</a></li>
-                            @endcanany
-                        
-                            <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->name }}
-                                </a>
-
-                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
-                                    </a>
-
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                        @csrf
-                                    </form>
-                                </div>
-                            </li>
-                        @endguest
-                    </ul>
-                </div>
-            </div>
-        </nav> -->
-
-        <main class="py-4">
+        <main class="py-0">
           <div class="site-container">
-                <div class="row justify-content-center mt-3">
+                <div class="row justify-content-center">
                     <div class="col-md-12">
                        @if ($message = Session::get('success'))
                             <div class="alert alert-success text-center" role="alert">
@@ -165,6 +118,7 @@ layout-navbar-fixed dark-style layout-menu-fixed layout-menu-collapsed
 
 <script src="{{ asset('assets/vendor/libs/i18n/i18n.js') }}"></script> 
 <script src="{{ asset('assets/vendor/libs/typeahead-js/typeahead.js') }}"></script>
+<!-- <script src="{{ asset('assets/vendor/libs/apex-charts/apexcharts.js')}}"></script> -->
 
 
 <!-- FormValidation Plugin and its dependencies -->
@@ -174,10 +128,12 @@ layout-navbar-fixed dark-style layout-menu-fixed layout-menu-collapsed
 <!-- Main JavaScript file -->
 <script src="{{ asset('assets/js/main.js') }}"></script>
 <script src="{{ asset('assets/js/pages-auth.js') }}"></script>
-<script src="{{ asset('assets/custom/js/simple.js') }}"></script>
+ <!-- <script src="{{ asset('assets/custom/js/simple.js') }}"></script>  -->
 
 <!-- Page specific JavaScript file -->
-
+<script>
+      
+</script>
 
 </body>
 </html>

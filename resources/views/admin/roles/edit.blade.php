@@ -3,7 +3,7 @@
 @section('content')
 
 <div class="row justify-content-center">
-    <div class="col-md-8">
+    <div class="col-md-10 mt-5">
 
         <div class="card">
             <div class="card-header">
@@ -33,13 +33,15 @@
                         <label for="permissions" class="col-md-4 col-form-label text-md-end text-start">Permissions</label>
                         <div class="col-md-6">           
                             <select class="form-select @error('permissions') is-invalid @enderror" multiple aria-label="Permissions" id="permissions" name="permissions[]" style="height: 210px;">
-                                @forelse ($permissions as $permission)
-                                    <option value="{{ $permission->id }}" {{ in_array($permission->id, $rolePermissions ?? []) ? 'selected' : '' }}>
+                               @forelse ($permissions as $permission)
+                                @if (!in_array($permission->name, ['create-role', 'edit-role', 'delete-role']))
+                                    <option value="{{ $permission->id }}" {{ in_array($permission->id, old('permissions', $role->permissions->pluck('id')->toArray()) ?? []) ? 'selected' : '' }}>
                                         {{ $permission->name }}
                                     </option>
-                                @empty
-
-                                @endforelse
+                                @endif
+                            @empty
+                                <!-- Handle empty permissions list -->
+                            @endforelse
                             </select>
                             @if ($errors->has('permissions'))
                                 <span class="text-danger">{{ $errors->first('permissions') }}</span>

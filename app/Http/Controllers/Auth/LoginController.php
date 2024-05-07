@@ -29,7 +29,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/dashboard';
 
     /**
      * Create a new controller instance.
@@ -45,14 +45,14 @@ class LoginController extends Controller
     {
 
         $credentials = $request->validate([
-            'mobile' => ['required', 'digits:10'],
+            'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
     
  
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->route('home');
+            return redirect()->route('dashboard');
         }
  
         return back()->withErrors([

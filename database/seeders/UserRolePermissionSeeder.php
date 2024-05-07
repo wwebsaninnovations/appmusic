@@ -22,73 +22,76 @@ class UserRolePermissionSeeder extends Seeder
             'create-user',
             'edit-user',
             'delete-user',
-            'view-user',
-            // 'create-book',
-            // 'edit-book',
-            // 'delete-book',
-            // 'view-book'
+            'create-music',
+            'edit-music',
+            'delete-music',
         ];
- 
-        // Create or update permissions
-        foreach ($permissions as $permissionName) {
-            Permission::updateOrCreate(['name' => $permissionName]);
-        }
+       //Created Permission
+       foreach ($permissions as $permission) {
+        Permission::create(['name' => $permission]);
+       }
+       
+        $superAdminUser = User::updateOrCreate([
+            'email' => 'superadmin@gmail.com',
+            'name' => 'Tabrej', 
+            'mobile' =>'8340106146',
+            'password' => Hash::make('12345678'),
+            'client_id' => 100001
 
-        // Create or update roles
-        $superAdminRole = Role::updateOrCreate(['name' => 'Super Admin']);
-        $adminRole = Role::updateOrCreate(['name' => 'Admin']);
-       // $storeManagerRole = Role::updateOrCreate(['name' => 'Store Manager']);
+        ]);
 
-        // Sync all permissions to super admin role
-        $permissions = Permission::pluck('id')->all();
-        $superAdminRole->syncPermissions($permissions);
+          $adminUser = User::updateOrCreate([
+            'email' => 'krishna@gmail.com',
+            'name' => 'krishna', 
+            'mobile' =>'8284910963',
+            'password' => Hash::make('12345678'),
+            'client_id' => 100002
+        ]);
 
+           // Create roles
+         $superAdminRole = Role::create(['name' => 'Super Admin']);
+         $adminRole = Role::create(['name' => 'Admin']);
+        // Create roles for regular users
+         $userRole = Role::create(['name'=> 'User']);
+
+    
+      
         // Assign specific permissions to admin role
         $adminRole->givePermissionTo([
             'create-user',
             'edit-user',
             'delete-user',
-            // 'create-book',
-            // 'edit-book',
-            // 'delete-book'
         ]);
-  
+
         // Assign specific permissions to product manager role
-        // $storeManagerRole->givePermissionTo([
-        //     'create-book',
-        //     'edit-book',
-        //     'delete-book'
-        // ]);
-
-        // Creating or updating Super Admin User
-        $superAdminUser = User::updateOrCreate([
-            'email' => 'sanjank.mvteams@gmail.com'
-        ], [
-            'name' => 'Sanjan', 
-            'mobile' =>'8340106146',
-            'password' => Hash::make('12345678')
+        $userRole->givePermissionTo([
+            'create-music',
+            'edit-music',
+            'delete-music',
         ]);
+
+        //Asign Role to the user
+        $permissions = Permission::pluck('id')->all();
+        $superAdminRole->syncPermissions($permissions);
+
         $superAdminUser->assignRole($superAdminRole);
-
-        // Creating or updating Admin User
-        $adminUser = User::updateOrCreate([
-            'email' => 'krishna@gmail.com'
-        ], [
-            'name' => 'krishna', 
-            'mobile' =>'8284910963',
-            'password' => Hash::make('12345678')
-        ]);
         $adminUser->assignRole($adminRole);
 
-        // Creating or updating Product Manager User
-        // $storeManagerUser = User::updateOrCreate([
-        //     'email' => 'neha@gmail.com'
-        // ], [
-        //     'name' => 'neha', 
-        //     'mobile' =>'1234567890',
-        //     'password' => Hash::make('12345678')
-        // ]);
-        // $storeManagerUser->assignRole($storeManagerRole);
+
     }
+
+
+    // public static function generate_client_id() {
+    //     $number = mt_rand(1000000, 99999999); // 8 digit
+    
+    //     if (self::client_idExists($number)) {
+    //         return self::generate_client_id();
+    //     }
+    //     return $number;
+    // }
+
+    // public static function client_idExists($number) {
+    //     return User::where('client_id',$number)->exists();
+    // }
 }
 

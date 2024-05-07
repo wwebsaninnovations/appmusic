@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="row justify-content-center">
-    <div class="col-md-8">
+    <div class="col-md-10 mt-5">
         <div class="card">
             <div class="card-header">
                 <div class="float-start">
@@ -63,24 +63,62 @@
                           <input type="password" class="form-control" id="password_confirmation" name="password_confirmation">
                         </div>
                     </div>
+                      <!-- Full Address -->
+                      <div class="mb-3 row">
+                        <label for="full_address" class="col-md-4 col-form-label text-md-end text-start">Full Address</label>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control @error('full_address') is-invalid @enderror" id="full_address" name="full_address" value="{{ $user->full_address }}">
+                            @error('full_address')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
 
+                    <!-- Company Label -->
+                    <div class="mb-3 row">
+                        <label for="company_label" class="col-md-4 col-form-label text-md-end text-start">Company Label</label>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control @error('company_label') is-invalid @enderror" id="company_label" name="company_label" value="{{$user->company_label }}">
+                            @error('company_label')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
                     <div class="mb-3 row">
                         <label for="roles" class="col-md-4 col-form-label text-md-end text-start">Roles</label>
                         <div class="col-md-6">           
-                            <select class="form-select @error('roles') is-invalid @enderror" multiple aria-label="Roles" id="roles" name="roles[]">
-                                @forelse ($roles as $role)
+                            <select class="form-select @error('roles') is-invalid @enderror"  aria-label="Roles" id="roles" name="roles">
+                            @forelse ($roles as $role)
 
-                                    @if ($role!='Super Admin')
-                                    <option value="{{ $role }}" {{ in_array($role, $userRoles ?? []) ? 'selected' : '' }}>
-                                        {{ $role }}
-                                    </option>
-                                    @else
-                                        @if (Auth::user()->hasRole('Super Admin'))   
-                                        <option value="{{ $role }}" {{ in_array($role, $userRoles ?? []) ? 'selected' : '' }}>
-                                            {{ $role }}
-                                        </option>
+                                                                
+                                @if (Auth::user()->hasRole('Super Admin') )   
+                                    
+                                        @if($user->hasRole('Super Admin') ) 
+
+                                                @if($role == 'Super Admin')
+                                                    <option value="{{ $role }}" {{$user->hasRole($role) == $role ? 'selected' : '' }}>
+                                                        {{ $role }}
+                                                    </option>
+                                                @endif
+                                            
+                                            @else
+
+                                                @if($role != 'Super Admin')
+                                                    <option value="{{ $role }}" {{ $user->hasRole($role) == $role ? 'selected' : '' }}>
+                                                        {{ $role }}
+                                                    </option>
+                                                @endif
+                                            
                                         @endif
-                                    @endif
+                                        
+                                    @else
+
+                                        @if( $role == 'User') 
+                                            <option value="{{ $role }}" {{ $user->hasRole($role) == $role ? 'selected' : '' }}>
+                                                {{ $role }}
+                                            </option>
+                                        @endif
+                                @endif 
 
                                 @empty
 

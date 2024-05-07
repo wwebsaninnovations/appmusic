@@ -23,7 +23,12 @@ class User extends Authenticatable
         'email',
         'password',
         'mobile',
-        'created_by'
+        'created_by',
+        'theme_mode', 
+        'client_id',
+        'full_address',
+        'company_label'
+
     ];
 
     /**
@@ -45,4 +50,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 }

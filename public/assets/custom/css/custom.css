@@ -1,0 +1,30 @@
+body {
+  overflow-x: hidden;
+}
+
+.layout-menu-collapsed.layout-menu-hover .app-brand {
+  justify-content: center;
+}
+.layout-menu-collapsed.layout-menu-hover .app-brand .app-brand-logo {
+  display: flex;
+  justify-content: center;
+  margin: auto;
+  width: 150px !important;
+  margin: auto;
+}
+.layout-menu-collapsed.layout-menu-hover .app-brand .app-brand-logo img {
+  width: 150px !important;
+  margin: auto;
+}
+.layout-menu-collapsed .app-brand {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+.layout-menu-collapsed .app-brand .app-brand-logo img {
+  width: 80px !important;
+}
+
+.user-profile-header img {
+  padding-top: 30px;
+}/*# sourceMappingURL=custom.css.map */

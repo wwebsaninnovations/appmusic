@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="row justify-content-center">
-    <div class="col-md-8">
+    <div class="col-md-10 mt-5 ">
         <div class="card">
             <div class="card-header">
                 <div class="float-start">
@@ -62,34 +62,60 @@
                         </div>
                     </div>
 
+                    <!-- Full Address -->
+                    <div class="mb-3 row">
+                        <label for="full_address" class="col-md-4 col-form-label text-md-end text-start">Full Address</label>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control @error('full_address') is-invalid @enderror" id="full_address" name="full_address" value="{{ old('full_address') }}">
+                            @error('full_address')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Company Label -->
+                    <div class="mb-3 row">
+                        <label for="company_label" class="col-md-4 col-form-label text-md-end text-start">Company Label</label>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control @error('company_label') is-invalid @enderror" id="company_label" name="company_label" value="{{ old('company_label') }}">
+                            @error('company_label')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                    
                     <div class="mb-3 row">
                         <label for="roles" class="col-md-4 col-form-label text-md-end text-start">Roles</label>
                         <div class="col-md-6">           
-                            <select class="form-select @error('roles') is-invalid @enderror" multiple aria-label="Roles" id="roles" name="roles[]">
-                                @forelse ($roles as $role)
+                            <select class="form-select @error('roles') is-invalid @enderror"  aria-label="Roles" id="roles" name="roles">
+                            @forelse ($roles as $role)
+                           
+                                    @if (Auth::user()->hasRole('Super Admin') )   
+                                     
+                                            @if($role != 'Super Admin')
+                                                <option value="{{ $role }}" {{ old('roles') == $role ? 'selected' : '' }}>
+                                                    {{ $role }}
+                                                </option>
+                                            @endif
+                         
+                                        @else
 
-                                    @if ($role!='Super Admin')
-                                        <option value="{{ $role }}" {{ in_array($role, old('roles') ?? []) ? 'selected' : '' }}>
-                                        {{ $role }}
-                                        </option>
-                                    @else
-                                        @if (Auth::user()->hasRole('Super Admin'))   
-                                            <option value="{{ $role }}" {{ in_array($role, old('roles') ?? []) ? 'selected' : '' }}>
-                                            {{ $role }}
-                                            </option>
+                                        @if( $role == 'User') 
+                                             <option value="{{ $role }}" {{ old('roles') == $role ? 'selected' : '' }}>
+                                                 {{ $role }}
+                                             </option>
                                         @endif
-                                    @endif
-
-                                @empty
-
-                                @endforelse
+                                    @endif 
+                  
+                            @empty
+                                <!-- Handle empty roles list -->
+                            @endforelse
                             </select>
                             @if ($errors->has('roles'))
                                 <span class="text-danger">{{ $errors->first('roles') }}</span>
                             @endif
                         </div>
                     </div>
-                    
                     <div class="mb-3 row">
                         <input type="submit" class="col-md-3 offset-md-5 btn btn-primary" value="Add User">
                     </div>
