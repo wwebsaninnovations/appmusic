@@ -17,6 +17,7 @@ return new class extends Migration
             $table->bigInteger('user_id');
             $table->string('track_path')->nullable();
             $table->string('track_name')->nullable();
+            $table->string('track_duration')->nullable();
             $table->string('track_version')->nullable();
             $table->string('lyrics_language')->nullable();
             $table->enum('explicit_content', ['none', 'explicit', 'clean'])->nullable();
@@ -32,11 +33,11 @@ return new class extends Migration
             $table->string('track_performers')->nullable();
             $table->string('publisher_rights')->nullable();
             $table->string('ownership_for_soound_rec')->nullable();
+
     
             $table->timestamps();
         });
     }
-    
 
     /**
      * Reverse the migrations.

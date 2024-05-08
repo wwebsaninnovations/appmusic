@@ -67,6 +67,7 @@ Route::post('/releases/create/step1', [ReleaseController::class, 'saveStep1'])->
 Route::get('/releases/create/step2', [ReleaseController::class, 'step2'])->name('releases.step2');
 Route::post('/releases/create/basic', [ReleaseController::class, 'saveBasic'])->name('releases.basic.save');
 Route::post('/releases/create/artwork', [ReleaseController::class, 'saveArtwork'])->name('releases.artwork.save');
+Route::post('/releases/create/uploadtrack', [ReleaseController::class, 'saveUploadTrack'])->name('releases.uploadTrack.save');
 
 Route::resources([
     // 'books' => BookController::class,

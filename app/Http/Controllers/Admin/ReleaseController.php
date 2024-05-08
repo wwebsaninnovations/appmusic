@@ -2,9 +2,12 @@
 namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Release;
+use App\Models\Track;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator; 
+
+use FFMpeg\FFMpeg;
 
 class ReleaseController extends Controller
 {
@@ -51,7 +54,10 @@ class ReleaseController extends Controller
     public function step2(Request $request){
         $release = Release::find( $request->release_id);
         $level = $request->level;
-        return view('admin.releases.step2', ['release' => $release, 'level'=> $level]);
+
+        $tracks = Track::where('release_id',$request->release_id)->get();
+      
+        return view('admin.releases.step2', ['release' => $release, 'tracks'=>$tracks, 'level'=> $level]);
     }
 
     public function saveBasic(Request $request) {
@@ -100,10 +106,56 @@ class ReleaseController extends Controller
     
     public function saveArtwork(Request $request) {
 
-        echo "hello";
-        die;
+        $user_id = Auth::user()->id;
+        $release_id = $request->release_id;
+        $validatedData = $request->validate([
+            'thumbnail' => 'required|file',
+        ]);
+
+        $path = $request->file('thumbnail')->storeAs(
+            'music/'.$user_id.'/'.$release_id.'/thumbnail',
+            $request->file('thumbnail')->getClientOriginalName(), 'public'
+        );
+
+        $release =Release::find($release_id);
+        $release->thumbnail_path = $path;
+        $release->save();
+        return redirect()->route('releases.step2', ['release_id'=>$release->id, 'level'=>'uploadtrack']);
+
     }
 
+    public function saveUploadTrack(Request $request) {
+
+    
+        $user_id = Auth::user()->id;
+        $release_id = $request->release_id;
+        $validatedData = $request->validate([
+            'track_paths.*' => 'required|file|mimes:audio/mpeg,mpga,mp3,wav,aac', // specify additional audio formats as needed
+        ]);
+
+        // Initialize FFMpeg
+        $ffmpeg = FFMpeg::create();
+
+        foreach ($request->file('track_paths') as $track) {
+            $path = $track->storeAs('music/'.$user_id.'/'. $release_id.'/tracks',$track->getClientOriginalName(), 'public');  
+
+            $audio = $ffmpeg->open($track->getPathname());
+            $format = $audio->getFormat();
+            $duration = $format->get('duration');
+
+            $trackData = [
+                'user_id' => $user_id,
+                'release_id' => $release_id,
+                'track_path' => $path,
+                'track_duration' => $duration
+            ];
+            $track = Track::create($trackData);
+        }
+
+        return redirect()->route('releases.step2', ['release_id'=>$release_id, 'level'=>'edittrack']);
+
+    }
+    
     /**
      * Store a newly created resource in storage.
      */

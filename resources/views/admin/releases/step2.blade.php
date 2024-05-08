@@ -8,8 +8,8 @@
             <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                 <button class="nav-link {{($level=='basic')? ' active':''}}" id="v-pills-basic-tab" data-bs-toggle="pill" data-bs-target="#v-pills-basic" type="button" role="tab" aria-controls="v-pills-basic" aria-selected="true">Basic</button>
                 <button class="nav-link {{($level=='artwork')? ' active':''}}" id="v-pills-artwork-tab" data-bs-toggle="pill" data-bs-target="#v-pills-artwork" type="button" role="tab" aria-controls="v-pills-artwork" aria-selected="false">Artwork</button>
-                <button class="nav-link" id="v-pills-upload_track-tab" data-bs-toggle="pill" data-bs-target="#v-pills-upload_track" type="button" role="tab" aria-controls="v-pills-upload_track" aria-selected="false">Upload Track</button>
-                <button class="nav-link" id="v-pills-edit_track-tab" data-bs-toggle="pill" data-bs-target="#v-pills-edit_track" type="button" role="tab" aria-controls="v-pills-edit_track" aria-selected="false">Edit Track</button>
+                <button class="nav-link {{($level=='uploadtrack')? ' active':''}}" id="v-pills-uploadtrack-tab" data-bs-toggle="pill" data-bs-target="#v-pills-uploadtrack" type="button" role="tab" aria-controls="v-pills-uploadtrack" aria-selected="false">Upload Track</button>
+                <button class="nav-link {{($level=='edittrack')? ' active':''}}" id="v-pills-edittrack-tab" data-bs-toggle="pill" data-bs-target="#v-pills-edittrack" type="button" role="tab" aria-controls="v-pills-edittrack" aria-selected="false">Edit Track</button>
             </div>
         </div>
         <div class="col-md-9">
@@ -118,41 +118,51 @@
                     <p>Artwork</p>
                     <form action="{{route('releases.artwork.save')}}" method="POST" enctype="multipart/form-data">
                         @csrf
-                    <div class ="row">
-                        <div class=" col-5 mb-3">
+                        <div class ="row">
+                            <div class=" col-5 mb-3">
                                 <label for="thumbnail" class="form-label">Upload Your Artwork</label>
                                 <input type="file" class="form-control" id="thumbnail" name="thumbnail" />
-                        </div>
-                        <div class="col-7">
-                             <p><b>Your Image Must Be :</b></p>
-                             <p>TIF or JPG gormat</p>
-                             <p>Square</p>
-                             <p>Minimum size: 3000 x 3000 pixels.</p>
-                             <p>Maximum size: 6000 x 6000 pixels.</p>
-                             <p>RGB format</p>
-                             <p>Opaque</p>
-                             <p>If you are scanning a CD, remove product sticker and crop marks</p>
+                                <input type="hidden" name ="release_id" value="{{$release->id}}">
+                            </div>
+                            <div class="col-7">
+                                <p><b>Your Image Must Be :</b></p>
+                                <p>TIF or JPG gormat</p>
+                                <p>Square</p>
+                                <p>Minimum size: 3000 x 3000 pixels.</p>
+                                <p>Maximum size: 6000 x 6000 pixels.</p>
+                                <p>RGB format</p>
+                                <p>Opaque</p>
+                                <p>If you are scanning a CD, remove product sticker and crop marks</p>
 
+                            </div>
                         </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Save & Next</button>
-                  </div>
+                        <button type="submit" class="btn btn-primary">Save & Next</button>
+                    </form>
                 </div>
-                <div class="tab-pane fade" id="v-pills-upload_track" role="tabpanel" aria-labelledby="v-pills-upload_track-tab">
-                    <p>Upload Tracks</p>
-                    <div class=" col-5 mb-3">
-                            <label for="tracks" class="form-label">Upload from Computer</label>
-                            <input type="file" class="form-control" id="tracks" name="track_paths[]" />
-                    </div>   
-                    <button type="submit" class="btn btn-primary">Next</button>
-                </div>
-                <div class="tab-pane fade" id="v-pills-edit_track" role="tabpanel" aria-labelledby="v-pills-edit_track-tab">
+           
+                <div class="tab-pane fade {{($level=='uploadtrack')? ' show active':''}}" id="v-pills-uploadtrack" role="tabpanel" aria-labelledby="v-pills-uploadtrack-tab">
+                     <p>Upload Tracks</p>
+                     <form action="{{route('releases.uploadTrack.save')}}" method="POST" enctype="multipart/form-data">
+                            @csrf  
+                            <div class="mb-3">
+                                <label for="tracks" class="form-label">Upload from Computer</label>
+                                <input type="file" class="form-control" id="tracks" name="track_paths[]" multiple />
+                                <input type="hidden" name ="release_id" value="{{$release->id}}">
+                            </div>   
+                            <button type="submit" class="btn btn-primary">Upload</button>
+                    </form>
+                 </div>
+
+                 <div class="tab-pane fade {{($level=='edittrack')? ' show active':''}}" id="v-pills-edittrack" role="tabpanel" aria-labelledby="v-pills-edittrack-tab">
                     <p>Edit Tracks</p>
-                
+                    <ul class="track-list">
+                        @foreach($tracks as $track)
+                            <li class="track-item">
+                                <span class="track-name">{{ basename($track->track_path) }}</span>
+                            </li>
+                        @endforeach
+                    </ul>
                 </div>
-
-                
-            </div>
         </div>
     </div>
 </div>

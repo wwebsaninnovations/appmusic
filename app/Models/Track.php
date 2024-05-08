@@ -14,6 +14,7 @@ class Track extends Model
         'user_id',
         'track_path',
         'track_name',
+        'track_duration',
         'track_version',
         'lyrics_language',
         'explicit_content',
