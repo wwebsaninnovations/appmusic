@@ -128,7 +128,7 @@ layout-navbar-fixed dark-style layout-menu-fixed layout-menu-collapsed
 <!-- Main JavaScript file -->
 <script src="{{ asset('assets/js/main.js') }}"></script>
 <script src="{{ asset('assets/js/pages-auth.js') }}"></script>
- <!-- <script src="{{ asset('assets/custom/js/simple.js') }}"></script>  -->
+<script src="{{ asset('assets/custom/js/custom.js') }}"></script>
 
 <!-- Page specific JavaScript file -->
 <script>

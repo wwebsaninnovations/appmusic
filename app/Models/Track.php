@@ -21,14 +21,19 @@ class Track extends Model
         'track_primary_artist',
         'track_featuring_artist',
         'track_remixer',
-        'track_writer',
+        'song_writer',
         'track_producer',
-        'composer',
+        'composer_name',
         'track_lyrics_name',
         'track_label_name',
         'isrc',
         'track_performers',
-        'publisher_rights',
+        'pname',
+        'cname',
         'ownership_for_soound_rec',
+        'original_release_date',
+        'sales_date',
+        'country_of_rec',
+        'nationality'
     ];
 }

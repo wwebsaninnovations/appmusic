@@ -26,7 +26,10 @@ return new class extends Migration
             $table->string('producer')->nullable();
             $table->string('genre')->nullable();
             $table->string('sub_genre')->nullable();
-            $table->string('copy_rights')->nullable();
+            $table->string('cname')->nullable();
+            $table->string('pname')->nullable();
+            $table->string('original_release_date')->nullable();
+            $table->string('sales_date')->nullable();
             $table->string('thumbnail_path')->nullable();
             $table->text('note')->nullable();
             $table->integer('status')->default(0);

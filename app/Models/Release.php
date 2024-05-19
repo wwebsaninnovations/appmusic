@@ -9,6 +9,7 @@ class Release extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'user_id',
         'format',
         'release_name',
         'release_version',
@@ -22,8 +23,10 @@ class Release extends Model
         'genre',
         'sub_genre',
         'cname',
+        'pname',
+        'original_release_date',
+        'sales_date',
         'thumbnail_path',
-        'user_id',
         'note',
         'status'
     ];

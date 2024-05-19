@@ -24,17 +24,20 @@ return new class extends Migration
             $table->string('track_primary_artist')->nullable();
             $table->string('track_featuring_artist')->nullable();
             $table->string('track_remixer')->nullable();
-            $table->string('track_writer')->nullable();
+            $table->string('song_writer')->nullable();
             $table->string('track_producer')->nullable();
-            $table->string('composer')->nullable();
+            $table->string('composer_name')->nullable();
             $table->string('track_lyrics_name')->nullable();
             $table->string('track_label_name')->nullable();
             $table->string('isrc')->nullable();
             $table->string('track_performers')->nullable();
-            $table->string('publisher_rights')->nullable();
-            $table->string('ownership_for_soound_rec')->nullable();
-
-    
+            $table->string('cname')->nullable();
+            $table->string('pname')->nullable();
+            $table->string('ownership_for_sound_rec')->nullable();
+            $table->string('original_release_date')->nullable();
+            $table->string('sales_date')->nullable();
+            $table->string('country_of_rec')->nullable();
+            $table->string('nationality')->nullable();
             $table->timestamps();
         });
     }
