@@ -171,78 +171,56 @@ class ReleaseController extends Controller
     public function saveEditTrack(Request $request) {
         $track_ids = $request->track_id;
         $release_id = $request->release_id;
-        $validatedData = $request->validate( [
-            'track_name' => 'required|array',
-            'track_name.*' => 'required|string|max:255|index_increment',
-            'track_version' => 'required|array',
-            'track_version.*' => 'required|string|max:50|index_increment',
-            'lyrics_language' => 'required|array',
-            'lyrics_language.*' => 'required|string|max:50|index_increment',
-            'explicit_content' => 'required|array',
-            'explicit_content.*' => 'required|string|max:50|index_increment',
-            'primary_artist' => 'required|array',
-            'primary_artist.*' => 'required|string|max:255|index_increment',
-            'featuring_artist' => 'nullable|array',
-            'featuring_artist.*' => 'nullable|string|max:255|index_increment',
-            'track_remixer' => 'nullable|array',
-            'track_remixer.*' => 'nullable|string|max:255|index_increment',
-            'song_writer' => 'required|array',
-            'song_writer.*' => 'required|string|max:255|index_increment',
-            'track_producer' => 'required|array',
-            'track_producer.*' => 'required|string|max:255|index_increment',
-            'composer_name' => 'required|array',
-            'composer_name.*' => 'required|string|max:255|index_increment',
-            'label_name' => 'required|array',
-            'label_name.*' => 'required|string|max:255|index_increment',
-            'isrc' => 'required|array',
-            'isrc.*' => 'required|string|max:255|index_increment',
-            'primary_performers' => 'required|array',
-            'primary_performers.*' => 'required|string|max:255|index_increment',
-            'pname' => 'required|array',
-            'pname.*' => 'required|string|max:255|index_increment',
-            'cname' => 'required|array',
-            'cname.*' => 'required|string|max:255|index_increment',
-            'ownership_for_sound_rec' => 'required|array',
-            'ownership_for_sound_rec.*' => 'required|string|max:255|index_increment',
-            'country_of_rec' => 'required|array',
-            'country_of_rec.*' => 'required|string|max:255|index_increment',
-            'nationality' => 'required|array',
-            'nationality.*' => 'required|string|max:255|index_increment',
-        ], [
-            'track_name.required' => 'Track names are required.',
-            'track_name.*.required' => 'Track name at index :index is required.',
-            'track_version.required' => 'Track versions are required.',
-            'track_version.*.required' => 'Track version at index :index is required.',
-            'lyrics_language.required' => 'Lyrics languages are required.',
-            'lyrics_language.*.required' => 'Lyrics language at index :index is required.',
-            'explicit_content.required' => 'Explicit content is required.',
-            'explicit_content.*.required' => 'Explicit content at index :index is required.',
-            'primary_artist.required' => 'Primary artists are required.',
-            'primary_artist.*.required' => 'Primary artist at index :index is required.',
-            'song_writer.required' => 'Song writers are required.',
-            'song_writer.*.required' => 'Song writer at index :index is required.',
-            'track_producer.required' => 'Track producers are required.',
-            'track_producer.*.required' => 'Track producer at index :index is required.',
-            'composer_name.required' => 'Composer names are required.',
-            'composer_name.*.required' => 'Composer name at index :index is required.',
-            'label_name.required' => 'Label names are required.',
-            'label_name.*.required' => 'Label name at index :index is required.',
-            'isrc.required' => 'ISRC codes are required.',
-            'isrc.*.required' => 'ISRC code at index :index is required.',
-            'primary_performers.required' => 'Primary performers are required.',
-            'primary_performers.*.required' => 'Primary performer at index :index is required.',
-            'pname.required' => 'Publisher names are required.',
-            'pname.*.required' => 'Publisher name at index :index is required.',
-            'cname.required' => 'Composer names are required.',
-            'cname.*.required' => 'Composer name at index :index is required.',
-            'ownership_for_sound_rec.required' => 'Ownership for sound recording is required.',
-            'ownership_for_sound_rec.*.required' => 'Ownership for sound recording at index :index is required.',
-            'country_of_rec.required' => 'Country of recording is required.',
-            'country_of_rec.*.required' => 'Country of recording at index :index is required.',
-            'nationality.required' => 'Nationalities are required.',
-            'nationality.*.required' => 'Nationality at index :index is required.',
-        ]);
+    
+        $rules = [];
+        $messages = [];
+    
+        for ($i = 0; $i < count($track_ids); $i++) {
+            
+            $rules['track_name.' . $i] = 'required|string|max:255';
+            $rules['track_version.' . $i] = 'required|string|max:50';
+            $rules['lyrics_language.' . $i] = 'required|string|max:50';
+            $rules['explicit_content.' . $i] = 'required|string|max:50';
+            $rules['primary_artist.' . $i] = 'required|string|max:255';
+            $rules['featuring_artist.' . $i] = 'nullable|string|max:255';
+            $rules['track_remixer.' . $i] = 'nullable|string|max:255';
+            $rules['song_writer.' . $i] = 'required|string|max:255';
+            $rules['track_producer.' . $i] = 'required|string|max:255';
+            $rules['composer_name.' . $i] = 'required|string|max:255';
+            $rules['label_name.' . $i] = 'required|string|max:255';
+            $rules['isrc.' . $i] = 'required|string|max:255';
+            $rules['primary_performers.' . $i] = 'required|string|max:255';
+            $rules['pname.' . $i] = 'required|string|max:255';
+            $rules['cname.' . $i] = 'required|string|max:255';
+            $rules['ownership_for_sound_rec.' . $i] = 'required|string|max:255';
+            $rules['country_of_rec.' . $i] = 'required|string|max:255';
+            $rules['nationality.' . $i] = 'required|string|max:255';
+    
+            $index = $i + 1;
+    
+            $messages['track_name.' . $i . '.required'] = "Track name at index $index is required.";
+            $messages['track_version.' . $i . '.required'] = "Track version at index $index is required.";
+            $messages['lyrics_language.' . $i . '.required'] = "Lyrics language at index $index is required.";
+            $messages['explicit_content.' . $i . '.required'] = "Explicit content at index $index is required.";
+            $messages['primary_artist.' . $i . '.required'] = "Primary artist at index $index is required.";
+            $messages['featuring_artist.' . $i . '.nullable'] = "Featuring artist at index $index is required.";
+            $messages['track_remixer.' . $i . '.nullable'] = "Track remixer at index $index is required.";
+            $messages['song_writer.' . $i . '.required'] = "Song writer at index $index is required.";
+            $messages['track_producer.' . $i . '.required'] = "Track producer at index $index is required.";
+            $messages['composer_name.' . $i . '.required'] = "Composer name at index $index is required.";
+            $messages['label_name.' . $i . '.required'] = "Label name at index $index is required.";
+            $messages['isrc.' . $i . '.required'] = "ISRC code at index $index is required.";
+            $messages['primary_performers.' . $i . '.required'] = "Primary performer at index $index is required.";
+            $messages['pname.' . $i . '.required'] = "Publisher name at index $index is required.";
+            $messages['cname.' . $i . '.required'] = "Composer name at index $index is required.";
+            $messages['ownership_for_sound_rec.' . $i . '.required'] = "Ownership for sound recording at index $index is required.";
+            $messages['country_of_rec.' . $i . '.required'] = "Country of recording at index $index is required.";
+            $messages['nationality.' . $i . '.required'] = "Nationality at index $index is required.";
+        }
+    
+        $validatedData = $request->validate($rules, $messages);
 
+       
         // foreach($track_ids  as $key=> $track_id )  {
         //     $track =Track::find($track_id);
         //     $track->track_name = $request->track_name[$key];
