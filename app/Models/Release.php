@@ -30,4 +30,11 @@ class Release extends Model
         'note',
         'status'
     ];
+
+     // Define the tracks relationship
+     public function tracks()
+     {
+         return $this->hasMany(Track::class);
+     }
+
 }

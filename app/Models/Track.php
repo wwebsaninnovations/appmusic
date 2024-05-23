@@ -36,4 +36,11 @@ class Track extends Model
         'country_of_rec',
         'nationality'
     ];
+    
+  
+    // Define the release relationship
+    public function release()
+    {
+        return $this->belongsTo(Release::class);
+    }
 }

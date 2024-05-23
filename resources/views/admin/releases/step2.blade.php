@@ -178,7 +178,7 @@
                                     <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                                         @foreach($tracks as $index => $track)
                                         <button class="nav-link {{ ($index == 0) ? 'active' : '' }}" id="v-pills-track{{ $index }}-tab" data-bs-toggle="pill" data-bs-target="#v-pills-track{{ $index }}" type="button" role="tab" aria-controls="v-pills-track{{ $index }}" aria-selected="{{ ($index == 0) ? 'true' : 'false' }}">
-                                            {{ basename($track->track_path) }}
+                                           <span>{{$index+1}}</span> {{ basename($track->track_path) }}
                                             <span class="track-duration">{{ $track->track_duration }}</span>
                                         </button>
                                         @endforeach
@@ -188,6 +188,7 @@
                                     <div class="tab-content" id="v-pills-tabContent">
                                         @foreach($tracks as $index => $track)
                                         <div class="tab-pane fade {{ ($index == 0) ? 'show active' : '' }}" id="v-pills-track{{ $index }}" role="tabpanel" aria-labelledby="v-pills-track{{ $index }}-tab">
+                                               <h4>Track Info {{ $index+1}}</h4>
                                                 <input type="hidden" name="track_id[]" value="{{$track->id}}" />
                                                  <div class="mb-3">
                                                     <label for="track_name{{ $index }}" class="form-label">Track Name</label>

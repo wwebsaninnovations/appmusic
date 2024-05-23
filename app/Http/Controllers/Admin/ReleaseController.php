@@ -16,9 +16,9 @@ class ReleaseController extends Controller
      */
     public function index()
     {
-        // $user_id = Auth::user()->id;
-        // $musics  = Music::where('user_id',$user_id)->paginate(3);
-        return view('admin.releases.index');
+        $user_id = Auth::user()->id;
+        $releases = Release::where('user_id', $user_id)->with('tracks')->paginate(5);
+        return view('admin.releases.index',['releases'=>$releases]);
     }
 
     /**
@@ -176,7 +176,6 @@ class ReleaseController extends Controller
         $messages = [];
     
         for ($i = 0; $i < count($track_ids); $i++) {
-            
             $rules['track_name.' . $i] = 'required|string|max:255';
             $rules['track_version.' . $i] = 'required|string|max:50';
             $rules['lyrics_language.' . $i] = 'required|string|max:50';
@@ -219,18 +218,38 @@ class ReleaseController extends Controller
         }
     
         $validatedData = $request->validate($rules, $messages);
-
-       
-        // foreach($track_ids  as $key=> $track_id )  {
-        //     $track =Track::find($track_id);
-        //     $track->track_name = $request->track_name[$key];
-        //     $track->track_version = $request->track_version[$key];
-        //     $track->lyrics_language =  $request->lyrics_language[$key];
-        //     $track->save();
-        // }  
-        return redirect()->route('releases.step2', ['release_id'=>$release_id, 'level'=>'schedulingPricing']);
-
+    
+        foreach($track_ids as $key => $track_id) {
+            try {
+                $track = Track::find($track_id);
+                $track->track_name = $request->track_name[$key];
+                $track->track_version = $request->track_version[$key];
+                $track->lyrics_language = $request->lyrics_language[$key];
+                $track->explicit_content = $request->explicit_content[$key];
+                $track->track_primary_artist = $request->primary_artist[$key];
+                $track->track_featuring_artist = $request->featuring_artist[$key];
+                $track->track_remixer = $request->track_remixer[$key];
+                $track->song_writer = $request->song_writer[$key];
+                $track->track_producer = $request->track_producer[$key];
+                $track->composer_name = $request->composer_name[$key];
+                $track->track_label_name = $request->label_name[$key];
+                $track->isrc = $request->isrc[$key];
+                $track->track_performers = $request->primary_performers[$key];
+                $track->pname = $request->pname[$key];
+                $track->cname = $request->cname[$key];
+                $track->ownership_for_sound_rec = $request->ownership_for_sound_rec[$key];
+                $track->country_of_rec = $request->country_of_rec[$key];
+                $track->nationality = $request->nationality[$key];
+                $track->save();
+            } catch (\Exception $e) {
+                // Handle the error, log it, or return a custom error response
+                return redirect()->back()->withErrors(['error' => 'There was an issue saving the track with ID ' . $track_id . ': ' . $e->getMessage()]);
+            }
+        }
+    
+        return redirect()->route('releases.index')->with('success', 'Releases has been added successfully.!');
     }
+    
 
 
     
