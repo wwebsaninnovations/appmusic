@@ -31,10 +31,23 @@
                 </a>
               </li> -->
               <li class="menu-item {{ request()->routeIs('releases.*') ? 'active' : '' }}">
-                <a href="{{ route('releases.index') }}" class="menu-link">
+                <a  href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="fa-solid fa-music menu-icon tf-icons"></i>
-                  <div data-i18n="New Release"> New Release</div>
+                  <div data-i18n="Manage Release"> Manage Release</div>
                 </a>
+                <ul class="menu-sub">
+                <li class="menu-item   {{ request()->routeIs('releases.index') ? 'active' : '' }}">
+                  <a href="{{ route('releases.index') }}"  class="menu-link">
+                    <div data-i18n="List">List</div>
+                  </a>
+                </li>
+             
+                <li class="menu-item  {{ request()->routeIs('releases.step1') ? 'active' : '' }}">
+                  <a href="{{ route('releases.step1') }}" class="menu-link">
+                    <div data-i18n="Add">Add</div>
+                  </a>
+                </li>
+              </ul>
               </li>
              @endif
           

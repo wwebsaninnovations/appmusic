@@ -33,6 +33,7 @@ return new class extends Migration
             $table->string('thumbnail_path')->nullable();
             $table->text('note')->nullable();
             $table->integer('status')->default(0);
+            $table->integer('form_status')->default(0);
             $table->timestamps();
         });
     }

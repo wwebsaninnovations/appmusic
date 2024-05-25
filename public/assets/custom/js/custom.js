@@ -1,5 +1,10 @@
 $(document).ready(function() {
 
+    $('.release-nav-link #v-pills-tab .nav-link').on('click', function() {
+        const newUrl = $(this).data('href');
+        window.history.pushState({path: newUrl}, '', newUrl);
+    });
+
     // function changeTheme(darkMode) {
     //     if (darkMode) {
     //         $('html').addClass('dark-style');
@@ -72,9 +77,113 @@ $('.apply_radio_click').click(function() {
     
  });
 
- 
+});
 
+$(document).ready(function() {
+    $('#droparea').on('click', function() {
+        $('#artworkimage').click();
+    });
 
+    $('#artworkimage').on('change', function(event) {
+        var files = event.target.files;
+        if (files.length > 0) {
+            var file = files[0];
+            var fileType = file.type;
+            var validTypes = ['image/jpeg', 'image/tiff'];
+            var imageTypeValid = validTypes.includes(fileType);
+            var img = new Image();
+
+            img.onload = function() {
+                var width = this.width;
+                var height = this.height;
+
+                if (!imageTypeValid) {
+                    $('#error-message').text('Invalid file type. Please upload a TIF or JPG image.');
+                    resetFileInput();
+                    return;
+                }
+
+                if (width !== height) {
+                    $('#error-message').text('Image must be square.');
+                    resetFileInput();
+                    return;
+                }
+
+                if (width < 300|| width > 6000 || height < 300 || height > 6000) {
+                    $('#error-message').text('Image dimensions must be between 3000 x 3000 pixels and 6000 x 6000 pixels.');
+                    resetFileInput();
+                    return;
+                }
+
+                // Hide error message if everything is valid
+                $('#error-message').text('');
+
+                // Show progress bar and start animation
+                $('.progress').show();
+                var progressBar = $('.progress-bar');
+                progressBar.css('width', '0%').attr('aria-valuenow', 0);
+
+                var progress = 0;
+                var interval = setInterval(function() {
+                    progress += 1;
+                    progressBar.css('width', progress + '%').attr('aria-valuenow', progress);
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        $('.progress').hide();
+
+                        // Display the image preview
+                        var reader = new FileReader();
+                        reader.onload = function(e) {
+                            $('#image-preview').html('<img src="' + e.target.result + '" alt="Artwork Preview">');
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                }, 20); // 20ms interval for 2 seconds to 100%
+                
+                $('#image-info').text('Selected file: ' + file.name);
+            };
+
+            img.onerror = function() {
+                $('#error-message').text('Invalid image file.');
+                resetFileInput();
+            };
+
+            img.src = URL.createObjectURL(file);
+        } else {
+            resetFileInput();
+        }
+    });
+
+    $('#droparea').on('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).addClass('hover');
+    });
+
+    $('#droparea').on('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).removeClass('hover');
+    });
+
+    $('#droparea').on('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).removeClass('hover');
+
+        var files = e.originalEvent.dataTransfer.files;
+        if (files.length > 0) {
+            $('#artworkimage')[0].files = files;
+            $('#artworkimage').trigger('change');
+        }
+    });
+
+    function resetFileInput() {
+        $('#artworkimage').val('');
+        $('#image-info').text('');
+        $('#image-preview').html('');
+        $('.progress').hide();
+    }
 });
 
 

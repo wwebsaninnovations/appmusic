@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Rules\FutureDate;
 use FFMpeg\FFMpeg;
 use App\Http\Requests\ValidateTrackRequest;
+use DB;
 class ReleaseController extends Controller
 {
     /**
@@ -53,12 +54,11 @@ class ReleaseController extends Controller
     
     //step2 is associated with basic, artwork, uploadTrack and editTrack forms 
     public function step2(Request $request){
-        $release = Release::find( $request->release_id);
-        $level = $request->level;
 
-        $tracks = Track::where('release_id',$request->release_id)->get();
-      
-        return view('admin.releases.step2', ['release' => $release, 'tracks'=>$tracks, 'level'=> $level]);
+
+        $release = Release::with('tracks')->find($request->release_id);
+        $level = $request->level;
+        return view('admin.releases.step2', ['release' => $release, 'level'=> $level]);
     }
 
     public function saveBasic(Request $request) {
@@ -80,6 +80,7 @@ class ReleaseController extends Controller
             'primary_artist_basic' => 'required|string|max:255',
             'featuring_artist_basic' => 'required|string|max:255',
             'producer_artist_basic'=> 'required|string|max:255',
+            'remixer_artist_basic'=>'required|string|max:255',
             'genre'=> 'required|string|max:255',
             'sub_genre' => 'required|string|max:255',
             'format' => 'required|in:single,ep,album',
@@ -102,6 +103,8 @@ class ReleaseController extends Controller
         $release->release_version = $validatedData['release_version'];
         $release->primary_artist = $validatedData['primary_artist_basic'];
         $release->featuring_artist = $validatedData['featuring_artist_basic'];
+        $release->producer = $validatedData['producer_artist_basic'];
+        $release->remixer = $validatedData['remixer_artist_basic'];
         $release->genre = $validatedData['genre'];
         $release->sub_genre = $validatedData['sub_genre'];
         $release->format = $validatedData['format'];
@@ -109,6 +112,7 @@ class ReleaseController extends Controller
         $release->pname = $validatedData['pname_basic'];
         $release->original_release_date = $validatedData['original_release_date'];
         $release->sales_date = $validatedData['sales_date'];
+        
         $release->save();
        
         return redirect()->route('releases.step2', ['release_id'=>$release->id, 'level'=>'artwork']);
@@ -119,7 +123,7 @@ class ReleaseController extends Controller
         $user_id = Auth::user()->id;
         $release_id = $request->release_id;
         $validatedData = $request->validate([
-            'thumbnail' => 'required|file|mimes:jpeg,tiff|dimensions:min_width=1600,min_height=1600,max_width=6000,max_height=6000',
+            'thumbnail' => 'required|file|mimes:jpeg,tiff|dimensions:min_width=300,min_height=300,max_width=6000,max_height=6000',
         ],[
             'thumbnail.mimes' => 'The thumbnail must be a file of type: TIF, JPG.',
             'thumbnail.dimensions' => 'The thumbnail must be between 1600 x 1600 pixels and 6000 x 6000 pixels.',
@@ -218,40 +222,48 @@ class ReleaseController extends Controller
         }
     
         $validatedData = $request->validate($rules, $messages);
-    
-        foreach($track_ids as $key => $track_id) {
-            try {
-                $track = Track::find($track_id);
-                $track->track_name = $request->track_name[$key];
-                $track->track_version = $request->track_version[$key];
-                $track->lyrics_language = $request->lyrics_language[$key];
-                $track->explicit_content = $request->explicit_content[$key];
-                $track->track_primary_artist = $request->primary_artist[$key];
-                $track->track_featuring_artist = $request->featuring_artist[$key];
-                $track->track_remixer = $request->track_remixer[$key];
-                $track->song_writer = $request->song_writer[$key];
-                $track->track_producer = $request->track_producer[$key];
-                $track->composer_name = $request->composer_name[$key];
-                $track->track_label_name = $request->label_name[$key];
-                $track->isrc = $request->isrc[$key];
-                $track->track_performers = $request->primary_performers[$key];
-                $track->pname = $request->pname[$key];
-                $track->cname = $request->cname[$key];
-                $track->ownership_for_sound_rec = $request->ownership_for_sound_rec[$key];
-                $track->country_of_rec = $request->country_of_rec[$key];
-                $track->nationality = $request->nationality[$key];
-                $track->save();
-            } catch (\Exception $e) {
-                // Handle the error, log it, or return a custom error response
-                return redirect()->back()->withErrors(['error' => 'There was an issue saving the track with ID ' . $track_id . ': ' . $e->getMessage()]);
+        DB::beginTransaction(); // Start a transaction
+        try {
+            foreach($track_ids as $key => $track_id) {
+            
+                    $track = Track::findOrFail($track_id); 
+                    $track->track_name = $request->track_name[$key];
+                    $track->track_version = $request->track_version[$key];
+                    $track->lyrics_language = $request->lyrics_language[$key];
+                    $track->explicit_content = $request->explicit_content[$key];
+                    $track->track_primary_artist = $request->primary_artist[$key];
+                    $track->track_featuring_artist = $request->featuring_artist[$key];
+                    $track->track_remixer = $request->track_remixer[$key];
+                    $track->song_writer = $request->song_writer[$key];
+                    $track->track_producer = $request->track_producer[$key];
+                    $track->composer_name = $request->composer_name[$key];
+                    $track->track_label_name = $request->label_name[$key];
+                    $track->isrc = $request->isrc[$key];
+                    $track->track_performers = $request->primary_performers[$key];
+                    $track->pname = $request->pname[$key];
+                    $track->cname = $request->cname[$key];
+                    $track->ownership_for_sound_rec = $request->ownership_for_sound_rec[$key];
+                    $track->country_of_rec = $request->country_of_rec[$key];
+                    $track->nationality = $request->nationality[$key];
+                    $track->save();
             }
+               // If all tracks are saved successfully, then update the release status
+                $release = Release::findOrFail($release_id);
+                $release->status = 1;
+                $release->form_status = 1;
+                $release->save();
+                DB::commit(); // Commit the transaction
+                return redirect()->route('releases.index')->with('success', 'Tracks and release updated successfully.');
+
         }
-    
-        return redirect()->route('releases.index')->with('success', 'Releases has been added successfully.!');
+        catch (\Exception $e) {
+            // Handle the error, log it, or return a custom error response
+            DB::rollback();
+            return redirect()->back()->withErrors(['error' => 'Failed to update tracks: ' . $e->getMessage()]);
+        }
+
+      
     }
-    
-
-
     
     /**
      * Store a newly created resource in storage.

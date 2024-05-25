@@ -4,8 +4,8 @@
 <div class="row justify-content-center">
     <div class="col-md-10 mt-5 ">
         <div class="card">
+            <div class="card-header">All Releases</div>
             <div class="card-body">
-                <a href="{{ route('releases.step1') }}" class="btn btn-success btn-sm my-2"><i class="bi bi-plus-circle"></i>New Release</a>
                 <table class="table table-striped table-bordered">
                     <thead>
                         <tr>
@@ -13,6 +13,8 @@
                         <th scope="col">thumbnail</th>
                         <th scope="col">Format</th>
                         <th scope="col">Audio,Mp3</th>
+                        <th scope="col">Form Status</th>
+                        <th scope="col">Release Status</th>
                         <th scope="col">Action</th>
                         </tr>
                     </thead>
@@ -27,6 +29,46 @@
                                     <p>{{ basename($track->track_path) }}</p>
                                 @endforeach
                             </td>
+                            <td>
+                                @if($release->form_status == 0)
+                                    <span class="badge bg-warning">Incomplete</span>
+                                @else
+                                    <span class="badge bg-success">Completed</span>
+                                @endif
+                            </td>
+
+                            <td>
+                                @php
+                                    $status = $release->status;
+                                    $statusText = '';
+                                    $badgeClass = '';
+                                    switch($status) {
+                                        case 0:
+                                            $statusText = 'Pending';
+                                            $badgeClass = 'badge bg-warning';
+                                            break;
+                                        case 1:
+                                            $statusText = 'Processing';
+                                            $badgeClass = 'badge bg-primary';
+                                            break;
+                                        case 2:
+                                            $statusText = 'Rejected';
+                                            $badgeClass = 'badge bg-danger';
+                                            break;
+                                        case 3:
+                                            $statusText = 'Approved';
+                                            $badgeClass = 'badge bg-success';
+                                            break;
+                                        default:
+                                            $statusText = 'Unknown';
+                                            $badgeClass = 'badge bg-dark';
+                                            break;
+                                    }
+                                @endphp
+
+                                <span class="{{ $badgeClass }}">{{ $statusText }}</span>
+                            </td>
+
                             <td>
                                 <form action="{{ route('releases.destroy', $release->id) }}" method="post">
                                     @csrf
