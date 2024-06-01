@@ -1,7 +1,14 @@
 <!doctype html>
 
+@php $html_class="light-style layout-navbar-fixed layout-menu-fixed"; @endphp
+@auth
+    @if(Auth::user()->theme_mode =='dark')
+    @php $html_class="layout-navbar-fixed dark-style layout-menu-fixed "; @endphp
+    @endif
+@endauth    
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
-  class=""
+  
+  class="{{$html_class}}"
   dir="ltr"
   data-theme="theme-default"
   data-assets-path="{{ asset('/') }}"
@@ -27,7 +34,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-
+<link rel="stylesheet" href="{{ asset('css/app.css') }}">
 <!-- Icons -->
 <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/boxicons.css') }}" />
 <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/fontawesome.css') }}" />
@@ -38,11 +45,12 @@
 
 <!-- Vendors CSS -->
 <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
+<link rel="stylesheet" href="{{ asset('assets/vendor/libs/formvalidation/dist/css/formValidation.min.css')}}" />
 <link rel="stylesheet" href="{{ asset('assets/vendor/libs/typeahead-js/typeahead.css') }}" />
 <link rel="stylesheet" href="{{ asset('assets/vendor/libs/dropzone/dropzone.css') }}" />
 
 <!-- Page CSS -->
-
+<link rel="stylesheet" href="{{ asset('assets/vendor/css/pages/pages/page-auth.css')}}" />
 <!-- Helpers -->
 <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
 
@@ -52,9 +60,6 @@
 <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
 <script src="{{ asset('assets/js/config.js') }}"></script>
 
-<!-- Drk
-layout-navbar-fixed dark-style layout-menu-fixed layout-menu-collapsed
--->
 <!-- Core CSS -->
 @php $classDark =""; @endphp
 @auth
@@ -117,7 +122,8 @@ layout-navbar-fixed dark-style layout-menu-fixed layout-menu-collapsed
 
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
-    <script src="{{ asset('assets/vendor/libs/jquery/jquery.js') }}"></script>
+<script src="{{ asset('js/app.js') }}"></script>    
+<script src="{{ asset('assets/vendor/libs/jquery/jquery.js') }}"></script>
 <script src="{{ asset('assets/vendor/libs/popper/popper.js') }}"></script>
 <script src="{{ asset('assets/vendor/js/bootstrap.js') }}"></script>
 <script src="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
@@ -129,6 +135,11 @@ layout-navbar-fixed dark-style layout-menu-fixed layout-menu-collapsed
 <script src="{{ asset('assets/vendor/js/menu.js') }}"></script>
 <!-- endbuild -->
 
+<!-- FormValidation Plugin and its dependencies -->
+<script src="{{ asset('assets/vendor/libs/formvalidation/dist/js/FormValidation.min.js') }}"></script>
+<script src="{{ asset('assets/vendor/libs/formvalidation/dist/js/plugins/Bootstrap5.min.js') }}"></script>
+<script src="{{ asset('assets/vendor/libs/formvalidation/dist/js/plugins/AutoFocus.min.js') }}"></script>
+
 <!-- Vendors JS -->
 <script src="{{ asset('assets/vendor/libs/apex-charts/apexcharts.js') }}"></script>
 
@@ -139,13 +150,8 @@ layout-navbar-fixed dark-style layout-menu-fixed layout-menu-collapsed
 
 <!-- Page JS -->
 <script src="{{ asset('assets/js/dashboards-analytics.js') }}"></script>
+<script src="{{ asset('assets/js/pages-auth.js') }}"></script>
 <script src="{{ asset('assets/custom/js/custom.js') }}"></script>
-
-
-
-  
-
-
 
 </body>
 </html>

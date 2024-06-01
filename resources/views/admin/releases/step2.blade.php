@@ -132,14 +132,56 @@
                 </div>
 
                 <div class="tab-pane fade  {{($level=='artwork')? ' show active':''}}" id="v-pills-artwork" role="tabpanel" aria-labelledby="v-pills-artwork-tab">
-                    <h3>Artwork</h3>
-                
+                        <h3>Artwork</h3>
+                        <div class="row">
+                            <!-- Basic  -->
+                                <div class="col-5">
+                                        <div class="card">                            
+                                                <div class="card-body">
+                                                    <form action="{{route('releases.artwork.save')}}" method="POST" enctype="multipart/form-data" class="dropzone needsclick" id="dropzone-basic">
+                                                    @csrf
+                                                        <div class="dz-message needsclick">
+                                                        Drop files here or click to upload
+                                                        <span class="note needsclick"
+                                                            >(This is just a demo dropzone. Selected files are <strong>not</strong> actually
+                                                            uploaded.)</span
+                                                        >
+                                                        </div>
+                                                        <div class="fallback">
+                                                             <input name="file" type="file" />                                                       
+                                                        </div>
+                                                        <input type="hidden" name ="release_id" value="{{$release->id}}">
+                                                        <input type="hidden" class="form-control"  name="thumbnail"  />
+                                                        <div id="image-preview" class="image-preview">
+                                                            @if(!empty($release->thumbnail_path))
+                                                                <img src="{{ asset('storage/' . $release->thumbnail_path) }}" width="150px" alt="Thumbnail">
+                                                            @endif
+                                                        </div>
+                                                        <div id="error-message" class="text-danger mt-2"></div>
 
-                    
-                    <form action="{{route('releases.artwork.save')}}" method="POST" enctype="multipart/form-data" class="dropzone needsclick" id="dropzone-basic">
+                                                       
+                                                    </form>
+                                            
+                                                </div>
+                                        </div>
+                                </div>
+                                <div class="col-5 artwork-instruction">
+
+                                    <p><b>Your Image Must Be :</b></p>
+                                    <p>TIF or JPG gormat</p>
+                                    <p>Square</p>
+                                    <p>Minimum size: 3000 x 3000 pixels.</p>
+                                    <p>Maximum size: 6000 x 6000 pixels.</p>
+                                    <p>RGB format</p>
+                                    <p>Opaque</p>
+                                    <p>If you are scanning a CD, remove product sticker and crop marks</p>
+                               </div>
+
+                        </div>
+
+                    <!-- <form action="{{route('releases.artwork.save')}}" method="POST" enctype="multipart/form-data" class="dropzone needsclick" id="dropzone-basic">
                         @csrf
-                    
-             
+                        <h3>Artwork</h3>
                       <div class ="row">
                            <div class="col-7 mb-3 artwork-area">
                                 <label for="thumbnail" class="form-label">Upload Your Artwork*</label>
@@ -172,16 +214,16 @@
 
                             </div>
                         </div>
-</div>
+                         </div>
                         <button type="submit" class="btn btn-primary">Save & Next</button>
-                    </form>
+                    </form> -->
 
                 </div>
            
                 <div class="tab-pane fade {{($level=='uploadtrack')? ' show active':''}}" id="v-pills-uploadtrack" role="tabpanel" aria-labelledby="v-pills-uploadtrack-tab">
                      <h5>Upload Tracks</h5>
                       
-                     <form action="{{route('releases.uploadTrack.save')}}" method="POST" enctype="multipart/form-data"  class="dropzone needsclick" id="dropzone-multi">
+                     <form action="{{route('releases.uploadTrack.save')}}" method="POST" enctype="multipart/form-data">
                             @csrf  
                             <div class="mb-3">
                                 <label for="tracks" class="form-label">Upload from Computer*</label>
