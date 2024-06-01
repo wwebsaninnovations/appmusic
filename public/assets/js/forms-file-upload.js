@@ -29,12 +29,23 @@
   // Basic Dropzone
   // --------------------------------------------------------------------
 
+  // Initialize Dropzone
   const myDropzone = new Dropzone('#dropzone-basic', {
     previewTemplate: previewTemplate,
     parallelUploads: 1,
     maxFilesize: 5,
     addRemoveLinks: true,
-    maxFiles: 1
+    maxFiles: 1,
+    init: function() {
+      const existingThumbnail = document.getElementById('existing-thumbnail');
+      if (existingThumbnail) {
+        const mockFile = { name: "Existing Thumbnail", size: 12345 };
+        this.emit("addedfile", mockFile);
+        this.emit("thumbnail", mockFile, existingThumbnail.src);
+        this.emit("complete", mockFile);
+        this.files.push(mockFile);
+      }
+    }
   });
 
   // Multiple Dropzone

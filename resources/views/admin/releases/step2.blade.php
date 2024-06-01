@@ -138,28 +138,23 @@
                                 <div class="col-5">
                                         <div class="card">                            
                                                 <div class="card-body">
-                                                    <form action="{{route('releases.artwork.save')}}" method="POST" enctype="multipart/form-data" class="dropzone needsclick" id="dropzone-basic">
-                                                    @csrf
+                                                    <form action="{{ route('releases.artwork.save') }}" method="POST" enctype="multipart/form-data" class="dropzone needsclick" id="dropzone-basic">
+                                                        @csrf
                                                         <div class="dz-message needsclick">
-                                                        Drop files here or click to upload
-                                                        <span class="note needsclick"
-                                                            >(This is just a demo dropzone. Selected files are <strong>not</strong> actually
-                                                            uploaded.)</span
-                                                        >
+                                                            Drop files here or click to upload
+                                                            <span class="note needsclick">(This is just a demo dropzone. Selected files are <strong>not</strong> actually uploaded.)</span>
                                                         </div>
                                                         <div class="fallback">
-                                                             <input name="file" type="file" />                                                       
+                                                            <input name="file" type="file" />
                                                         </div>
-                                                        <input type="hidden" name ="release_id" value="{{$release->id}}">
-                                                        <input type="hidden" class="form-control"  name="thumbnail"  />
+                                                        <input type="hidden" name="release_id" value="{{ $release->id }}">
+                                                        <input type="hidden" class="form-control" name="thumbnail" />
                                                         <div id="image-preview" class="image-preview">
-                                                            @if(!empty($release->thumbnail_path))
-                                                                <img src="{{ asset('storage/' . $release->thumbnail_path) }}" width="150px" alt="Thumbnail">
+                                                            @if (!empty($release->thumbnail_path))
+                                                                <img id="existing-thumbnail" src="{{ asset('storage/' . $release->thumbnail_path) }}" width="150px" alt="Thumbnail" style="display: none;">
                                                             @endif
                                                         </div>
                                                         <div id="error-message" class="text-danger mt-2"></div>
-
-                                                       
                                                     </form>
                                             
                                                 </div>
