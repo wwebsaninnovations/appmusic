@@ -80,50 +80,50 @@ body{
         box-shadow: none;
     }
 }
-.artwork-area{
-    .droparea {
-        border: 2px dashed #ccc;
-        padding: 20px;
-        text-align: center;
-        transition: background-color 0.3s;
-        cursor: pointer;
+// .artwork-area{
+//     .droparea {
+//         border: 2px dashed #ccc;
+//         padding: 20px;
+//         text-align: center;
+//         transition: background-color 0.3s;
+//         cursor: pointer;
     
-        &:hover {
-            background-color: #f0f0f0;
-        }
+//         &:hover {
+//             background-color: #f0f0f0;
+//         }
     
-        &.drag-over {
-            background-color: #e0e0e0;
-        }
-    }
-    .image-preview {
-        margin-top: 10px;
-        img{
-            width: 100%;
-        }
-    }
-    .image-preview img {
-        max-width: 100%;
-        height: auto;
+//         &.drag-over {
+//             background-color: #e0e0e0;
+//         }
+//     }
+//     .image-preview {
+//         margin-top: 10px;
+//         img{
+//             width: 100%;
+//         }
+//     }
+//     .image-preview img {
+//         max-width: 100%;
+//         height: auto;
 
-    }
-    .progress {
-        margin-top: 10px;
-        display: none;
-    }
-}
+//     }
+//     .progress {
+//         margin-top: 10px;
+//         display: none;
+//     }
+// }
 
-.progress-container {
-    display: none;
-    width: 100%;
-    background-color: #f3f3f3;
-    border: 1px solid #ccc;
-    margin-top: 10px;
-}
+// .progress-container {
+//     display: none;
+//     width: 100%;
+//     background-color: #f3f3f3;
+//     border: 1px solid #ccc;
+//     margin-top: 10px;
+// }
 
-.progress-bar {
-    width: 0;
-    height: 20px;
-    background-color: #4caf50;
-    transition: width 0.3s;
-}
+// .progress-bar {
+//     width: 0;
+//     height: 20px;
+//     background-color: #4caf50;
+//     transition: width 0.3s;
+// }

@@ -123,9 +123,9 @@
                         <h5>Release Date info</h5> 
                             <div class="mb-3">
                                 <label for="original_release_date" class="form-label">Original Release Date*</label>
-                                <input type="date" class="form-control" name="original_release_date" value="{{$release->original_release_date}}"/>
+                                <input type="date" class="form-control" name="original_release_date" value="{{old('original_release_date',$release->original_release_date)}}"/>
                                 <label for="sales_date" class="form-label" >Sales Date*</label>
-                                <input type="date" class="form-control" name="sales_date" value= "{{$release->sales_date}}" />
+                                <input type="date" class="form-control" name="sales_date" value= "{{old('original_release_date',$release->sales_date)}}" />
                             </div>
                         <button type="submit" class="btn btn-primary">Save & Next</button>
                    </form>
@@ -133,12 +133,17 @@
 
                 <div class="tab-pane fade  {{($level=='artwork')? ' show active':''}}" id="v-pills-artwork" role="tabpanel" aria-labelledby="v-pills-artwork-tab">
                     <h3>Artwork</h3>
-                    <form action="{{route('releases.artwork.save')}}" method="POST" enctype="multipart/form-data">
+                
+
+                    
+                    <form action="{{route('releases.artwork.save')}}" method="POST" enctype="multipart/form-data" class="dropzone needsclick" id="dropzone-basic">
                         @csrf
-                        <div class ="row">
-                            <div class="col-5 mb-3 artwork-area">
+                    
+             
+                      <div class ="row">
+                           <div class="col-7 mb-3 artwork-area">
                                 <label for="thumbnail" class="form-label">Upload Your Artwork*</label>
-                                <div id="droparea" class="droparea">
+                                 <div id="droparea" class="droparea">
                                     <p>Drag and drop your artwork here or click to select a file.</p>
                                 </div>
                                 <div class="progress">
@@ -152,12 +157,10 @@
                                         <img src="{{ asset('storage/' . $release->thumbnail_path) }}" width="150px" alt="Thumbnail">
                                     @endif
                                 </div>
-                                <div id="error-message" class="text-danger mt-2"></div>
-                            </div>
-                                                        
-
-                            
-                            <div class="col-7 artwork-instruction">
+                             <div id="error-message" class="text-danger mt-2"></div>
+                            </div> 
+                       
+                            <div class="col-5 artwork-instruction">
                                 <p><b>Your Image Must Be :</b></p>
                                 <p>TIF or JPG gormat</p>
                                 <p>Square</p>
@@ -169,23 +172,28 @@
 
                             </div>
                         </div>
+</div>
                         <button type="submit" class="btn btn-primary">Save & Next</button>
                     </form>
+
                 </div>
            
                 <div class="tab-pane fade {{($level=='uploadtrack')? ' show active':''}}" id="v-pills-uploadtrack" role="tabpanel" aria-labelledby="v-pills-uploadtrack-tab">
                      <h5>Upload Tracks</h5>
-                     <form action="{{route('releases.uploadTrack.save')}}" method="POST" enctype="multipart/form-data">
+                      
+                     <form action="{{route('releases.uploadTrack.save')}}" method="POST" enctype="multipart/form-data"  class="dropzone needsclick" id="dropzone-multi">
                             @csrf  
                             <div class="mb-3">
                                 <label for="tracks" class="form-label">Upload from Computer*</label>
                                 <input type="file" class="form-control" id="tracks" name="track_paths[]" multiple />
                                 <input type="hidden" name ="release_id" value="{{$release->id}}">
                             </div>  
+                          
                             @if(!$release->tracks->isEmpty())                       
                                 @foreach($release->tracks as $index => $track)
                                     <div class="mb-3">
                                         <p><strong>Track {{ $index + 1 }}:</strong> {{ basename($track->track_path) }}</p>
+                                        
                                         <audio controls>
                                             <source src="{{ asset('storage/' . $track->track_path) }}" type="audio/mpeg">
                                             Your browser does not support the audio element.

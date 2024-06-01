@@ -63,47 +63,4 @@ body {
 .tabs-item button {
   text-align: left;
   box-shadow: none;
-}
-
-.artwork-area .droparea {
-  border: 2px dashed #ccc;
-  padding: 20px;
-  text-align: center;
-  transition: background-color 0.3s;
-  cursor: pointer;
-}
-.artwork-area .droparea:hover {
-  background-color: #f0f0f0;
-}
-.artwork-area .droparea.drag-over {
-  background-color: #e0e0e0;
-}
-.artwork-area .image-preview {
-  margin-top: 10px;
-}
-.artwork-area .image-preview img {
-  width: 100%;
-}
-.artwork-area .image-preview img {
-  max-width: 100%;
-  height: auto;
-}
-.artwork-area .progress {
-  margin-top: 10px;
-  display: none;
-}
-
-.progress-container {
-  display: none;
-  width: 100%;
-  background-color: #f3f3f3;
-  border: 1px solid #ccc;
-  margin-top: 10px;
-}
-
-.progress-bar {
-  width: 0;
-  height: 20px;
-  background-color: #4caf50;
-  transition: width 0.3s;
 }/*# sourceMappingURL=custom.css.map */

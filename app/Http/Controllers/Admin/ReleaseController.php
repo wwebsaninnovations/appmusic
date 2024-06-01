@@ -18,7 +18,7 @@ class ReleaseController extends Controller
     public function index()
     {
         $user_id = Auth::user()->id;
-        $releases = Release::where('user_id', $user_id)->with('tracks')->paginate(5);
+        $releases = Release::where('user_id', $user_id)->with('tracks')->orderBy('created_at', 'desc')->paginate(5);
         return view('admin.releases.index',['releases'=>$releases]);
     }
 
@@ -122,20 +122,32 @@ class ReleaseController extends Controller
     public function saveArtwork(Request $request) {
         $user_id = Auth::user()->id;
         $release_id = $request->release_id;
-        $validatedData = $request->validate([
-            'thumbnail' => 'required|file|mimes:jpeg,tiff|dimensions:min_width=300,min_height=300,max_width=6000,max_height=6000',
-        ],[
-            'thumbnail.mimes' => 'The thumbnail must be a file of type: TIF, JPG.',
-            'thumbnail.dimensions' => 'The thumbnail must be between 1600 x 1600 pixels and 6000 x 6000 pixels.',
-         ]);
-
-        $path = $request->file('thumbnail')->storeAs(
-            'music/'.$user_id.'/'.$release_id.'/thumbnail',
-            $request->file('thumbnail')->getClientOriginalName(), 'public'
-        );
-
         $release =Release::find($release_id);
-        $release->thumbnail_path = $path;
+
+        if ($release && !empty($release->thumbnail_path) && !$request->hasFile('thumbnail')) {
+            // nothing to do
+        }else{
+
+            $validatedData = $request->validate([
+                'thumbnail' => 'required|file|mimes:jpeg,tiff|dimensions:min_width=300,min_height=300,max_width=6000,max_height=6000',
+            ],[
+                'thumbnail.mimes' => 'The thumbnail must be a file of type: TIF, JPG.',
+                'thumbnail.dimensions' => 'The thumbnail must be between 1600 x 1600 pixels and 6000 x 6000 pixels.',
+             ]);
+
+             // Check if there is an existing thumbnail and delete it
+            if (!empty($release->thumbnail_path)) {
+                Storage::disk('public')->delete($release->thumbnail_path);
+            }
+            
+             $path = $request->file('thumbnail')->storeAs(
+                'music/'.$user_id.'/'.$release_id.'/thumbnail',
+                $request->file('thumbnail')->getClientOriginalName(), 'public'
+            );
+            $release->thumbnail_path = $path;
+
+           
+        }
         $release->save();
         return redirect()->route('releases.step2', ['release_id'=>$release->id, 'level'=>'uploadtrack']);
 
@@ -146,10 +158,32 @@ class ReleaseController extends Controller
     
         $user_id = Auth::user()->id;
         $release_id = $request->release_id;
+        $release =Release::find($release_id);
+        $format = $release->format;
+
+        switch ($format) {
+            case 'ep':
+                $count = 5;
+                $countFileError ="You can upload a maximum ". $count. "files in EP Format.";
+                break;
+            case 'album':
+                $count = 30;
+                 $countFileError ="You can upload maximum ".$count." files in Album Format.";
+                break;
+            default:
+                $count = 1;
+                 $countFileError ="You can upload a Single file";
+                break;
+        }
+
+
         $validatedData = $request->validate([
             'track_paths.*' => 'required|file|mimes:audio/mpeg,mpga,mp3,wav,aac', // specify additional audio formats as needed
         ]);
 
+        if (count($request->file('track_paths')) > $count) {
+            return back()->withErrors(['track_paths' =>  $countFileError])->withInput();
+        }
         // Initialize FFMpeg
         $ffmpeg = FFMpeg::create();
 
@@ -249,11 +283,10 @@ class ReleaseController extends Controller
             }
                // If all tracks are saved successfully, then update the release status
                 $release = Release::findOrFail($release_id);
-                $release->status = 1;
                 $release->form_status = 1;
                 $release->save();
                 DB::commit(); // Commit the transaction
-                return redirect()->route('releases.index')->with('success', 'Tracks and release updated successfully.');
+              return redirect()->route('releases.step2',['release_id'=>$release_id, 'level'=>'summery'])->with('success', 'Tracks and release updated successfully.');
 
         }
         catch (\Exception $e) {

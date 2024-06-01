@@ -26,30 +26,27 @@
 <link rel="icon" type="image/x-icon" href="../../assets/img/favicon/favicon.ico" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-
-<!-- Icons -->
+<link rel="stylesheet" href="{{ asset('css/app.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/boxicons.css') }}" />
 <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/fontawesome.css') }}" />
-<link rel="stylesheet" href="{{ asset('assets/vendor/fonts/flag-icons.css') }}" />
+<link rel="stylesheet" href="{{ asset('assets/vendor/fonts/flag-icons.css')}}" />
 
-<!-- Core CSS -->
+
 <link rel="stylesheet" href="{{ asset('assets/css/demo.css') }}" />
 
-<!-- Vendors CSS -->
+  <!-- Vendors CSS -->
+<link rel="stylesheet" href="{{ asset('assets/vendor/libs/typeahead-js/typeahead.css')}}" />
+<!-- <link rel="stylesheet" href="{{ asset('assets/vendor/libs/apex-charts/apex-charts.css')}}"> -->
 <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
-<link rel="stylesheet" href="{{ asset('assets/vendor/libs/typeahead-js/typeahead.css') }}" />
-<link rel="stylesheet" href="{{ asset('assets/vendor/libs/dropzone/dropzone.css') }}" />
+<!-- Vendor -->
+<link rel="stylesheet" href="{{ asset('assets/vendor/libs/formvalidation/dist/css/formValidation.min.css')}}" />
+<!-- Page -->
+<link rel="stylesheet" href="{{ asset('assets/vendor/css/pages/page-auth.css')}}" />
+<link rel="stylesheet" href="{{ asset('assets/vendor/libs/dropzone/dropzone.css')}}" />
 
-<!-- Page CSS -->
-
-<!-- Helpers -->
+<!-- Template Customizer & Theme Config -->
 <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
-
-<!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
-<!--? Template customizer: To hide customizer set displayCustomizer value false in config.js.  -->
 <script src="{{ asset('assets/vendor/js/template-customizer.js') }}"></script>
-<!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
 <script src="{{ asset('assets/js/config.js') }}"></script>
 
 <!-- Drk
@@ -115,37 +112,37 @@ layout-navbar-fixed dark-style layout-menu-fixed layout-menu-collapsed
 <!-- jQuery and other libraries -->
 
 
-    <!-- Core JS -->
-    <!-- build:js assets/vendor/js/core.js -->
-    <script src="{{ asset('assets/vendor/libs/jquery/jquery.js') }}"></script>
+<!-- SCRIPT START -->
+<!-- Core libraries and utilities built into a single file -->
+<script src="{{ asset('js/app.js') }}"></script>
+<script src="{{ asset('assets/vendor/libs/jquery/jquery.js') }}"></script>
 <script src="{{ asset('assets/vendor/libs/popper/popper.js') }}"></script>
 <script src="{{ asset('assets/vendor/js/bootstrap.js') }}"></script>
 <script src="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
-
 <script src="{{ asset('assets/vendor/libs/hammer/hammer.js') }}"></script>
-<script src="{{ asset('assets/vendor/libs/i18n/i18n.js') }}"></script>
-<script src="{{ asset('assets/vendor/libs/typeahead-js/typeahead.js') }}"></script>
-
 <script src="{{ asset('assets/vendor/js/menu.js') }}"></script>
-<!-- endbuild -->
 
-<!-- Vendors JS -->
-<script src="{{ asset('assets/vendor/libs/apex-charts/apexcharts.js') }}"></script>
+<script src="{{ asset('assets/vendor/libs/i18n/i18n.js') }}"></script> 
+<script src="{{ asset('assets/vendor/libs/typeahead-js/typeahead.js') }}"></script>
+<!-- <script src="{{ asset('assets/vendor/libs/apex-charts/apexcharts.js')}}"></script> -->
 
-<!-- Main JS -->
+
+<!-- FormValidation Plugin and its dependencies -->
+<script src="{{ asset('assets/vendor/libs/formvalidation/dist/js/FormValidation.min.js') }}"></script>
+<script src="{{ asset('assets/vendor/libs/formvalidation/dist/js/plugins/Bootstrap5.min.js') }}"></script>
+<script src="{{ asset('assets/vendor/libs/formvalidation/dist/js/plugins/AutoFocus.min.js') }}"></script>
+<!-- Main JavaScript file -->
 <script src="{{ asset('assets/vendor/libs/dropzone/dropzone.js') }}"></script>
 <script src="{{ asset('assets/js/main.js') }}"></script>
 <script src="{{ asset('assets/js/forms-file-upload.js') }}"></script>
 
-<!-- Page JS -->
-<script src="{{ asset('assets/js/dashboards-analytics.js') }}"></script>
+<script src="{{ asset('assets/js/pages-auth.js') }}"></script>
 <script src="{{ asset('assets/custom/js/custom.js') }}"></script>
 
-
-
-  
-
-
+<!-- Page specific JavaScript file -->
+<script>
+      
+</script>
 
 </body>
 </html>
