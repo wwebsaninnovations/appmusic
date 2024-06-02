@@ -33,21 +33,31 @@ $(document).ready(function() {
 
    $('.apply_click').click(function(){
         
+        jQuery(this).html("Apply Now <b> ✓ </b>");
+
         let copyValue =  $(this).next().val();
         let input_attr = $(this).next().attr('data-name');
         $('.input-'+input_attr).val(copyValue);
 
    });
+ 
 
 
 $('.apply_radio_click').click(function() {
      var container = $(this).closest('.wrap-field'); 
      var closestRadio = container.find('.input-explicit:checked'); 
      if (closestRadio.length > 0) {
+          jQuery(this).html("Apply Now <b> ✓ </b>");
           var value = closestRadio.val();
           $('.input-explicit').prop("checked", false);
           $('input[type="radio"][value="' + value + '"]').prop("checked", true); 
       }
+ });
+
+
+ jQuery(document).on("change", '.input-explicit', function(){
+    console.log("***")
+    jQuery(this).closest('.wrap-field').find('.apply_radio_click').html("Apply Now");
 
  });
 
@@ -68,123 +78,169 @@ $('.apply_radio_click').click(function() {
 
  $('.apply_checkbox_click').click(function() {
     var container = $(this).closest('.wrap-field'); 
-    var checkbox = container.find('.input-primary_performers:checked');
+    var checkbox  = container.find('.input-primary_performers:checked');
     if(checkbox.length > 0) {
+        jQuery(this).closest('.wrap-field').find('.apply_radio_click').html("Apply Now");
         $('.input-primary_performers').prop("checked", true); 
     }else{
         $('.input-primary_performers').prop("checked", false); 
     }
-    
  });
 
 });
 
-// $(document).ready(function() {
-//     $('#droparea').on('click', function() {
-//         $('#artworkimage').click();
-//     });
+$(document).ready(function() {
+    $('#droparea').on('click', function() {
+        $('#artworkimage').click();
+    });
 
-//     $('#artworkimage').on('change', function(event) {
-//         var files = event.target.files;
-//         if (files.length > 0) {
-//             var file = files[0];
-//             var fileType = file.type;
-//             var validTypes = ['image/jpeg', 'image/tiff'];
-//             var imageTypeValid = validTypes.includes(fileType);
-//             var img = new Image();
+    $('#artworkimage').on('change', function(event) {
+        var files = event.target.files;
+        if (files.length > 0) {
+            var file = files[0];
+            var fileType = file.type;
+            var validTypes = ['image/jpeg', 'image/tiff'];
+            var imageTypeValid = validTypes.includes(fileType);
+            var img = new Image();
 
-//             img.onload = function() {
-//                 var width = this.width;
-//                 var height = this.height;
+            img.onload = function() {
+                var width = this.width;
+                var height = this.height;
 
-//                 if (!imageTypeValid) {
-//                     $('#error-message').text('Invalid file type. Please upload a TIF or JPG image.');
-//                     resetFileInput();
-//                     return;
-//                 }
+                if (!imageTypeValid) {
+                    $('#error-message').text('Invalid file type. Please upload a TIF or JPG image.');
+                    resetFileInput();
+                    return;
+                }
 
-//                 if (width !== height) {
-//                     $('#error-message').text('Image must be square.');
-//                     resetFileInput();
-//                     return;
-//                 }
+                if (width !== height) {
+                    $('#error-message').text('Image must be square.');
+                    resetFileInput();
+                    return;
+                }
 
-//                 if (width < 300|| width > 6000 || height < 300 || height > 6000) {
-//                     $('#error-message').text('Image dimensions must be between 3000 x 3000 pixels and 6000 x 6000 pixels.');
-//                     resetFileInput();
-//                     return;
-//                 }
+                if (width < 300|| width > 6000 || height < 300 || height > 6000) {
+                    $('#error-message').text('Image dimensions must be between 3000 x 3000 pixels and 6000 x 6000 pixels.');
+                    resetFileInput();
+                    return;
+                }
 
-//                 // Hide error message if everything is valid
-//                 $('#error-message').text('');
+                // Hide error message if everything is valid
+                $('#error-message').text('');
 
-//                 // Show progress bar and start animation
-//                 $('.progress').show();
-//                 var progressBar = $('.progress-bar');
-//                 progressBar.css('width', '0%').attr('aria-valuenow', 0);
+                // Show progress bar and start animation
+                $('.progress').show();
+                var progressBar = $('.progress-bar');
+                progressBar.css('width', '0%').attr('aria-valuenow', 0);
 
-//                 var progress = 0;
-//                 var interval = setInterval(function() {
-//                     progress += 1;
-//                     progressBar.css('width', progress + '%').attr('aria-valuenow', progress);
-//                     if (progress >= 100) {
-//                         clearInterval(interval);
-//                         $('.progress').hide();
+                var progress = 0;
+                var interval = setInterval(function() {
+                    progress += 1;
+                    progressBar.css('width', progress + '%').attr('aria-valuenow', progress);
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        $('.progress').hide();
 
-//                         // Display the image preview
-//                         var reader = new FileReader();
-//                         reader.onload = function(e) {
-//                             $('#image-preview').html('<img src="' + e.target.result + '" alt="Artwork Preview">');
-//                         };
-//                         reader.readAsDataURL(file);
-//                     }
-//                 }, 20); // 20ms interval for 2 seconds to 100%
+                        // Display the image preview
+                        var reader = new FileReader();
+                        reader.onload = function(e) {
+                            $('#image-preview').html('<img src="' + e.target.result + '" alt="Artwork Preview">');
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                }, 20); // 20ms interval for 2 seconds to 100%
                 
-//                 $('#image-info').text('Selected file: ' + file.name);
-//             };
+                $('#image-info').text('Selected file: ' + file.name);
+            };
 
-//             img.onerror = function() {
-//                 $('#error-message').text('Invalid image file.');
-//                 resetFileInput();
-//             };
+            img.onerror = function() {
+                $('#error-message').text('Invalid image file.');
+                resetFileInput();
+            };
 
-//             img.src = URL.createObjectURL(file);
-//         } else {
-//             resetFileInput();
-//         }
-//     });
+            img.src = URL.createObjectURL(file);
+        } else {
+            resetFileInput();
+        }
+    });
 
-//     $('#droparea').on('dragover', function(e) {
-//         e.preventDefault();
-//         e.stopPropagation();
-//         $(this).addClass('hover');
-//     });
+    $('#droparea').on('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).addClass('hover');
+    });
 
-//     $('#droparea').on('dragleave', function(e) {
-//         e.preventDefault();
-//         e.stopPropagation();
-//         $(this).removeClass('hover');
-//     });
+    $('#droparea').on('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).removeClass('hover');
+    });
 
-//     $('#droparea').on('drop', function(e) {
-//         e.preventDefault();
-//         e.stopPropagation();
-//         $(this).removeClass('hover');
+    $('#droparea').on('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).removeClass('hover');
 
-//         var files = e.originalEvent.dataTransfer.files;
-//         if (files.length > 0) {
-//             $('#artworkimage')[0].files = files;
-//             $('#artworkimage').trigger('change');
-//         }
-//     });
+        var files = e.originalEvent.dataTransfer.files;
+        if (files.length > 0) {
+            $('#artworkimage')[0].files = files;
+            $('#artworkimage').trigger('change');
+        }
+    });
 
-//     function resetFileInput() {
-//         $('#artworkimage').val('');
-//         $('#image-info').text('');
-//         $('#image-preview').html('');
-//         $('.progress').hide();
-//     }
-// });
+    function resetFileInput() {
+        $('#artworkimage').val('');
+        $('#image-info').text('');
+        $('#image-preview').html('');
+        $('.progress').hide();
+    }
+});
+
+
+$(document).ready(function() {
+    $('#searchInput').on('input', function() {
+        var query = $(this).val();
+        if (query.trim() !== '') {
+            $("#searchIcon").hide();
+            $('#clearIcon').show();
+        } else {
+            $("#searchIcon").show();
+            $('#clearIcon').hide();
+        }
+    });
+
+    $('#clearIcon').click(function() {
+        $('#searchInput').val('');
+        $('#searchResults').empty();
+        $(this).hide();
+        $("#searchIcon").show();
+    });
+
+    $(document).on( 'keyup keydown' , '#searchInput' ,function() {
+        var query = $('#searchInput').val();
+        if (query.trim() !== '' && query.length >= 2) {
+            $('#loadingIcon').show();
+            $.ajax({
+                url: '/search',
+                method: 'GET',
+                data: {query: query},
+                success: function(response) {
+                  if(response){
+                    $('#loadingIcon').hide();
+                    $('#searchResults').html(response.html);
+                  }
+         
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+        else {
+            $('#searchResults').html('');
+        }
+    });
+});
 
 
 

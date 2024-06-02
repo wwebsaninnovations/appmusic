@@ -405,7 +405,7 @@
                             </form>
                        @endif
                  </div>
-                 <div class="tab-pane fade {{($level=='summery')? ' show active':''}}" id="v-pills-summery" role="tabpanel" aria-labelledby="v-pills-summery-tab">
+                 <div class="tab-pane fade release_summary {{($level=='summery')? ' show active':''}}" id="v-pills-summery" role="tabpanel" aria-labelledby="v-pills-summery-tab">
                     <div class="container mt-5">
                         <h2>Release Summary</h2>
 

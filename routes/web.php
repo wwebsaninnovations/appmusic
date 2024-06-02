@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BookController;
 use App\Http\Controllers\Admin\MusicController;
 use App\Http\Controllers\Admin\ReleaseController;
+use App\Http\Controllers\Admin\SearchController;
 use App\Http\Controllers\ThemeController;
 /*
 |--------------------------------------------------------------------------
@@ -18,9 +19,6 @@ use App\Http\Controllers\ThemeController;
 |
 */
 Route::get('/welcome', function () {
-
-    
-
     return view('welcome');
 });
 
@@ -52,7 +50,7 @@ Route::post('/musics/create/step2', [MusicController::class, 'saveStep2'])->name
 Route::get('/musics/create/step3', [MusicController::class, 'step3'])->name('musics.step3');
 
 
-
+Route::get('/search',  [SearchController::class, 'search'])->name('search');
 //Edit Route
 Route::get('/musics/edit/step1/{id}', [MusicController::class, 'editStep1'])->name('musics.editStep1');
 Route::post('/musics/edit/step1', [MusicController::class, 'updateStep1'])->name('musics.editStep1.update');
