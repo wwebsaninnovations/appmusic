@@ -18,6 +18,9 @@ use App\Http\Controllers\ThemeController;
 |
 */
 Route::get('/welcome', function () {
+
+    
+
     return view('welcome');
 });
 

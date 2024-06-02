@@ -10,6 +10,7 @@ use App\Rules\FutureDate;
 use FFMpeg\FFMpeg;
 use App\Http\Requests\ValidateTrackRequest;
 use DB;
+use Illuminate\Support\Facades\Storage;
 class ReleaseController extends Controller
 {
     /**
@@ -55,9 +56,14 @@ class ReleaseController extends Controller
     //step2 is associated with basic, artwork, uploadTrack and editTrack forms 
     public function step2(Request $request){
 
-
         $release = Release::with('tracks')->find($request->release_id);
         $level = $request->level;
+
+        if ($request->has('summary')) {
+
+            return view('admin.releases.step2', ['release' => $release, 'level'=> $level, 'summary'=>$request->summary])->with('success', 'Basic information updated successfully.');
+        }
+
         return view('admin.releases.step2', ['release' => $release, 'level'=> $level]);
     }
 
@@ -114,96 +120,177 @@ class ReleaseController extends Controller
         $release->sales_date = $validatedData['sales_date'];
         
         $release->save();
-       
-        return redirect()->route('releases.step2', ['release_id'=>$release->id, 'level'=>'artwork']);
+
+        if($request->summary){
+        
+            return redirect()->route('releases.step2', ['release_id'=>$release->id, 'level'=>$request->summary])->with('success', 'Basic information updated successfully.');
+        }
+        return redirect()->route('releases.step2', ['release_id'=>$release->id, 'level'=>'artwork' ]);
 
     }
     
+    // public function saveArtwork(Request $request) {
+    //     $user_id = Auth::user()->id;
+    //     $release_id = $request->release_id;
+    //     $release =Release::find($release_id);
+    //     dd($request);
+
+    //     if ($release && !empty($release->thumbnail_path) && !$request->hasFile('thumbnail')) {
+    //         // nothing to do
+    //     }else{
+
+    //         $validatedData = $request->validate([
+    //             'thumbnail' => 'required|file|mimes:jpeg,tiff|dimensions:min_width=300,min_height=300,max_width=6000,max_height=6000',
+    //         ],[
+    //             'thumbnail.mimes' => 'The thumbnail must be a file of type: TIF, JPG.',
+    //             'thumbnail.dimensions' => 'The thumbnail must be between 1600 x 1600 pixels and 6000 x 6000 pixels.',
+    //          ]);
+
+    //          // Check if there is an existing thumbnail and delete it
+    //         if (!empty($release->thumbnail_path)) {
+    //             Storage::disk('public')->delete($release->thumbnail_path);
+    //         }
+            
+    //          $path = $request->file('thumbnail')->storeAs(
+    //             'music/'.$user_id.'/'.$release_id.'/thumbnail',
+    //             $request->file('thumbnail')->getClientOriginalName(), 'public'
+    //         );
+    //         $release->thumbnail_path = $path;
+
+           
+    //     }
+    //     $release->save();
+    //     return redirect()->route('releases.step2', ['release_id'=>$release->id, 'level'=>'uploadtrack']);
+
+    // }
     public function saveArtwork(Request $request) {
         $user_id = Auth::user()->id;
         $release_id = $request->release_id;
-        $release =Release::find($release_id);
-
-        if ($release && !empty($release->thumbnail_path) && !$request->hasFile('thumbnail')) {
-            // nothing to do
+        $release = Release::find($release_id);
+        if ( !empty($release->thumbnail_path) && empty($request->thumbnail) || empty($request->filename)) {
+            //nothing to do
+          
         }else{
 
-            $validatedData = $request->validate([
-                'thumbnail' => 'required|file|mimes:jpeg,tiff|dimensions:min_width=300,min_height=300,max_width=6000,max_height=6000',
-            ],[
-                'thumbnail.mimes' => 'The thumbnail must be a file of type: TIF, JPG.',
-                'thumbnail.dimensions' => 'The thumbnail must be between 1600 x 1600 pixels and 6000 x 6000 pixels.',
-             ]);
+            if (empty($request->thumbnail) || empty($request->filename)) {
+                 return back()->withErrors(['file' => 'No file was uploaded']);
+            }
 
-             // Check if there is an existing thumbnail and delete it
+            $base64String = $request->input('thumbnail');
+            list($metadata, $base64Data) = explode(';base64,', $base64String);
+       
+            preg_match('/data:image\/([^;]+)/', $metadata, $matches);
+            $fileType = $matches[1] ?? 'png'; 
+
+            if (!in_array($fileType, ['jpeg', 'jpg', 'tif', 'tiff'])) {
+                return back()->withErrors(['file' => 'The thumbnail must be a file of type: JPEG, JPG, TIF, or TIFF.']);
+            }
+        
+            $base64Data = str_replace(' ', '+', $base64Data);
+            $imageData = base64_decode($base64Data);
+        
+            if ($imageData === false) {
+                return back()->withErrors(['file' => 'Base64 decode failed']);
+            }
+        
+            // Create an image resource from the string need default gd library enbale ext. php.ini
+            $image = imagecreatefromstring($imageData);
+            if ($image === false) {
+                return back()->withErrors(['file' => 'Invalid image data']);
+            }
+        
+            // Get image dimensions
+            $width = imagesx($image);
+            $height = imagesy($image);
+        
+            if ($width < 300 || $height < 300 || $width > 6000 || $height > 6000) {
+                return back()->withErrors(['file' => 'The thumbnail must be between 300 x 300 pixels and 6000 x 6000 pixels.']);
+            }
+
+            if ($width != $height ) {
+                return back()->withErrors(['file' => 'The thumbnail must be a square.']);
+            }
+    
             if (!empty($release->thumbnail_path)) {
                 Storage::disk('public')->delete($release->thumbnail_path);
             }
-            
-             $path = $request->file('thumbnail')->storeAs(
-                'music/'.$user_id.'/'.$release_id.'/thumbnail',
-                $request->file('thumbnail')->getClientOriginalName(), 'public'
-            );
-            $release->thumbnail_path = $path;
-
-           
+        
+            $filePath = 'music/' . $user_id . '/' . $release_id . '/' .  $request->filename;
+            Storage::disk('public')->put($filePath, $imageData);
+        
+            $release->thumbnail_path = $filePath;
+            $release->save();
         }
-        $release->save();
-        return redirect()->route('releases.step2', ['release_id'=>$release->id, 'level'=>'uploadtrack']);
 
+        
+        if($request->summary){
+        
+            return redirect()->route('releases.step2', ['release_id'=>$release->id, 'level'=>$request->summary])->with('success', 'Artwork  updated successfully.');
+        }
+      
+        return redirect()->route('releases.step2', ['release_id' => $release->id, 'level' => 'uploadtrack']);
     }
+    
+    
+    
 
     public function saveUploadTrack(Request $request) {
 
     
         $user_id = Auth::user()->id;
         $release_id = $request->release_id;
-        $release =Release::find($release_id);
+        $release = Release::find($release_id);
         $format = $release->format;
-
+    
         switch ($format) {
             case 'ep':
                 $count = 5;
-                $countFileError ="You can upload a maximum ". $count. "files in EP Format.";
+                $countFileError = "You can upload a maximum of $count files in EP Format.";
                 break;
             case 'album':
                 $count = 30;
-                 $countFileError ="You can upload maximum ".$count." files in Album Format.";
+                $countFileError = "You can upload a maximum of $count files in Album Format.";
                 break;
             default:
                 $count = 1;
-                 $countFileError ="You can upload a Single file";
+                $countFileError = "You can upload a Single file.";
                 break;
         }
-
-
+    
         $validatedData = $request->validate([
             'track_paths.*' => 'required|file|mimes:audio/mpeg,mpga,mp3,wav,aac', // specify additional audio formats as needed
         ]);
-
-        if (count($request->file('track_paths')) > $count) {
-            return back()->withErrors(['track_paths' =>  $countFileError])->withInput();
+    
+        $trackPaths = $request->file('track_paths') ?? [];
+    
+        if (count($trackPaths) > $count) {
+            return back()->withErrors(['track_paths' => $countFileError])->withInput();
         }
+    
         // Initialize FFMpeg
         $ffmpeg = FFMpeg::create();
-
-        foreach ($request->file('track_paths') as $track) {
-            $path = $track->storeAs('music/'.$user_id.'/'. $release_id.'/tracks',$track->getClientOriginalName(), 'public');  
-
+    
+        foreach ($trackPaths as $track) {
+            $path = $track->storeAs('music/' . $user_id . '/' . $release_id . '/tracks', $track->getClientOriginalName(), 'public');
+    
             $audio = $ffmpeg->open($track->getPathname());
             $format = $audio->getFormat();
             $durationInSeconds = $format->get('duration');
             $durationFormatted = $this->convertDurationToMinutesSeconds($durationInSeconds);
-
+    
             $trackData = [
                 'user_id' => $user_id,
                 'release_id' => $release_id,
                 'track_path' => $path,
                 'track_duration' => $durationFormatted
             ];
-            $track = Track::create($trackData);
+            Track::create($trackData);
         }
-        return redirect()->route('releases.step2', ['release_id'=>$release_id, 'level'=>'edittrack']);
+    
+        if ($request->summary) {
+            return redirect()->route('releases.step2', ['release_id' => $release->id, 'level' => $request->summary])->with('success', 'Tracks updated successfully.');
+        }
+        return redirect()->route('releases.step2', ['release_id' => $release_id, 'level' => 'edittrack']);
     }
 
     public function saveEditTrack(Request $request) {
@@ -235,24 +322,24 @@ class ReleaseController extends Controller
     
             $index = $i + 1;
     
-            $messages['track_name.' . $i . '.required'] = "Track name at index $index is required.";
-            $messages['track_version.' . $i . '.required'] = "Track version at index $index is required.";
-            $messages['lyrics_language.' . $i . '.required'] = "Lyrics language at index $index is required.";
-            $messages['explicit_content.' . $i . '.required'] = "Explicit content at index $index is required.";
-            $messages['primary_artist.' . $i . '.required'] = "Primary artist at index $index is required.";
-            $messages['featuring_artist.' . $i . '.nullable'] = "Featuring artist at index $index is required.";
-            $messages['track_remixer.' . $i . '.nullable'] = "Track remixer at index $index is required.";
-            $messages['song_writer.' . $i . '.required'] = "Song writer at index $index is required.";
-            $messages['track_producer.' . $i . '.required'] = "Track producer at index $index is required.";
-            $messages['composer_name.' . $i . '.required'] = "Composer name at index $index is required.";
-            $messages['label_name.' . $i . '.required'] = "Label name at index $index is required.";
-            $messages['isrc.' . $i . '.required'] = "ISRC code at index $index is required.";
-            $messages['primary_performers.' . $i . '.required'] = "Primary performer at index $index is required.";
-            $messages['pname.' . $i . '.required'] = "Publisher name at index $index is required.";
-            $messages['cname.' . $i . '.required'] = "Composer name at index $index is required.";
-            $messages['ownership_for_sound_rec.' . $i . '.required'] = "Ownership for sound recording at index $index is required.";
-            $messages['country_of_rec.' . $i . '.required'] = "Country of recording at index $index is required.";
-            $messages['nationality.' . $i . '.required'] = "Nationality at index $index is required.";
+            $messages['track_name.' . $i . '.required'] = "Track name at track- $index is required.";
+            $messages['track_version.' . $i . '.required'] = "Track version at track- $index is required.";
+            $messages['lyrics_language.' . $i . '.required'] = "Lyrics language at track- $index is required.";
+            $messages['explicit_content.' . $i . '.required'] = "Explicit content at track- $index is required.";
+            $messages['primary_artist.' . $i . '.required'] = "Primary artist at track- $index is required.";
+            $messages['featuring_artist.' . $i . '.nullable'] = "Featuring artist at track- $index is required.";
+            $messages['track_remixer.' . $i . '.nullable'] = "Track remixer at track- $index is required.";
+            $messages['song_writer.' . $i . '.required'] = "Song writer at track- $index is required.";
+            $messages['track_producer.' . $i . '.required'] = "Track producer at track- $index is required.";
+            $messages['composer_name.' . $i . '.required'] = "Composer name at track- $index is required.";
+            $messages['label_name.' . $i . '.required'] = "Label name at track- $index is required.";
+            $messages['isrc.' . $i . '.required'] = "ISRC code at track- $index is required.";
+            $messages['primary_performers.' . $i . '.required'] = "Primary performer at track- $index is required.";
+            $messages['pname.' . $i . '.required'] = "Publisher name at track- $index is required.";
+            $messages['cname.' . $i . '.required'] = "Composer name at track- $index is required.";
+            $messages['ownership_for_sound_rec.' . $i . '.required'] = "Ownership for sound recording at track- $index is required.";
+            $messages['country_of_rec.' . $i . '.required'] = "Country of recording at track- $index is required.";
+            $messages['nationality.' . $i . '.required'] = "Nationality at track- $index is required.";
         }
     
         $validatedData = $request->validate($rules, $messages);
@@ -286,6 +373,11 @@ class ReleaseController extends Controller
                 $release->form_status = 1;
                 $release->save();
                 DB::commit(); // Commit the transaction
+
+                if($request->summary){
+        
+                    return redirect()->route('releases.step2', ['release_id'=>$release->id, 'level'=>$request->summary])->with('success', 'Tracks updated successfully.');
+                }
               return redirect()->route('releases.step2',['release_id'=>$release_id, 'level'=>'summery'])->with('success', 'Tracks and release updated successfully.');
 
         }

@@ -25,6 +25,11 @@
                     </ul>
                 </div>
             @endif
+            @if ($message = Session::get('success'))
+                <div class="alert alert-success text-center" role="alert">
+                    {{ $message }}
+                </div>
+            @endif
             <!-- Tab panes -->
             <div class="tab-content" id="v-pills-tabContent">
                 <div class="tab-pane fade  {{($level=='basic')? ' show active':''}}" id="v-pills-basic" role="tabpanel" aria-labelledby="v-pills-basic-tab">
@@ -36,6 +41,7 @@
                             <label for="upc" class="form-label">UPC*</label>
                             <input type="text" class="form-control" id="upc" name="upc" value="{{ old('upc', $release->upc ?? '') }}">
                             <input type="hidden" name ="release_id" value="{{$release->id}}">
+                            <input type="hidden" name="summary" value="{{ $summary ?? '' }}">
                         </div>
                         <div class="mb-3">
                             <label for="release_code" class="form-label">Release Code*</label>
@@ -135,7 +141,7 @@
                         <h3>Artwork</h3>
                         <div class="row">
                             <!-- Basic  -->
-                                <div class="col-5">
+                                <div class="col-6">
                                         <div class="card">                            
                                                 <div class="card-body">
                                                     <form action="{{ route('releases.artwork.save') }}" method="POST" enctype="multipart/form-data" class="dropzone needsclick" id="dropzone-basic">
@@ -145,22 +151,26 @@
                                                             <span class="note needsclick">(This is just a demo dropzone. Selected files are <strong>not</strong> actually uploaded.)</span>
                                                         </div>
                                                         <div class="fallback">
-                                                            <input name="file" type="file" />
+                                                            <input type="file" name="file"/>
                                                         </div>
                                                         <input type="hidden" name="release_id" value="{{ $release->id }}">
-                                                        <input type="hidden" class="form-control" name="thumbnail" />
+                                                        <input type="hidden" name="summary" value="{{ $summary ?? '' }}">
+                                                        <input type="hidden"  name="thumbnail" id="artworkimge" style="display:none;">
+                                                        <input type="hidden"  name="filename" id="artworkfilename" style="display:none;">
                                                         <div id="image-preview" class="image-preview">
                                                             @if (!empty($release->thumbnail_path))
                                                                 <img id="existing-thumbnail" src="{{ asset('storage/' . $release->thumbnail_path) }}" width="150px" alt="Thumbnail" style="display: none;">
                                                             @endif
                                                         </div>
                                                         <div id="error-message" class="text-danger mt-2"></div>
+
+                                                        <button type="submit" class="btn btn-primary">Save & Next</button>
                                                     </form>
                                             
                                                 </div>
                                         </div>
                                 </div>
-                                <div class="col-5 artwork-instruction">
+                                <div class="col-6 artwork-instruction">
 
                                     <p><b>Your Image Must Be :</b></p>
                                     <p>TIF or JPG gormat</p>
@@ -224,6 +234,7 @@
                                 <label for="tracks" class="form-label">Upload from Computer*</label>
                                 <input type="file" class="form-control" id="tracks" name="track_paths[]" multiple />
                                 <input type="hidden" name ="release_id" value="{{$release->id}}">
+                                <input type="hidden" name="summary" value="{{ $summary ?? '' }}">
                             </div>  
                           
                             @if(!$release->tracks->isEmpty())                       
@@ -252,6 +263,7 @@
                             <form action="{{ route('releases.editTrack.save') }}" method="POST" enctype="multipart/form-data">
                             @csrf  
                             <input type="hidden" name ="release_id" value="{{$release->id}}">
+                            <input type="hidden" name="summary" value="{{ $summary ?? '' }}">
                                 <div class="row">
                                     <div class="col-6">
                                         <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
@@ -427,7 +439,7 @@
                                     <p><strong>Original Release Date:</strong> {{ $release->original_release_date ?? '' }}</p>
                                     <p><strong>Sales Date:</strong> {{ $release->sales_date ?? '' }}</p>
 
-                                    <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'basic'])}}" class="btn btn-primary mt-4">Edit</a>
+                                    <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'basic', 'summary'=>'basic' ])}}" class="btn btn-primary mt-4">Edit</a>
                                 @endif
                             </div>
                         </div>
@@ -451,7 +463,7 @@
                                     <li>If you are scanning a CD, remove product sticker and crop marks</li>
                                 </ul>
 
-                                <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'artwork'])}}" class="btn btn-primary mt-4">Edit</a>
+                                <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'artwork', 'summary'=>'artwork'])}}" class="btn btn-primary mt-4">Edit</a>
                             </div>
                         </div>
 
@@ -467,7 +479,7 @@
                                             </div>
                                         @endforeach
                                   @endif    
-                                <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'uploadtrack'])}}" class="btn btn-primary mt-4">Edit</a>
+                                <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'uploadtrack','summary'=>'uploadtrack' ])}}" class="btn btn-primary mt-4">Edit</a>
                             </div>
                         </div>
 
@@ -527,7 +539,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'edittrack'])}}" class="btn btn-primary mt-4">Edit</a>
+                                <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'edittrack', 'summary'=>'edittrack'])}}" class="btn btn-primary mt-4">Edit</a>
                             </div>
                         </div>
                     </div>

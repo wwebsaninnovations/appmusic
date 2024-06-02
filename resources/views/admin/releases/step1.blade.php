@@ -3,10 +3,15 @@
 @section('content')
 <div class="container mt-5">
     <div class="row justify-content-center">
+ 
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">New Release</div>
-
+                @if ($message = Session::get('success'))
+                    <div class="alert alert-success text-center" role="alert">
+                        {{ $message }}
+                    </div>
+                @endif
                 <div class="card-body">
                     <form action="{{route('releases.step1.save')}}" method="POST">
                         @csrf

@@ -89,12 +89,6 @@
           <div class="site-container">
                 <div class="row justify-content-center">
                     <div class="col-md-12">
-                       @if ($message = Session::get('success'))
-                            <div class="alert alert-success text-center" role="alert">
-                                {{ $message }}
-                            </div>
-                        @endif
-
                         <div class="layout-wrapper layout-content-navbar">
                             <div class="layout-container">
                             @auth 
