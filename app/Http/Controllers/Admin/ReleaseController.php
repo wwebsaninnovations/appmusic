@@ -342,7 +342,14 @@ class ReleaseController extends Controller
             $messages['nationality.' . $i . '.required'] = "Nationality at track- $index is required.";
         }
     
-        $validatedData = $request->validate($rules, $messages);
+        //$validatedData = $request->validate($rules, $messages);
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator, 'edittrack');
+        }
+    
+
         DB::beginTransaction(); // Start a transaction
         try {
             foreach($track_ids as $key => $track_id) {
@@ -384,7 +391,7 @@ class ReleaseController extends Controller
         catch (\Exception $e) {
             // Handle the error, log it, or return a custom error response
             DB::rollback();
-            return redirect()->back()->withErrors(['error' => 'Failed to update tracks: ' . $e->getMessage()]);
+            return redirect()->back()->withErrors(['error' => 'Failed to update tracks and release: ' . $e->getMessage()], 'edittrack');
         }
 
       

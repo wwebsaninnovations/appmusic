@@ -15,16 +15,7 @@
         </div>
 
         <div class="col-md-10">
-            <!-- Display validation errors -->
-           @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+          
             @if ($message = Session::get('success'))
                 <div class="alert alert-success text-center" role="alert">
                     {{ $message }}
@@ -35,111 +26,214 @@
                 <div class="tab-pane fade  {{($level=='basic')? ' show active':''}}" id="v-pills-basic" role="tabpanel" aria-labelledby="v-pills-basic-tab">
                    
                     <h5>Complete Release Basic Information</h5>
-                    <form action="{{route('releases.basic.save')}}" method="POST">
-                        @csrf
-                       <div class="mb-3">
-                            <label for="upc" class="form-label">UPC*</label>
-                            <input type="text" class="form-control" id="upc" name="upc" value="{{ old('upc', $release->upc ?? '') }}">
-                            <input type="hidden" name ="release_id" value="{{$release->id}}">
+                        <form action="{{ route('releases.basic.save') }}" method="POST">
+                            @csrf
+
+                            <div class="mb-3">
+                                <label for="upc" class="form-label">UPC*</label>
+                                <input type="text" class="form-control" id="upc" name="upc" value="{{ old('upc', $release->upc ?? '') }}">
+                                @if ($errors->has('upc'))
+                                    <div class="text-danger">
+                                        {{ $errors->first('upc') }}
+                                    </div>
+                                @endif
+                            </div>
+
+                            <input type="hidden" name="release_id" value="{{ $release->id }}">
                             <input type="hidden" name="summary" value="{{ $summary ?? '' }}">
-                        </div>
-                        <div class="mb-3">
-                            <label for="release_code" class="form-label">Release Code*</label>
-                            <input type="text" class="form-control" id="release_code" name="release_code" value="{{ old('release_code', $release->release_code ?? '') }}">
-                        </div>
-                        <div class="mb-3">
-                            <label for="release_code" class="form-label">Meta Language*</label>
-                            <select class="form-select" id="meta_language" name="meta_language">
-                                <option value="">Select Language</option>
-                                <option value="Hindi" {{ old('meta_language', $release->meta_language) == 'Hindi' ? 'selected' : '' }}   >Hindi</option>
-                                <option value="English" {{ old('meta_language', $release->meta_language) == 'English' ? 'selected' : '' }}  >English</option>
-                                <option value="Bhojpuri" {{ old('meta_language', $release->meta_language) == 'Bhojpuri' ? 'selected' : '' }}    >Bhojpuri</option>
-                            </select>
-                        </div>
 
-                         <div class="mb-3">
-                            <label for="release_name" class="form-label">Release Name*</label>
-                            <input type="text" class="form-control" id="release_name" name="release_name"  value="{{ old('release_name', $release->release_name ?? '') }}">
-                        </div>
+                            <div class="mb-3">
+                                <label for="release_code" class="form-label">Release Code*</label>
+                                <input type="text" class="form-control" id="release_code" name="release_code" value="{{ old('release_code', $release->release_code ?? '') }}">
+                                @if ($errors->has('release_code'))
+                                    <div class="text-danger">
+                                        {{ $errors->first('release_code') }}
+                                    </div>
+                                @endif
+                            </div>
 
-                        <div class="mb-3">
-                            <label for="release_version" class="form-label">Release Version*</label>
-                            <input type="text" class="form-control" id="release_version" name="release_version"   value="{{ old('release_version', $release->release_version ?? '') }}">
-                        </div>
-                        <div class="mb-3">
-                            <label for="release_name_displayed_as" class="form-label">Release Name Displayed As</label>
-                            <input type="text" class="form-control" id="release_name_displayed_as" name="release_name_displayed_as"  value="{{$release->release_name.'('.$release->release_version.')'}}">
-                        </div>
-                        <h5>Artist & Contributor</h5>
-                        <div class="mb-3">
-                            <label for="primary_artist_basic" class="form-label">Primary Artist*</label>
-                            <input type="text" class="form-control" id="primary_artist_basic" name="primary_artist_basic"  value="{{ old('primary_artist_basic', $release->primary_artist ?? '') }}">
-                            <div>Suggestions and create new</div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="featuring_artist_basic" class="form-label"> Featuring Artist*</label>
-                            <input type="text" class="form-control" id="featuring_artist_basic" name="featuring_artist_basic"   value="{{ old('featuring_artist_basic', $release->featuring_artist ?? '') }}">
-                        </div>
-                        <div class="mb-3">
-                            <label for="remixer_artist_basic" class="form-label">Remixer*</label>
-                            <input type="text" class="form-control" id="remixer_artist_basic" name="remixer_artist_basic"  value="{{ old('remixer_artist_basic', $release->remixer ?? '') }}">
-                        </div>
-                        <div class="mb-3">
-                            <label for="producer_artist_basic" class="form-label">Producer*</label>
-                            <input type="text" class="form-control" id="producer_artist_basic" name="producer_artist_basic"  value="{{ old('producer_artist_basic', $release->producer ?? '') }}">
-                        </div>
-                        <h5>Release Details</h5>
-                        <div class="mb-3">
-                            <label for="genre" class="form-label">Genre*</label>
-                            <select class="form-select" id="genre" name="genre">
-                                <option value=''>Select Genre</option>
-                                <option value='pop' {{ old('genre', $release->genre ) == 'pop' ? 'selected' : '' }}>Pop</option>
-                                <!-- Add additional genres as needed -->
-                            </select>
+                            <div class="mb-3">
+                                <label for="meta_language" class="form-label">Meta Language*</label>
+                                <select class="form-select" id="meta_language" name="meta_language">
+                                    <option value="">Select Language</option>
+                                    <option value="Hindi" {{ old('meta_language', $release->meta_language) == 'Hindi' ? 'selected' : '' }}>Hindi</option>
+                                    <option value="English" {{ old('meta_language', $release->meta_language) == 'English' ? 'selected' : '' }}>English</option>
+                                    <option value="Bhojpuri" {{ old('meta_language', $release->meta_language) == 'Bhojpuri' ? 'selected' : '' }}>Bhojpuri</option>
+                                </select>
+                                @if ($errors->has('meta_language'))
+                                    <div class="text-danger">
+                                        {{ $errors->first('meta_language') }}
+                                    </div>
+                                @endif
+                            </div>
 
+                            <div class="mb-3">
+                                <label for="release_name" class="form-label">Release Name*</label>
+                                <input type="text" class="form-control" id="release_name" name="release_name" value="{{ old('release_name', $release->release_name ?? '') }}">
+                                @if ($errors->has('release_name'))
+                                    <div class="text-danger">
+                                        {{ $errors->first('release_name') }}
+                                    </div>
+                                @endif
+                            </div>
 
-                        </div>
-                        <div class="mb-3">
-                            <label for="sub_genre" class="form-label">Sub Genre*</label>
-                            <select class="form-select" id="sub_genre" name="sub_genre">
-                                <option value=''>Select Sub Genre</option>
-                                <option value="pop"  {{ old('sub_genre', $release->sub_genre ) == 'pop' ? 'selected' : '' }}  >  Pop  </option>
-                            </select>
-                        </div>
-                                 
-                        <div class="mb-3">
-                            <label for="format" class="form-label">Format*</label>
-                            <select class="form-select" id="format" name="format">
-                                <option value="">Select Format</option>
-                                <option value="single" {{ old('format', $release->format) == 'single' ? 'selected' : '' }}>Single</option>
-                                <option value="ep" {{ old('format', $release->format) == 'ep' ? 'selected' : '' }}>EP</option>
-                                <option value="album" {{ old('format', $release->format) == 'album' ? 'selected' : '' }}>Album</option>
-                            </select>
+                            <div class="mb-3">
+                                <label for="release_version" class="form-label">Release Version*</label>
+                                <input type="text" class="form-control" id="release_version" name="release_version" value="{{ old('release_version', $release->release_version ?? '') }}">
+                                @if ($errors->has('release_version'))
+                                    <div class="text-danger">
+                                        {{ $errors->first('release_version') }}
+                                    </div>
+                                @endif
+                            </div>
 
-                        </div>
-                        <div class="mb-3">
-                            <label for="cname_basic" class="form-label">C Name*</label>
-                            <input type="text" class="form-control" id="cname_basic" name="cname_basic" placeholder="Year with Company Name" value="{{ old('cname_basic' , $release->cname ?? '') }}">
-                        </div>
-                        <div class="mb-3">
-                            <label for="pname_basic" class="form-label">P Name*</label>
-                            <input type="text" class="form-control" id="pname_basic" name="pname_basic" placeholder="Year with Company Name" value="{{ old('pname_basic' , $release->pname ?? '')}}">
-                        </div> 
+                            <div class="mb-3">
+                                <label for="release_name_displayed_as" class="form-label">Release Name Displayed As</label>
+                                <input type="text" class="form-control" id="release_name_displayed_as" name="release_name_displayed_as" value="{{ $release->release_name.'('.$release->release_version.')' }}">
+                            </div>
 
-                        <h5>Release Date info</h5> 
+                            <h5>Artist & Contributor</h5>
+
+                            <div class="mb-3">
+                                <label for="primary_artist_basic" class="form-label">Primary Artist*</label>
+                                <input type="text" class="form-control" id="primary_artist_basic" name="primary_artist_basic" value="{{ old('primary_artist_basic', $release->primary_artist ?? '') }}">
+                                @if ($errors->has('primary_artist_basic'))
+                                    <div class="text-danger">
+                                        {{ $errors->first('primary_artist_basic') }}
+                                    </div>
+                                @endif
+                                <div>Suggestions and create new</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="featuring_artist_basic" class="form-label">Featuring Artist*</label>
+                                <input type="text" class="form-control" id="featuring_artist_basic" name="featuring_artist_basic" value="{{ old('featuring_artist_basic', $release->featuring_artist ?? '') }}">
+                                @if ($errors->has('featuring_artist_basic'))
+                                    <div class="text-danger">
+                                        {{ $errors->first('featuring_artist_basic') }}
+                                    </div>
+                                @endif
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="remixer_artist_basic" class="form-label">Remixer*</label>
+                                <input type="text" class="form-control" id="remixer_artist_basic" name="remixer_artist_basic" value="{{ old('remixer_artist_basic', $release->remixer ?? '') }}">
+                                @if ($errors->has('remixer_artist_basic'))
+                                    <div class="text-danger">
+                                        {{ $errors->first('remixer_artist_basic') }}
+                                    </div>
+                                @endif
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="producer_artist_basic" class="form-label">Producer*</label>
+                                <input type="text" class="form-control" id="producer_artist_basic" name="producer_artist_basic" value="{{ old('producer_artist_basic', $release->producer ?? '') }}">
+                                @if ($errors->has('producer_artist_basic'))
+                                    <div class="text-danger">
+                                        {{ $errors->first('producer_artist_basic') }}
+                                    </div>
+                                @endif
+                            </div>
+
+                            <h5>Release Details</h5>
+
+                            <div class="mb-3">
+                                <label for="genre" class="form-label">Genre*</label>
+                                <select class="form-select" id="genre" name="genre">
+                                    <option value="">Select Genre</option>
+                                    <option value="pop" {{ old('genre', $release->genre) == 'pop' ? 'selected' : '' }}>Pop</option>
+                                    <!-- Add additional genres as needed -->
+                                </select>
+                                @if ($errors->has('genre'))
+                                    <div class="text-danger">
+                                        {{ $errors->first('genre') }}
+                                    </div>
+                                @endif
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="sub_genre" class="form-label">Sub Genre*</label>
+                                <select class="form-select" id="sub_genre" name="sub_genre">
+                                    <option value="">Select Sub Genre</option>
+                                    <option value="pop" {{ old('sub_genre', $release->sub_genre) == 'pop' ? 'selected' : '' }}>Pop</option>
+                                </select>
+                                @if ($errors->has('sub_genre'))
+                                    <div class="text-danger">
+                                        {{ $errors->first('sub_genre') }}
+                                    </div>
+                                @endif
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="format" class="form-label">Format*</label>
+                                <select class="form-select" id="format" name="format">
+                                    <option value="">Select Format</option>
+                                    <option value="single" {{ old('format', $release->format) == 'single' ? 'selected' : '' }}>Single</option>
+                                    <option value="ep" {{ old('format', $release->format) == 'ep' ? 'selected' : '' }}>EP</option>
+                                    <option value="album" {{ old('format', $release->format) == 'album' ? 'selected' : '' }}>Album</option>
+                                </select>
+                                @if ($errors->has('format'))
+                                    <div class="text-danger">
+                                        {{ $errors->first('format') }}
+                                    </div>
+                                @endif
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="cname_basic" class="form-label">C Name*</label>
+                                <input type="text" class="form-control" id="cname_basic" name="cname_basic" placeholder="Year with Company Name" value="{{ old('cname_basic', $release->cname ?? '') }}">
+                                @if ($errors->has('cname_basic'))
+                                    <div class="text-danger">
+                                        {{ $errors->first('cname_basic') }}
+                                    </div>
+                                @endif
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="pname_basic" class="form-label">P Name*</label>
+                                <input type="text" class="form-control" id="pname_basic" name="pname_basic" placeholder="Year with Company Name" value="{{ old('pname_basic', $release->pname ?? '') }}">
+                                @if ($errors->has('pname_basic'))
+                                    <div class="text-danger">
+                                        {{ $errors->first('pname_basic') }}
+                                    </div>
+                                @endif
+                            </div>
+
+                            <h5>Release Date info</h5>
+
                             <div class="mb-3">
                                 <label for="original_release_date" class="form-label">Original Release Date*</label>
-                                <input type="date" class="form-control" name="original_release_date" value="{{old('original_release_date',$release->original_release_date)}}"/>
-                                <label for="sales_date" class="form-label" >Sales Date*</label>
-                                <input type="date" class="form-control" name="sales_date" value= "{{old('original_release_date',$release->sales_date)}}" />
+                                <input type="date" class="form-control" name="original_release_date" value="{{ old('original_release_date', $release->original_release_date) }}">
+                                @if ($errors->has('original_release_date'))
+                                    <div class="text-danger">
+                                        {{ $errors->first('original_release_date') }}
+                                    </div>
+                                @endif
                             </div>
-                        <button type="submit" class="btn btn-primary">Save & Next</button>
-                   </form>
+
+                            <div class="mb-3">
+                                <label for="sales_date" class="form-label">Sales Date*</label>
+                                <input type="date" class="form-control" name="sales_date" value="{{ old('sales_date', $release->sales_date) }}">
+                                @if ($errors->has('sales_date'))
+                                    <div class="text-danger">
+                                        {{ $errors->first('sales_date') }}
+                                    </div>
+                                @endif
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Save & Next</button>
+                        </form>
                 </div>
 
                 <div class="tab-pane fade  {{($level=='artwork')? ' show active':''}}" id="v-pills-artwork" role="tabpanel" aria-labelledby="v-pills-artwork-tab">
                         <h3>Artwork</h3>
                         <div class="row">
+                             <!-- Display general error message -->
+                                @if ($errors->has('file'))
+                                    <div class="alert alert-danger">
+                                        {{ $errors->first('file') }}
+                                    </div>
+                                @endif
                             <!-- Basic  -->
                                 <div class="col-6">
                                         <div class="card">                            
@@ -227,7 +321,12 @@
            
                 <div class="tab-pane fade {{($level=='uploadtrack')? ' show active':''}}" id="v-pills-uploadtrack" role="tabpanel" aria-labelledby="v-pills-uploadtrack-tab">
                      <h5>Upload Tracks</h5>
-                      
+                    <!-- Display validation errors for upload track form -->
+                        @if ($errors->has('track_paths'))
+                            <div class="alert alert-danger">
+                                {{ $errors->first('track_paths') }}
+                            </div>
+                        @endif
                      <form action="{{route('releases.uploadTrack.save')}}" method="POST" enctype="multipart/form-data">
                             @csrf  
                             <div class="mb-3">
@@ -255,6 +354,16 @@
 
                  <div class="tab-pane fade {{($level=='edittrack')? ' show active':''}}" id="v-pills-edittrack" role="tabpanel"        aria-labelledby="v-pills-edittrack-tab">
                         <h5>Edit Tracks</h5>
+                        @if (session('errors') && session('errors')->hasBag('edittrack'))
+                            <div class="alert alert-danger">
+                                <ul>
+                                    @foreach (session('errors')->getBag('edittrack')->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
                         @if($release->tracks->isEmpty())
                             <div class="alert alert-warning">
                                 <strong>Tracks Missing:</strong> Please upload tracks to proceed with the release process.
