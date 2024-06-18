@@ -93,6 +93,7 @@
               <table id="example" class="display" style="width:100%">
                         <thead>
                             <tr>
+                                
                                 <th>id</th>
                                 <th>Thumbnail</th>
                                 <th>Release Name</th>
