@@ -2,7 +2,7 @@
  * File Upload
  */
 
-'use strict';
+// 'use strict';
 
 (function () {
   // previewTemplate: Updated Dropzone default previewTemplate
@@ -91,11 +91,11 @@ const myDropzone = new Dropzone('#dropzone-basic', {
 
   // Multiple Dropzone
   // --------------------------------------------------------------------
-  // const dropzoneMulti = new Dropzone('#dropzone-multi', {
-  //   previewTemplate: previewTemplate,
-  //   parallelUploads: 1,
-  //   maxFilesize: 5,
-  //   addRemoveLinks: true
-  // });
+  const dropzoneMulti = new Dropzone('#dropzone-multi', {
+   // previewTemplate: previewTemplate,
+  //  parallelUploads: 1,
+    maxFilesize: 5,
+    addRemoveLinks: true
+  });
 
 })();

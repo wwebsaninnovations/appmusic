@@ -37,4 +37,9 @@ class Release extends Model
          return $this->hasMany(Track::class);
      }
 
+     public function platforms()
+     {
+         return $this->belongsToMany(Platform::class, 'platform_release');
+     }
+
 }

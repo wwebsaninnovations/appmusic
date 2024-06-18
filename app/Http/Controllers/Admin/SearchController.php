@@ -14,6 +14,7 @@ class SearchController extends Controller
         $user_id = Auth::user()->id;
         $keyword = $request->input('keyword');
 
+     
         // Query to filter releases based on the keyword
         $releases = Release::where('user_id', $user_id)
         ->where('format', 'LIKE', "%$keyword%")

@@ -51,6 +51,7 @@ Route::get('/musics/create/step3', [MusicController::class, 'step3'])->name('mus
 
 
 Route::get('/search',  [SearchController::class, 'search'])->name('search');
+
 //Edit Route
 Route::get('/musics/edit/step1/{id}', [MusicController::class, 'editStep1'])->name('musics.editStep1');
 Route::post('/musics/edit/step1', [MusicController::class, 'updateStep1'])->name('musics.editStep1.update');
@@ -72,7 +73,18 @@ Route::get('/releases/create/step2', [ReleaseController::class, 'step2'])->name(
 Route::post('/releases/create/basic', [ReleaseController::class, 'saveBasic'])->name('releases.basic.save');
 Route::post('/releases/create/artwork', [ReleaseController::class, 'saveArtwork'])->name('releases.artwork.save');
 Route::post('/releases/create/uploadtrack', [ReleaseController::class, 'saveUploadTrack'])->name('releases.uploadTrack.save');
-Route::post('/releases/create/edittrack', [ReleaseController::class, 'saveEditTrack'])->name('releases.editTrack.save');Route::post('/releases/create/schedulingPricing', [ReleaseController::class, 'saveSchedulingPricing'])->name('releases.schedulingPricing.save');
+Route::post('/releases/create/edittrack', [ReleaseController::class, 'saveEditTrack'])->name('releases.editTrack.save');
+Route::post('/releases/create/platforms', [ReleaseController::class, 'savePlatforms'])->name('releases.platforms.save');
+
+Route::post('/releases/create/removetrack', [ReleaseController::class, 'removeUploadTrack'])->name('releases.uploadTrack.remove');
+Route::post('/releases/create/getartwork', [ReleaseController::class, 'getArtwork'])->name('releases.artwork.get');
+
+Route::post('/releases/create/removeartwork', [ReleaseController::class, 'removeArtwork'])->name('releases.artwork.remove');
+
+//Ajax URL
+
+Route::get('/releases/getReleaseData', [ReleaseController::class, 'getReleaseData']);
+
 
 Route::resources([
     // 'books' => BookController::class,

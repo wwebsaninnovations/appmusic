@@ -230,10 +230,8 @@
                         <h3>Artwork</h3>
                         <div class="row">
                              <!-- Display general error message -->
-                             <div class="alert alert-danger artwork_error" style="display:none;">
-                              </div>
                                 @if ($errors->has('file'))
-                                    <div class="alert alert-danger artwork_error">
+                                    <div class="alert alert-danger">
                                         {{ $errors->first('file') }}
                                     </div>
                                 @endif
@@ -241,36 +239,29 @@
                                 <div class="col-6">
                                         <div class="card">                            
                                                 <div class="card-body">
-                                                    <div class="row">
-                                                        <div class="col-md-6 col-12">
-                                                            <form action="{{ route('releases.artwork.save') }}" method="POST" enctype="multipart/form-data"  id="dropzone-basic" class="dropzone">
-                                                                @csrf
-                                                            
-                                                                <input type="hidden" name="release_id" id="artwork_release_id" value="{{ $release->id }}">
-                                                                <input type="hidden" name="summary" value="{{ $summary ?? '' }}">
-
-
-                                                                <!-- <input type="hidden"  name="thumbnail" id="artworkimge" style="display:none;">
-                                                                <input type="hidden"  name="filename" id="artworkfilename" style="display:none;"> -->
-                                                            
-                                                                    <!-- @if (!empty($release->thumbnail_path))
-                                                                        <img id="existing-thumbnail" src="{{ asset('storage/' . $release->thumbnail_path) }}" width="150px" alt="Thumbnail" style="display: none;">
-                                                                    @endif -->
-                                                        
-                                                        
-
-                                                            </form>
-                                                        </div>   
-                                                        <div class="col-md-6 col-12">
-                                                            <strong>Uploaded Image</strong>
-                                                                <img id="uploaded_current_artwork" src="" width="150px" alt="Thumbnail" style="display:none;">
-                                                              @if (!empty($release->thumbnail_path))
-                                                                        <img id="existing-thumbnail" src="{{ asset('storage/' . $release->thumbnail_path) }}" width="150px" alt="Thumbnail" >
-                                                                   
-                                                              @endif
+                                                    <form action="{{ route('releases.artwork.save') }}" method="POST" enctype="multipart/form-data" class="dropzone needsclick" id="dropzone-basic">
+                                                        @csrf
+                                                        <div class="dz-message needsclick">
+                                                            Drop files here or click to upload
+                                                            <span class="note needsclick">(This is just a demo dropzone. Selected files are <strong>not</strong> actually uploaded.)</span>
                                                         </div>
-                                                        <div class="col-12"> <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'uploadtrack'])}}" class="btn btn-primary mt-3">Next</a></div>
-                                                    </div>
+                                                        <div class="fallback">
+                                                            <input type="file" name="file"/>
+                                                        </div>
+                                                        <input type="hidden" name="release_id" value="{{ $release->id }}">
+                                                        <input type="hidden" name="summary" value="{{ $summary ?? '' }}">
+                                                        <input type="hidden"  name="thumbnail" id="artworkimge" style="display:none;">
+                                                        <input type="hidden"  name="filename" id="artworkfilename" style="display:none;">
+                                                        <div id="image-preview" class="image-preview">
+                                                            @if (!empty($release->thumbnail_path))
+                                                                <img id="existing-thumbnail" src="{{ asset('storage/' . $release->thumbnail_path) }}" width="150px" alt="Thumbnail" style="display: none;">
+                                                            @endif
+                                                        </div>
+                                                        <div id="error-message" class="text-danger mt-2"></div>
+
+                                                        <button type="submit" class="btn btn-primary">Save & Next</button>
+                                                    </form>
+                                            
                                                 </div>
                                         </div>
                                 </div>
@@ -332,65 +323,45 @@
                 <div class="tab-pane fade {{($level=='uploadtrack')? ' show active':''}}" id="v-pills-uploadtrack" role="tabpanel" aria-labelledby="v-pills-uploadtrack-tab">
                      <h5>Upload Tracks</h5>
                
-                     <div class="col-12">
-                        <div class="card">
-                            <ul>
-                                <li><strong>Single</strong> : maximum 1 file.</li>
-                                <li><strong>EP</strong> : maximum 5 files.</li>
-                                <li><strong>Album</strong> : maximum 30 files.</li>
-                            </ul>
-                            <h5 class="card-header">Multiple</h5>
-                            <div class="card-body">
-                        
-                                <form action="{{route('releases.uploadTrack.save')}}"  method="post" enctype="multipart/form-data" id="image-upload" class="dropzone">
-                                    @csrf
-                                    <input type="hidden" name ="release_id" id="release_id" value="{{$release->id}}">
-                                    <input type="hidden" name="summary" value="{{ $summary ?? '' }}">
-                                    <input type="hidden" name="release_format"  id="release_format" value="{{ $release->format}}">
-                                </form>
-                                <div class="row mt-5">
-                                <div class="col-2">
-                                <div class="col-12"> <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'edittrack'])}}" class="btn btn-primary mt-3">Next</a></div>
-                                </div>
-
-                                <div class="col-10">
-                                @if(!$release->tracks->isEmpty())                       
-                                    @foreach($release->tracks as $index => $track)
-                                        <div class="mb-3" style="display: flex; justify-content: space-between;">
-                                            <div style="width: 60%;">
-                                                <p><strong>Track {{ $index + 1 }}:</strong> {{ basename($track->track_path) }}</p>
-                                            </div>
-                                            <div style="width: 30%;">
-                                                <audio controls style="width: 90%;">
-                                                    <source src="{{ asset('storage/' . $track->track_path) }}" type="audio/mpeg">
-                                                    Your browser does not support the audio element.
-                                                </audio>
-                                            </div>
-                                            <div style="width: 10%;">
-                                                <a href="#" onclick="event.preventDefault(); document.getElementById('removetrack-form').submit();">Remove</a>
-                                                <form id="removetrack-form" action="{{ route('releases.uploadTrack.remove') }}" method="POST" class="d-none">
-                                                    @csrf
-                                                    <input type="hidden" name ="release_id"  value="{{$release->id}}">
-                                                    <input type="hidden" name ="fn" value="{{basename($track->track_path) }}">
-                                                </form>
-
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                @endif
-                                </div>
-                                </div>
-                                
+                        @if ($errors->has('track_paths'))
+                            <div class="alert alert-danger">
+                                {{ $errors->first('track_paths') }}
                             </div>
-                        </div>
-                    </div>
+                        @endif
+                     <form action="{{route('releases.uploadTrack.save')}}" method="POST" enctype="multipart/form-data">
+                            @csrf  
+                            <div class="mb-3">
+                                <label for="tracks" class="form-label">Upload from Computer*</label>
+                                <input type="file" class="form-control" id="tracks" name="track_paths[]" multiple />
+                                <input type="hidden" name ="release_id" value="{{$release->id}}">
+                                <input type="hidden" name="summary" value="{{ $summary ?? '' }}">
+                            </div>  
+                          
+                            @if(!$release->tracks->isEmpty())                       
+                                @foreach($release->tracks as $index => $track)
+                                    <div class="mb-3">
+                                        <p><strong>Track {{ $index + 1 }}:</strong> {{ basename($track->track_path) }}</p>
+                                        
+                                        <audio controls>
+                                            <source src="{{ asset('storage/' . $track->track_path) }}" type="audio/mpeg">
+                                            Your browser does not support the audio element.
+                                        </audio>
+                                    </div>
+                                @endforeach
+                            @endif
+                            <button type="submit" class="btn btn-primary">Upload</button>
+                    </form>
                  </div>
 
                  <div class="tab-pane fade {{($level=='edittrack')? ' show active':''}}" id="v-pills-edittrack" role="tabpanel"        aria-labelledby="v-pills-edittrack-tab">
                         <h5>Edit Tracks</h5>
                         @if (session('errors') && session('errors')->hasBag('edittrack'))
                             <div class="alert alert-danger">
-                            <strong>Alert:</strong> Still you missed the some required fields, please check each track manually.Thankyou!
+                                <ul>
+                                    @foreach (session('errors')->getBag('edittrack')->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
                             </div>
                         @endif
 
@@ -398,7 +369,7 @@
                             <div class="alert alert-warning">
                                 <strong>Tracks Missing:</strong> Please upload tracks to proceed with the release process.
                             </div>
-                            @else
+                        @else
                             <form action="{{ route('releases.editTrack.save') }}" method="POST" enctype="multipart/form-data">
                             @csrf  
                             <input type="hidden" name ="release_id" value="{{$release->id}}">
@@ -424,9 +395,6 @@
                                                     <div class="mb-3">
                                                         <label for="track_name{{ $index }}" class="form-label">Track Name*</label>
                                                         <input type="text" class="form-control" id="track_name{{ $index }}" name="track_name[]" value="{{ pathinfo(basename($track->track_path), PATHINFO_FILENAME) }}">
-                                                        @if ($errors->edittrack->has('track_name.' . $index))
-                                                            <div class="text-danger">{{ $errors->edittrack->first('track_name.' . $index) }}</div>
-                                                        @endif
                                                     </div> 
                                                     <div class="mb-3">
                                                         <label for="track_version{{ $index }}" class="form-label">Version*</label>
@@ -434,9 +402,6 @@
                                                             <button type="button" class="apply_click click_btn" style="display: block;">Apply Now</button>
                                                         @endif
                                                         <input type="text" class="form-control input-track_version" data-name="track_version" id="track_version{{ $index }}" name="track_version[]" value="{{ old('track_version.'.$index, $track->track_version)  }}">
-                                                        @if ($errors->edittrack->has('track_version.' . $index))
-                                                            <div class="text-danger">{{ $errors->edittrack->first('track_version.' . $index) }}</div>
-                                                        @endif
                                                     </div>   
                                                     <div class="mb-3">
                                                         <label for="lyrics_language" class="form-label">Lyrics Language*</label>
@@ -444,9 +409,6 @@
                                                             <button type="button" class="apply_click click_btn" style="display: block;">Apply Now</button>
                                                         @endif
                                                         <input type="text" class="form-control input-lyrics_language" data-name="lyrics_language" id="lyrics_language{{ $index }}" name="lyrics_language[]" value="{{ old('lyrics_language.'.$index,$track->lyrics_language) }}">
-                                                        @if ($errors->edittrack->has('lyrics_language.' . $index))
-                                                            <div class="text-danger">{{ $errors->edittrack->first('lyrics_language.' . $index) }}</div>
-                                                        @endif
                                                     </div>
                                                     <div class="mb-3 wrap-field">
                                                     <label for="explicit_content" class="form-label">Explicit Content*</label>
@@ -467,9 +429,6 @@
                                                         {{ (old('explicit_content.'.$index, $track->explicit_content) == 'clean') ? 'checked' : '' }}>
                                                     <label for="explicit_content_clean_{{ $index }}">Clean</label>
 
-                                                    @if ($errors->edittrack->has('explicit_content.' . $index))
-                                                            <div class="text-danger">{{ $errors->edittrack->first('explicit_content.' . $index) }}</div>
-                                                     @endif
 
                                                     </div>   
                                                     <h5>Contributor</h5>
@@ -480,9 +439,6 @@
                                                         @endif
                                                         
                                                         <input type="text" class="form-control input-primary_artist" data-name="primary_artist" id="primary_artist{{ $index }}" name="primary_artist[]" value ="{{old('primary_artist.'.$index,$track->track_primary_artist)}}"  >
-                                                        @if ($errors->edittrack->has('primary_artist.' . $index))
-                                                            <div class="text-danger">{{ $errors->edittrack->first('primary_artist.' . $index) }}</div>
-                                                        @endif
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="featuring_artist"  class="form-label">Featuring Artist*</label>
@@ -491,9 +447,6 @@
                                                           <button type="button" class="apply_click click_btn">Apply Now</button>
                                                         @endif
                                                         <input type="text" class="form-control input-featuring_artist" data-name="featuring_artist" id="featuring_artist{{ $index }}" name="featuring_artist[]"  value ="{{old('featuring_artist.'.$index,$track->track_featuring_artist)}}" >
-                                                        @if ($errors->edittrack->has('featuring_artist.' . $index))
-                                                            <div class="text-danger">{{ $errors->edittrack->first('featuring_artist.' . $index) }}</div>
-                                                        @endif
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="track_remixer"  class="form-label">Remixer*</label>
@@ -501,9 +454,6 @@
                                                           <button type="button" class="apply_click click_btn">Apply Now</button>
                                                         @endif
                                                         <input type="text" class="form-control input-track_remixer" data-name="track_remixer" id="track_remixer{{ $index }}" name="track_remixer[]"   value ="{{old('track_remixer.'.$index, $track->track_remixer)}}" >
-                                                        @if ($errors->edittrack->has('track_remixer.' . $index))
-                                                            <div class="text-danger">{{ $errors->edittrack->first('track_remixer.' . $index) }}</div>
-                                                        @endif
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="song_writer"  class="form-label">Song Writer*</label>
@@ -512,9 +462,6 @@
                                                           <button type="button" class="apply_click click_btn">Apply Now</button>
                                                         @endif
                                                         <input type="text" class="form-control input-song_writer" data-name="song_writer" id="song_writer{{ $index }}" name="song_writer[]" value ="{{old('song_writer.'.$index, $track->song_writer)}}">
-                                                        @if ($errors->edittrack->has('song_writer.' . $index))
-                                                            <div class="text-danger">{{ $errors->edittrack->first('song_writer.' . $index) }}</div>
-                                                        @endif
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="track_producer"  class="form-label">Producer*</label>                                                      
@@ -522,9 +469,6 @@
                                                           <button type="button" class="apply_click click_btn">Apply Now</button>
                                                         @endif
                                                         <input type="text" class="form-control input-track_producer" data-name="track_producer" id="track_producer{{ $index }}" name="track_producer[]"  value ="{{old('track_producer.'.$index,$track->track_producer)}}" >
-                                                        @if ($errors->edittrack->has('track_producer.' . $index))
-                                                            <div class="text-danger">{{ $errors->edittrack->first('track_producer.' . $index) }}</div>
-                                                        @endif
                                                     </div>
                                                     <h5>Composer</h5>
                                                     <div class="mb-3">
@@ -533,9 +477,6 @@
                                                           <button type="button" class="apply_click click_btn">Apply Now</button>
                                                         @endif
                                                         <input type="text" class="form-control input-composer_name" data-name="composer_name" id="composer_name{{ $index }}" name="composer_name[]"  value ="{{old('composer_name.'.$index, $track->composer_name)}}" >
-                                                        @if ($errors->edittrack->has('composer_name.' . $index))
-                                                            <div class="text-danger">{{ $errors->edittrack->first('composer_name.' . $index) }}</div>
-                                                        @endif
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="label_name"  class="form-label">Label Name*</label>
@@ -543,9 +484,6 @@
                                                           <button type="button" class="apply_click click_btn">Apply Now</button>
                                                         @endif
                                                         <input type="text" class="form-control input-label_name" data-name="label_name" id="label_name{{ $index }}" name="label_name[]"  value ="{{old('label_name.'.$index, $track->track_label_name)}}" >
-                                                        @if ($errors->edittrack->has('label_name.' . $index))
-                                                            <div class="text-danger">{{ $errors->edittrack->first('label_name.' . $index) }}</div>
-                                                        @endif
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="isrc"  class="form-label">ISRC* </label>
@@ -553,9 +491,6 @@
                                                           <button type="button" class="apply_click click_btn">Apply Now</button>
                                                         @endif
                                                         <input type="text" class="form-control input-isrc" data-name="isrc" id="isrc{{ $index }}" name="isrc[]"  value ="{{old('isrc.'.$index, $track->isrc)}}" >
-                                                        @if ($errors->edittrack->has('isrc.' . $index))
-                                                            <div class="text-danger">{{ $errors->edittrack->first('isrc.' . $index) }}</div>
-                                                        @endif
                                                     </div>
 
                                                     <div class="mb-3 wrap-field">
@@ -564,9 +499,6 @@
                                                          {{ (old('primary_performers.'.$index, $track->primary_performers) == $track->primary_performers) ? 'checked' : '' }}>
                                                          @if(count($release->tracks) > 1)
                                                             <button type="button" class="apply_checkbox_click click_btn">Apply Now</button>
-                                                        @endif
-                                                        @if ($errors->edittrack->has('primary_performers.' . $index))
-                                                            <div class="text-danger">{{ $errors->edittrack->first('primary_performers.' . $index) }}</div>
                                                         @endif
                                                         
                                                     
@@ -579,9 +511,6 @@
                                                         @endif
                                                       
                                                         <input type="text" name="pname[]"  class="form-control input-pname" data-name="pname"  id="pname{{ $index }}" value="{{old('pname.'.$index, $track->pname)}}" />
-                                                        @if ($errors->edittrack->has('pname.' . $index))
-                                                            <div class="text-danger">{{ $errors->edittrack->first('pname.' . $index) }}</div>
-                                                        @endif
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="cname"  class="form-label">C Name* </label>
@@ -589,9 +518,6 @@
                                                           <button type="button" class="apply_click click_btn">Apply Now</button>
                                                         @endif
                                                         <input type="text" name="cname[]" class="form-control input-cname" data-name="cname" id="cname{{ $index }}" value="{{old('cname.'.$index, $track->cname)}}"  />
-                                                        @if ($errors->edittrack->has('cname.' . $index))
-                                                            <div class="text-danger">{{ $errors->edittrack->first('cname.' . $index) }}</div>
-                                                        @endif
                                                     </div>
                                                     <div class="mb-3 wrap-field">
                                                         <label for="ownership_for_sound_rec"  class="form-label">Ownership for the sound recording* </label>
@@ -603,9 +529,7 @@
                                                             <option value="I am the owner" {{ old('ownership_for_sound_rec.'.$index, $track->ownership_for_sound_rec) == 'I am the owner' ? 'selected' : '' }}>I am the owner</option>
                                                             <option value="I am the manager" {{ old('ownership_for_sound_rec.'.$index, $track->ownership_for_sound_rec) == 'I am the manager' ? 'selected' : '' }}>I am the manager</option>
                                                         </select>
-                                                        @if ($errors->edittrack->has('ownership_for_sound_rec.' . $index))
-                                                            <div class="text-danger">{{ $errors->edittrack->first('ownership_for_sound_rec.' . $index) }}</div>
-                                                        @endif
+
 
                                                     </div>
                                                     <div class="mb-3">
@@ -615,9 +539,6 @@
                                                         @endif
                                                       
                                                         <input type="text" class="form-control input-country_of_rec" data-name="country_of_rec"  id="country_of_rec{{ $index }}" name="country_of_rec[]" value="{{old('country_of_rec.'.$index, $track->country_of_rec)}}" />
-                                                        @if ($errors->edittrack->has('country_of_rec.' . $index))
-                                                            <div class="text-danger">{{ $errors->edittrack->first('country_of_rec.' . $index) }}</div>
-                                                        @endif
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="nationality" class="form-label">Nationality of original copyright owner* </label>
@@ -625,16 +546,13 @@
                                                           <button type="button" class="apply_click click_btn">Apply Now</button>
                                                         @endif
                                                         <input type="text" name="nationality[]"  class="form-control input-nationality" data-name="nationality"  id="nationality{{ $index }}"   value="{{old('nationality.'.$index, $track->nationality)}}" />
-                                                        @if ($errors->edittrack->has('nationality.' . $index))
-                                                            <div class="text-danger">{{ $errors->edittrack->first('nationality.' . $index) }}</div>
-                                                        @endif
                                                     </div>
                                             </div>
                                             @endforeach
                                         </div>
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Next</button>
+                                <button type="submit" class="btn btn-primary">Save Release</button>
                             </form>
                        @endif
                  </div>
@@ -744,11 +662,6 @@
                         </div>
 
                         <div class="card mb-4">
-                            <ul>
-                                <li><strong>Single</strong> : maximum 1 file.</li>
-                                <li><strong>EP</strong> : maximum 5 files.</li>
-                                <li><strong>Album</strong> : maximum 30 files.</li>
-                            </ul>
                             <div class="card-body">
                                 <h5 class="card-title">Uploaded Tracks</h5>
                                   @if($release->tracks->isEmpty())
@@ -823,24 +736,7 @@
                                 <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'edittrack', 'summary'=>'edittrack'])}}" class="btn btn-primary mt-4">Edit</a>
                             </div>
                         </div>
-
-                        <div class="card mb-4">
-                            <div class="card-body">
-                                <h5 class="card-title">PlatForms</h5>
-                                @if($release->platforms->isEmpty())
-                                    <div class="alert alert-warning">Not Completed</div>
-                                @else
-                                    @foreach($release->platforms as $platform)
-                                        <div class="mb-3">
-                                            <p>{{ $platform->name }}</p>
-                                        </div>
-                                    @endforeach
-                                @endif
-                                <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'platforms','summary'=>'platforms' ])}}" class="btn btn-primary mt-4">Edit</a>
-                            </div>
-                        </div>
                     </div>
-                    <a href="{{route('releases.index')}}" class="btn btn-primary text-center">Save Release</a>
               </div>
         </div>
     </div>

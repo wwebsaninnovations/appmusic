@@ -24,80 +24,6 @@ class ReleaseController extends Controller
         return view('admin.releases.index',['releases'=>$releases]);
     }
 
-    public function getReleaseData(Request $request)
-    {
-        $user_id = Auth::id(); // Using Auth::id() directly to get the authenticated user's ID
-        $columns = ['id', 'thumbnail_path', 'release_name', 'format', 'release_code', 'upc', 'status'];
-    
-        $length = $request->input('length');
-        $column = $request->input('order.0.column', 0); // Index of column to sort, default to 0
-        $dir = $request->input('order.0.dir', 'desc'); // Order direction
-        $searchValue = $request->input('search.value');
-    
-        // Validate column index
-        if (!isset($columns[$column])) {
-            $column = 0; // Default to the first column if invalid
-        }
-    
-        $query = Release::where('user_id', $user_id)
-                        ->with('tracks') // Assuming 'tracks' is a relationship defined in your Release model
-                        ->orderBy($columns[$column], $dir);
-    
-        if ($searchValue) {
-            $query->where(function($q) use ($searchValue) {
-                $q->where('release_name', 'like', "%{$searchValue}%")
-                  ->orWhere('format', 'like', "%{$searchValue}%")
-                  ->orWhere('release_code', 'like', "%{$searchValue}%")
-                  ->orWhere('upc', 'like', "%{$searchValue}%")
-                  ->orWhere(function ($q) use ($searchValue) {
-                      if (strtolower($searchValue) == 'pending') {
-                          $q->orWhere('status', 0);
-                      } elseif (strtolower($searchValue) == 'approved') {
-                          $q->orWhere('status', 1);
-                      } elseif (strtolower($searchValue) == 'rejected') {
-                          $q->orWhere('status', 2);
-                      }
-                  });
-            });
-        }
-    
-        $totalRecords = $query->count();
-        $releases = $query->offset($request->input('start'))->limit($length)->get();
-    
-        $data = [];
-    
-        if ($releases->isNotEmpty()) {
-            foreach ($releases as $release) {
-                $status = match ($release->status) {
-                    0 => 'Pending',
-                    1 => 'Approved',
-                    default => 'Rejected'
-                };
-    
-                $data[] = [
-                    'id'           => $release->id,
-                    'thumbnail'    => $release->thumbnail_path, // Adjust this to match your actual attribute name
-                    'release_name' => $release->release_name,
-                    'format'       => $release->format, // Adjust attribute name to lowercase 'format'
-                    'code'         => $release->release_code,
-                    'upc'          => $release->upc,
-                    'status'       => $status,
-                ];
-            }
-        }
-    
-        return response()->json([
-            'data' => $data,
-            'draw' => intval($request->input('draw')),
-            'recordsTotal' => $totalRecords,
-            'recordsFiltered' => $totalRecords
-        ]);
-    }
-    
-    
-    
-    
-
     /**
      * Show the form for creating a new resource.
      */
@@ -326,23 +252,26 @@ class ReleaseController extends Controller
         // Calculate the total count of tracks
         $totalTrackCount = $existingTrackCount + $newTrackCount;
 
-        if($format =="ep")
-        {
-          $flag = (  $totalTrackCount  <= 5 )? true : false;
 
-          if( $flag == false){
-            return response()->json(['status' => 'success', 'message' => 'Track should be  less than  and equal 5.']);
-          }
-        }
+        echo   $totalTrackCount .' '.  $format ;
 
-        if($format =="album")
-        {
-          $flag = ($totalTrackCount  <= 30)? true : false;
+        // if($format =="ep")
+        // {
+        //   $flag = (  $totalTrackCount  <= 5 )? true : false;
 
-          if( $flag == false){
-            return response()->json(['status' => 'success', 'message' => 'Track should be less than  and equal 30.']);
-          }
-        }
+        //   if( $flag == false){
+        //     return response()->json(['status' => 'success', 'message' => 'Track should be  less than  and equal 5.']);
+        //   }
+        // }
+
+        // if($format =="album")
+        // {
+        //   $flag = ($totalTrackCount  <= 30)? true : false;
+
+        //   if( $flag == false){
+        //     return response()->json(['status' => 'success', 'message' => 'Track should be less than  and equal 30.']);
+        //   }
+        // }
 
         if($format =="single")
         {
@@ -359,7 +288,7 @@ class ReleaseController extends Controller
         // Initialize FFMpeg (commented out for now)
         // $ffmpeg = FFMpeg::create();
     
-        foreach ($newTrackFiles  as $track) {
+        foreach ($trackPaths as $track) {
             $path = $track->storeAs('music/' . $user_id . '/' . $release_id . '/tracks', $track->getClientOriginalName(), 'public');
     
             // $audio = $ffmpeg->open($track->getPathname());
@@ -511,7 +440,7 @@ class ReleaseController extends Controller
         
             return redirect()->route('releases.step2', ['release_id'=>$release->id, 'level'=>$request->summary])->with('success', 'Platforms updated successfully.');
         }
-        return redirect()->route('releases.step2',['release_id'=>$release_id, 'level'=>'summary'])->with('success', 'Platforms updated successfully.');
+        return redirect()->route('releases.step2',['release_id'=>$release_id, 'level'=>'summery'])->with('success', 'Platforms updated successfully.');
     }
     
 

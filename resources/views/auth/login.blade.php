@@ -3,7 +3,7 @@
 
 <div class="container-xxl">
       <div class="authentication-wrapper authentication-basic container-p-y">
-        <div class="authentication-inner">
+        <div class="authentication-inner"  style="max-width:400px; margin:0 auto;">
           <!-- Register -->
           <div class="card">
             <div class="card-body">
