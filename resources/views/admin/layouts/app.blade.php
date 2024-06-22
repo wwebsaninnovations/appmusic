@@ -189,6 +189,7 @@ $('#example').DataTable({
           type: 'GET'
         },
         columns: [
+          { data: '' },  
           { data: 'id' },
           { 
             data: 'thumbnail',
@@ -200,56 +201,52 @@ $('#example').DataTable({
           { data: 'format' },
           { data: 'code' },
           { data: 'upc' },
-          { data: 'status' }
+          { data: 'status' },
+          { data: 'form_status' },
+          { 
+            data: null,
+            orderable: false,
+            render: function(data, type, full, meta) {
+                const editUrl = `/releases/create/step2?release_id=${data.id}&level=basic`;
+                return `<a class="btn btn-primary" href="${editUrl}">Edit</a> <a class="btn btn-danger">Delete</a>`;
+            }
+         }
         ],
+
+        columnDefs: [
+        {
+            orderable: false,
+            render: DataTable.render.select(),
+            targets: 0
+        }
+    ],
+    select: {
+        style: 'multi',
+        selector: 'td:first-child',
+        headerCheckbox: 'select-all'
+    },
+
+
         processing: true,
         serverSide: true,
         paging: true,
         lengthMenu: [10, 25, 50, 100],
         pageLength: 10,
-        order: [[0, 'desc']],
+        order: [[1, 'desc']],
         searchDelay: 500 ,
+        dom: 'Blfrtip',  //enabel all datatables functionality
+        buttons: [
+                {
+                    extend: 'excel',
+                    text: 'Download Excelsheet',
+                    exportOptions: {
+                        columns: ':not(:first-child):not(:last-child)' 
+                    }
+                },
+        ]
 
-        layout: {
-            topStart: {
-                buttons: [
-                    {
-                        extend: 'print',
-                        text: 'Print all',
-                        exportOptions: {
-                            modifier: {
-                                selected: null
-                            }
-                        }
-                    },
-                    {
-                        extend: 'print',
-                        text: 'Print selected'
-                    },
-                    {
-                        extend: 'excel',
-                        text: 'Export to Excel (All)',
-                        exportOptions: {
-                            modifier: {
-                                selected: null // Export all rows
-                            }
-                        }
-                    },
-                    {
-                        extend: 'excel',
-                        text: 'Export to Excel (Selected)',
-                        exportOptions: {
-                            modifier: {
-                                selected: true // Export selected rows
-                            }
-                        }
-                    },
-                ]
-            }
-        },
-        select: {
-           style: 'multi'
-        }
+       
+       
     });
 
   const myDropzone = new Dropzone('#dropzone-basic', {

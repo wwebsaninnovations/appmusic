@@ -93,7 +93,7 @@
               <table id="example" class="display" style="width:100%">
                         <thead>
                             <tr>
-                                
+                               <th>Select</th>
                                 <th>id</th>
                                 <th>Thumbnail</th>
                                 <th>Release Name</th>
@@ -101,6 +101,8 @@
                                 <th>Code</th>
                                 <th>Upc</th>
                                 <th>Status</th>
+                                <th>Form Status</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                        

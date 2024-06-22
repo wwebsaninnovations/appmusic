@@ -57,7 +57,14 @@ class ReleaseController extends Controller
                       } elseif (strtolower($searchValue) == 'rejected') {
                           $q->orWhere('status', 2);
                       }
-                  });
+                  })
+                  ->orWhere(function ($q) use ($searchValue) {
+                    if (strtolower($searchValue) == 'incomplete') {
+                        $q->orWhere('form_status', 0);
+                    } elseif (strtolower($searchValue) == 'complete') {
+                        $q->orWhere('form_status', 1);
+                    } 
+                });
             });
         }
     
@@ -73,6 +80,12 @@ class ReleaseController extends Controller
                     1 => 'Approved',
                     default => 'Rejected'
                 };
+                $form_status = match ($release->form_status) {
+                    0 => 'Incomplete',
+                    1 => 'Complete',
+                };
+
+
     
                 $data[] = [
                     'id'           => $release->id,
@@ -82,6 +95,7 @@ class ReleaseController extends Controller
                     'code'         => $release->release_code,
                     'upc'          => $release->upc,
                     'status'       => $status,
+                    'form_status'  => $form_status
                 ];
             }
         }
