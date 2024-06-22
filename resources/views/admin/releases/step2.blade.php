@@ -390,7 +390,7 @@
                         <h5>Edit Tracks</h5>
                         @if (session('errors') && session('errors')->hasBag('edittrack'))
                             <div class="alert alert-danger">
-                            <strong>Alert:</strong> Still you missed the some required fields, please check each track manually.Thankyou!
+                            <strong>Alert:</strong> You have missed the some required fields, please check each track manually.
                             </div>
                         @endif
 
