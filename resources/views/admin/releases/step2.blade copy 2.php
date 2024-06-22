@@ -11,7 +11,7 @@
                 <a class="nav-link {{($level=='uploadtrack')? ' active':''}}" id="v-pills-uploadtrack-tab" data-bs-toggle="pill" href="#v-pills-uploadtrack" role="tab" aria-controls="v-pills-uploadtrack" aria-selected="false" data-href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'uploadtrack'])}}">Upload Track</a>
                 <a class="nav-link {{($level=='edittrack')? ' active':''}}" id="v-pills-edittrack-tab" data-bs-toggle="pill" href="#v-pills-edittrack" role="tab" aria-controls="v-pills-edittrack" aria-selected="false" data-href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'edittrack'])}}">Edit Track</a>
                 <a class="nav-link {{($level=='platforms')? ' active':''}}" id="v-pills-platforms-tab" data-bs-toggle="pill" href="#v-pills-platforms" role="tab" aria-controls="v-pills-edittrack" aria-selected="false" data-href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'platforms'])}}">Platforms-Configuration</a>
-                <a class="nav-link {{($level=='summery')? ' active':''}}" id="v-pills-summery-tab" data-bs-toggle="pill" href="#v-pills-summery" role="tab" aria-controls="v-pills-summery" aria-selected="false" data-href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'summery'])}}">Summary</a>
+                <a class="nav-link {{($level=='summary')? ' active':''}}" id="v-pills-summary-tab" data-bs-toggle="pill" href="#v-pills-summary" role="tab" aria-controls="v-pills-summary" aria-selected="false" data-href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'summary'])}}">Summary</a>
             </div>
         </div>
 
@@ -632,7 +632,7 @@
                     </form>
 
                 </div>
-                 <div class="tab-pane fade release_summary {{($level=='summery')? ' show active':''}}" id="v-pills-summery" role="tabpanel" aria-labelledby="v-pills-summery-tab">
+                 <div class="tab-pane fade release_summary {{($level=='summary')? ' show active':''}}" id="v-pills-summary" role="tabpanel" aria-labelledby="v-pills-summary-tab">
                     <div class="container mt-5">
                         <h2>Release Summary</h2>
 
