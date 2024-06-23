@@ -180,13 +180,24 @@ tr.selected td{
 
 <script type="text/javascript">
 
+  //   dataSrc: function (json) {
+        //         // Update your HTML elements with the response data
+        //         $('#recordsTotal').text(json.recordsTotal);
+        //         $('#totalApproved').text(json.totalApproved);
+        //         $('#totalPending').text(json.totalPending);
+        //         $('#totalRejected').text(json.totalRejected);
+        //         $('#totalIncomplete').text(json.totalIncomplete);
 
+        //         // Return the data to DataTables for rendering
+        //         return json.data;
+        //     }
 
 //DataTables
 $('#example').DataTable({
         ajax: {
           url: '/releases/getReleaseData',
-          type: 'GET'
+          type: 'GET',
+      
         },
         columns: [
           { data: '' },  
@@ -198,17 +209,60 @@ $('#example').DataTable({
             }
           },
           { data: 'release_name' },
-          { data: 'format' },
+          { 
+            data: 'format',
+            render: function(data, type, full, meta) {
+                let badgeClass = '';
+                if (data === 'single') {
+                    badgeClass = 'badge bg-primary';
+                } else if (data === 'ep') {
+                    badgeClass = 'badge bg-info';
+                } else if (data === 'album') {
+                    badgeClass = 'badge bg-secondary';
+                }
+                return `<span class="${badgeClass}">${data}</span>`;
+            }
+           },
           { data: 'code' },
           { data: 'upc' },
-          { data: 'status' },
-          { data: 'form_status' },
+          { 
+            data: 'status',
+            render: function(data, type, full, meta) {
+                let badgeClass = '';
+                if (data === 'Pending') {
+                    badgeClass = 'badge bg-warning text-dark';
+                } else if (data === 'Approved') {
+                    badgeClass = 'badge bg-success';
+                } else if (data === 'Rejected') {
+                    badgeClass = 'badge bg-danger';
+                }
+                return `<span class="${badgeClass}">${data}</span>`;
+            }
+           },
+          {
+            data: 'form_status',
+            render: function(data, type, full, meta) {
+                let badgeClass = '';
+                if (data === 'Incomplete') {
+                    badgeClass = 'badge bg-danger';
+                } else if (data === 'Complete') {
+                    badgeClass = 'badge bg-success';
+                }
+                return `<span class="${badgeClass}">${data}</span>`;
+            }
+          },
           { 
             data: null,
             orderable: false,
             render: function(data, type, full, meta) {
                 const editUrl = `/releases/create/step2?release_id=${data.id}&level=basic`;
-                return `<a class="btn btn-primary" href="${editUrl}">Edit</a> <a class="btn btn-danger">Delete</a>`;
+                return `
+                    <a class="badge bg-label-primary rounded p-2 " href="${editUrl}">
+                        <i class="bx bxs-edit bx-sm"></i>
+                    </a>
+                    <a href="#" class="badge bg-label-danger rounded p-2 delete-btn" data-id="${data.id}">
+                        <i class="bx bx-trash bx-sm"></i>
+                    </a>`;
             }
          }
         ],
@@ -248,6 +302,55 @@ $('#example').DataTable({
        
        
     });
+
+
+  // Listen for the `xhr` event to update HTML elements with summary information
+  $('#example').on('xhr.dt', function (e, settings, json, xhr) {
+        // Update your HTML elements with the response data
+        $('#recordsTotal').text(json.recordsTotal);
+        $('#totalApproved').text(json.totalApproved);
+        $('#totalPending').text(json.totalPending);
+        $('#totalRejected').text(json.totalRejected);
+        $('#totalComplete').text(json.totalComplete);
+        $('#totalIncomplete').text(json.totalIncomplete);
+        $('#totalTracks').text(json.totalTracks);
+        $('#totalTracksApproved').text(json.totalTracksApproved);
+    });
+
+
+
+
+// Handle delete button click
+$('#example').on('click', '.delete-btn', function (e) {
+    e.preventDefault();
+    const releaseId = $(this).data('id');
+
+    if (confirm('Are you sure you want to delete this release?')) {
+        $.ajax({
+            url: `/releases/delete`,
+            type: 'post',
+            data: {
+                _token: "{{ csrf_token() }}",
+                 id : releaseId
+            },
+            success: function(response) {
+                $('#example').DataTable().ajax.reload(null, false); // Reload the table data without resetting pagination
+                console.log("Release deleted successfully: " + response);
+            },
+            error: function(xhr, status, error) {
+                console.error("Error deleting release: " + error);
+            }
+        });
+    }
+});
+
+
+
+
+
+
+
+
 
   const myDropzone = new Dropzone('#dropzone-basic', {
     thumbnailWidth: 200,
@@ -361,9 +464,28 @@ var dropzone = new Dropzone('#image-upload', {
     parallelUploads: 10,
     maxFiles: maxTracks,
     init: function() {
+
+        this.on("success", function(file, response) {
+            // Handle the response here
+          //  console.log("File uploaded successfully:", response);
+            if (response.status === 'success') {
+                $('.track_upload_success').html(response.message);
+                $('.track_upload_success').show();
+                $('.track_upload_error').hide();
+                //console.log("Server response message: " + response.message);
+             
+            } else {
+                $('.track_upload_error').html(response.message);
+                $('.track_upload_success').hide();
+                $('.track_upload_error').show();
+                // console.error("Server error message: " + response.message);
+            }
+        });
+
         this.on("removedfile", function(file) {
 
-    
+            $('.track_upload_success').hide();
+            $('.track_upload_error').hide();
             // Ensure file has a preview element
             if (!file.previewElement) return;
 

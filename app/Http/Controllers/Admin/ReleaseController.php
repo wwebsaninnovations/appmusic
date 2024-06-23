@@ -100,11 +100,37 @@ class ReleaseController extends Controller
             }
         }
     
+        // Count total approved, pending, rejected, and incomplete
+        $totalApproved = Release::where('user_id', $user_id)->where('status', 1)->count();
+        $totalPending = Release::where('user_id', $user_id)->where('status', 0)->count();
+        $totalRejected = Release::where('user_id', $user_id)->where('status', 2)->count();
+        $totalComplete = Release::where('user_id', $user_id)->where('form_status', 1)->count();
+        $totalIncomplete = Release::where('user_id', $user_id)->where('form_status', 0)->count();
+        // Count total tracks across all releases
+        $totalTracks = 0;
+        // Count total tracks from approved releases only
+        $totalTracksApproved = 0;
+
+        foreach ($releases as $release) {
+            $totalTracks += $release->tracks->count();
+
+            if ($release->status == 1) {
+                $totalTracksApproved += $release->tracks->count();
+            }
+        }
+
         return response()->json([
             'data' => $data,
             'draw' => intval($request->input('draw')),
             'recordsTotal' => $totalRecords,
-            'recordsFiltered' => $totalRecords
+            'recordsFiltered' => $totalRecords,
+            'totalApproved' => $totalApproved,
+            'totalPending' => $totalPending,
+            'totalRejected' => $totalRejected,
+            'totalComplete' => $totalComplete,
+            'totalIncomplete' => $totalIncomplete,
+            'totalTracks'=>$totalTracks,
+            'totalTracksApproved'=>$totalTracksApproved
         ]);
     }
     
@@ -318,85 +344,78 @@ class ReleaseController extends Controller
         }
     }
     
-    
-    
-
     public function saveUploadTrack(Request $request) 
     {
-
         $user_id = Auth::user()->id;
         $release_id = $request->release_id;
         $release = Release::find($release_id);
-        $format =  $release->format;
-       
-         // Retrieve existing tracks from the database
+        $format = $release->format;
+    
+        // Retrieve existing tracks from the database
         $existingTracks = Track::where('release_id', $release_id)->get();
         $existingTrackCount = $existingTracks->count();
-
+    
         // Get the new track files from the request
         $newTrackFiles = $request->file('file') ?? [];
         $newTrackCount = count($newTrackFiles);
-
+    
         // Calculate the total count of tracks
         $totalTrackCount = $existingTrackCount + $newTrackCount;
-
-        if($format =="ep")
-        {
-          $flag = (  $totalTrackCount  <= 5 )? true : false;
-
-          if( $flag == false){
-            return response()->json(['status' => 'success', 'message' => 'Track should be  less than  and equal 5.']);
-          }
-        }
-
-        if($format =="album")
-        {
-          $flag = ($totalTrackCount  <= 30)? true : false;
-
-          if( $flag == false){
-            return response()->json(['status' => 'success', 'message' => 'Track should be less than  and equal 30.']);
-          }
-        }
-
-        if($format =="single")
-        {
-          $flag = (  $totalTrackCount == 1)? true : false;
-
-          if( $flag == false){
-            return response()->json(['status' => 'success', 'message' => 'Track should be equal to 1.']);
-          }
-        }
-          // Custom mime type validation
-        
     
-      
-        // Initialize FFMpeg (commented out for now)
-        // $ffmpeg = FFMpeg::create();
-    
-        foreach ($newTrackFiles  as $track) {
-            $path = $track->storeAs('music/' . $user_id . '/' . $release_id . '/tracks', $track->getClientOriginalName(), 'public');
-    
-            // $audio = $ffmpeg->open($track->getPathname());
-            // $format = $audio->getFormat();
-            // $durationInSeconds = $format->get('duration');
-            // $durationFormatted = $this->convertDurationToMinutesSeconds($durationInSeconds);
-    
-            $trackData = [
-                'user_id' => $user_id,
-                'release_id' => $release_id,
-                'track_path' => $path,
-                // 'track_duration' => $durationFormatted
-            ];
-            Track::create($trackData);
+        // Validate track limits based on format
+        if ($format == "ep" && $totalTrackCount > 5) {
+            return response()->json(['status' => 'error', 'message' => 'You have already uploaded maximum number of files for '. $format]);
         }
     
-        if ($request->summary) {
-            return redirect()->route('releases.step2', ['release_id' => $release->id, 'level' => $request->summary])->with('success', 'Tracks updated successfully.');
+        if ($format == "album" && $totalTrackCount > 30) {
+            return response()->json(['status' => 'error', 'message' => 'You have already uploaded maximum number of files for '. $format]);
         }
     
-        return redirect()->route('releases.step2', ['release_id' => $release_id, 'level' => 'uploadtrack'])->with('success', 'Tracks updated successfully.');
+        if ($format == "single" && $totalTrackCount != 1) {
+            return response()->json(['status' => 'error', 'message' => 'Single track should be exactly 1.']);
+        }
+    
+        // Store new tracks
+        if ($newTrackCount > 0) {
+            foreach ($newTrackFiles as $track) {
+                $originalName = $track->getClientOriginalName();
+                $track_path = 'music/' . $user_id . '/' . $release_id . '/tracks/'.$originalName;
+                $newTrackName = $originalName;
+
+                // Check if the track name already exists
+                $existingTrackRow = Track::where('release_id', $release_id)->where('track_path',  $track_path)->first();
+                if ($existingTrackRow) {
+                      // Generate a unique filename by appending the current timestamp
+                    $filenameWithoutExtension = pathinfo($originalName, PATHINFO_FILENAME);
+                    $extension = $track->getClientOriginalExtension();
+                    $newTrackName = $filenameWithoutExtension . '_' . time() . '.' . $extension;
+                }
+         
+                // Store the file with the unique filename
+                $path = $track->storeAs('music/' . $user_id . '/' . $release_id . '/tracks', $newTrackName, 'public');
+    
+                // Save track data to the database
+                $trackData = [
+                    'user_id' => $user_id,
+                    'release_id' => $release_id,
+                    'track_path' => $path,
+                ];
+                Track::create($trackData);
+            }
+        }
+    
+        return response()->json(['status' => 'success', 'message' => 'Track uploaded successfully.']);
+        // Redirect with success message
+        // if ($request->summary) {
+        //     return redirect()->route('releases.step2', ['release_id' => $release->id, 'level' => $request->summary])->with('success', 'Tracks updated successfully.');
+        // }
+    
+        // return redirect()->route('releases.step2', ['release_id' => $release_id, 'level' => 'uploadtrack'])->with('success', 'Tracks updated successfully.');
     }
     
+
+
+ 
 
 
     public function saveEditTrack(Request $request) {
@@ -428,24 +447,24 @@ class ReleaseController extends Controller
     
             $index = $i + 1;
     
-            $messages['track_name.' . $i . '.required'] = "Track name at track- $index is required.";
-            $messages['track_version.' . $i . '.required'] = "Track version at track- $index is required.";
-            $messages['lyrics_language.' . $i . '.required'] = "Lyrics language at track- $index is required.";
-            $messages['explicit_content.' . $i . '.required'] = "Explicit content at track- $index is required.";
-            $messages['primary_artist.' . $i . '.required'] = "Primary artist at track- $index is required.";
-            $messages['featuring_artist.' . $i . '.nullable'] = "Featuring artist at track- $index is required.";
-            $messages['track_remixer.' . $i . '.nullable'] = "Track remixer at track- $index is required.";
-            $messages['song_writer.' . $i . '.required'] = "Song writer at track- $index is required.";
-            $messages['track_producer.' . $i . '.required'] = "Track producer at track- $index is required.";
-            $messages['composer_name.' . $i . '.required'] = "Composer name at track- $index is required.";
-            $messages['label_name.' . $i . '.required'] = "Label name at track- $index is required.";
-            $messages['isrc.' . $i . '.required'] = "ISRC code at track- $index is required.";
-            $messages['primary_performers.' . $i . '.required'] = "Primary performer at track- $index is required.";
-            $messages['pname.' . $i . '.required'] = "Publisher name at track- $index is required.";
-            $messages['cname.' . $i . '.required'] = "Composer name at track- $index is required.";
-            $messages['ownership_for_sound_rec.' . $i . '.required'] = "Ownership for sound recording at track- $index is required.";
-            $messages['country_of_rec.' . $i . '.required'] = "Country of recording at track- $index is required.";
-            $messages['nationality.' . $i . '.required'] = "Nationality at track- $index is required.";
+            $messages['track_name.' . $i . '.required'] = "Track name is required.";
+            $messages['track_version.' . $i . '.required'] = "Track version is required.";
+            $messages['lyrics_language.' . $i . '.required'] = "Lyrics language is required.";
+            $messages['explicit_content.' . $i . '.required'] = "Explicit content is required.";
+            $messages['primary_artist.' . $i . '.required'] = "Primary artist is required.";
+            $messages['featuring_artist.' . $i . '.nullable'] = "Featuring artist is required.";
+            $messages['track_remixer.' . $i . '.nullable'] = "Track remixer is required.";
+            $messages['song_writer.' . $i . '.required'] = "Song writer is required.";
+            $messages['track_producer.' . $i . '.required'] = "Track producer is required.";
+            $messages['composer_name.' . $i . '.required'] = "Composer name is required.";
+            $messages['label_name.' . $i . '.required'] = "Label name is required.";
+            $messages['isrc.' . $i . '.required'] = "ISRC code is required.";
+            $messages['primary_performers.' . $i . '.required'] = "Primary performer is required.";
+            $messages['pname.' . $i . '.required'] = "Publisher name is required.";
+            $messages['cname.' . $i . '.required'] = "Composer name is required.";
+            $messages['ownership_for_sound_rec.' . $i . '.required'] = "Ownership for sound recording is required.";
+            $messages['country_of_rec.' . $i . '.required'] = "Country of recording is required.";
+            $messages['nationality.' . $i . '.required'] = "Nationality is required.";
         }
     
         //$validatedData = $request->validate($rules, $messages);
@@ -544,17 +563,31 @@ class ReleaseController extends Controller
             $track->delete();
     
             // Remove the file from the filesystem
-            if (Storage::exists($track_path)) {
-                Storage::delete($track_path);
-            }
-    
-            // Handle AJAX request
+            if (Storage::disk('public')->exists($track_path)) {
+                Storage::disk('public')->delete($track_path);
+
+                // Handle AJAX request
+                if ($request->ajax()) {
+                    return response()->json(['status' => 'success', 'message' => 'Track deleted successfully']);
+                }
+
+                // Handle form submission
+                return redirect()->back()->with('success', 'Track deleted successfully');
+
+            }else{
+
+                 // Handle AJAX request
             if ($request->ajax()) {
-                return response()->json(['status' => 'success', 'message' => 'Track deleted successfully']);
+                return response()->json(['status' => 'success', 'message' => 'Track not deleted successfully']);
             }
     
             // Handle form submission
-            return redirect()->back()->with('success', 'Track deleted successfully');
+            return redirect()->back()->with('success', 'Track not deleted successfully');
+
+
+            }
+    
+           
         } else {
             // Handle AJAX request
             if ($request->ajax()) {
@@ -580,11 +613,16 @@ class ReleaseController extends Controller
             $release->thumbnail_path="";
             $release->save();
             // Remove the file from the filesystem
-            if (Storage::exists($thumbnail_path)) {
-                Storage::delete($thumbnail_path);
+
+            if (Storage::disk('public')->exists($thumbnail_path)) {
+                // File exists, delete it
+                Storage::disk('public')->delete($thumbnail_path);
+                return response()->json(['status' => 'success', 'message' => 'Artwork deleted successfully']);
+            } else {
+                // File does not exist
+                return response()->json(['status' => 'error', 'message' => 'Artwork file not found']);
             }
-           // Handle AJAX request
-            return response()->json(['status' => 'success', 'message' => 'Artwork deleted successfully']);
+      
         } else {
             // Handle AJAX request
             return response()->json(['status' => 'error', 'message' => 'Artwork not found'], 404);
@@ -599,6 +637,27 @@ class ReleaseController extends Controller
       $release_id = $request->release_id;
       return  "music/{$user_id}/{$release_id}/thumbnail/{$filename}";
     }
+
+
+
+
+    public function deleteReleaseData(Request $request)
+    {
+
+        $id = $request->id;
+
+        $release = Release::find($id);
+
+        if (!$release) {
+            return response()->json(['message' => 'Release not found'], 404);
+        }
+
+     // Perform any necessary cleanup, e.g., deleting associated tracks or files
+         $release->delete();
+         return response()->json(['message' => 'Release deleted successfully'], 200);
+    }
+
+
 
     
     /**
@@ -640,11 +699,6 @@ class ReleaseController extends Controller
     {
         //
     }
-
-
-
-
-
 
     //helper function
 

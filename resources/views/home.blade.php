@@ -5,6 +5,147 @@
             <!-- Content -->
             <div class="container-xxl flex-grow-1 container-p-y">
               <div class="row">
+              <div class="row g-4 mb-4">
+                    <div class="col-sm-6 col-xl-3">
+                    <div class="card">
+                        <div class="card-body">
+                        <div class="d-flex align-items-start justify-content-between">
+                            <div class="content-left">
+                            <span>Total Releases</span>
+                            <div class="d-flex align-items-end mt-2">
+                                <h4 class="mb-0 me-2" >{{$totalRelease}}</h4>
+                            </div>
+                            </div>
+                            <span class="badge bg-label-primary rounded p-2">
+                            <i class="bx bxs-playlist bx-sm"></i>
+                            </span>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                    <div class="card">
+                        <div class="card-body">
+                        <div class="d-flex align-items-start justify-content-between">
+                            <div class="content-left">
+                            <span>Approved</span>
+                            <div class="d-flex align-items-end mt-2" >
+                                <h4 class="mb-0 me-2" >{{$totalApproved}}</h4>
+                            </div>
+                            </div>
+                            <span class="badge bg-label-success rounded p-2">
+                            <i class="bx bxs-playlist bx-sm"></i>
+                            </span>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="card">
+                            <div class="card-body">
+                            <div class="d-flex align-items-start justify-content-between">
+                                <div class="content-left">
+                                <span>Pending</span>
+                                <div class="d-flex align-items-end mt-2">
+                                    <h4 class="mb-0 me-2" >{{$totalPending}}</h4>
+                                </div>
+                                </div>
+                                <span class="badge bg-label-warning rounded p-2">
+                                <i class="bx bxs-playlist bx-sm"></i>
+                                </span>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="card">
+                                <div class="card-body">
+                                        <div class="d-flex align-items-start justify-content-between">
+                                            <div class="content-left">
+                                                <span>Rejected</span>
+                                                <div class="d-flex align-items-end mt-2">
+                                                    <h4 class="mb-0 me-2">{{$totalRejected}}</h4>
+                                                </div>
+                                            </div>
+                                            <span class="badge bg-label-danger rounded p-2">
+                                            <i class="bx bxs-playlist bx-sm"></i>
+                                            </span>
+                                        </div>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="card">
+                                <div class="card-body">
+                                        <div class="d-flex align-items-start justify-content-between">
+                                            <div class="content-left">
+                                                <span>Complete forms</span>
+                                                <div class="d-flex align-items-end mt-2">
+                                                    <h4 class="mb-0 me-2">{{$totalComplete}}</h4>
+                                                </div>
+                                            </div>
+                                            <span class="badge bg-label-success rounded p-2">
+                                            <i class="bx bx-detail bx-sm"></i>
+                                            </span>
+                                        </div>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="card">
+                                <div class="card-body">
+                                        <div class="d-flex align-items-start justify-content-between">
+                                            <div class="content-left">
+                                                <span>Incomplete forms</span>
+                                                <div class="d-flex align-items-end mt-2">
+                                                    <h4 class="mb-0 me-2" >{{$totalIncomplete}}</h4>
+                                                </div>
+                                            </div>
+                                            <span class="badge bg-label-danger rounded p-2">
+                                            <i class="bx bx-detail bx-sm"></i>
+                                            </span>
+                                        </div>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="card">
+                            <div class="card-body">
+                            <div class="d-flex align-items-start justify-content-between">
+                                <div class="content-left">
+                                <span>Total Tracks</span>
+                                <div class="d-flex align-items-end mt-2">
+                                    <h4 class="mb-0 me-2" >{{$totalTracks}}</h4>
+                                </div>
+                                </div>
+                                <span class="badge bg-label-primary rounded p-2">
+                                <i class=" bx bx-play-circle bx-sm"></i>
+                                </span>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="card">
+                            <div class="card-body">
+                            <div class="d-flex align-items-start justify-content-between">
+                                <div class="content-left">
+                                <span> Approved Tracks</span>
+                                <div class="d-flex align-items-end mt-2">
+                                    <h4 class="mb-0 me-2">{{$totalTracksApproved}}</h4>
+                                </div>
+                                </div>
+                                <span class="badge bg-label-success rounded p-2">
+                                <i class=" bx bx-play-circle bx-sm"></i>
+                                </span>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+              </div>
+              <div class="row">
                 <div class="col-lg-8 mb-4 order-0">
                   <div class="card">
                     <div class="d-flex align-items-end row">
@@ -14,7 +155,7 @@
                           <p class="mb-2"><i class="bx bx-envelope"></i>{{Auth::user()->email}} </p>
                           <p class="mb-2"><i class="bx bx-user"></i> Client id: {{Auth::user()->client_id}} </p>
 
-                          <a href="javascript:;" class="btn btn-sm btn-label-primary">View Badges</a>
+                          <a href="{{route('profile')}}" class="btn btn-sm btn-label-primary">View profile</a>
                         </div>
                       </div>
                       <div class="col-sm-5 text-center text-sm-left">

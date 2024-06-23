@@ -9,11 +9,12 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
+  
     public function up(): void
     {
         Schema::create('tracks', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('release_id');
+            $table->foreignId('release_id')->constrained('releases')->onDelete('cascade'); // Adding foreign key constraint with cascading delete
             $table->bigInteger('user_id');
             $table->string('track_path')->nullable();
             $table->string('track_name')->nullable();

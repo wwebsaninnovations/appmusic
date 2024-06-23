@@ -222,7 +222,7 @@
                                 @endif
                             </div>
 
-                            <button type="submit" class="btn btn-primary">Save & Next</button>
+                            <button type="submit" class="btn btn-primary"> Save</button>
                         </form>
                 </div>
 
@@ -331,7 +331,7 @@
            
                 <div class="tab-pane fade {{($level=='uploadtrack')? ' show active':''}}" id="v-pills-uploadtrack" role="tabpanel" aria-labelledby="v-pills-uploadtrack-tab">
                      <h5>Upload Tracks</h5>
-               
+                  
                      <div class="col-12">
                         <div class="card">
                             <ul>
@@ -339,9 +339,12 @@
                                 <li><strong>EP</strong> : maximum 5 files.</li>
                                 <li><strong>Album</strong> : maximum 30 files.</li>
                             </ul>
+                            
                             <h5 class="card-header">Multiple</h5>
+                                <!-- Display general error message -->
+                            <div class="alert alert-danger track_upload_error" style="display:none;"></div>
+                            <div class="alert alert-danger track_upload_success" style="display:none;"></div>
                             <div class="card-body">
-                        
                                 <form action="{{route('releases.uploadTrack.save')}}"  method="post" enctype="multipart/form-data" id="image-upload" class="dropzone">
                                     @csrf
                                     <input type="hidden" name ="release_id" id="release_id" value="{{$release->id}}">
@@ -389,9 +392,12 @@
                  <div class="tab-pane fade {{($level=='edittrack')? ' show active':''}}" id="v-pills-edittrack" role="tabpanel"        aria-labelledby="v-pills-edittrack-tab">
                         <h5>Edit Tracks</h5>
                         @if (session('errors') && session('errors')->hasBag('edittrack'))
-                            <div class="alert alert-danger">
-                            <strong>Alert:</strong> You have missed the some required fields, please check each track manually.
-                            </div>
+                            @if($release->format != 'single')
+                                <div class="alert alert-danger">
+                                    <strong>Alert:</strong> You have missed the some required fields, please check each track manually.
+                                </div>
+                            @endif    
+
                         @endif
 
                         @if($release->tracks->isEmpty())
@@ -408,7 +414,7 @@
                                         <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                                             @foreach($release->tracks as $index => $track)
                                             <a class="nav-link {{ ($index == 0) ? 'active' : '' }}" id="v-pills-track{{ $index }}-tab" data-bs-toggle="pill" href="#v-pills-track{{ $index }}" role="tab" aria-controls="v-pills-track{{ $index }}" aria-selected="{{ ($index == 0) ? 'true' : 'false' }}">
-                                                <span>{{ $index + 1 }}</span> {{ basename($track->track_path) }}
+                                                <span>{{ $index + 1 }}. </span> {{ basename($track->track_path) }}
                                                 <span class="track-duration">{{ $track->track_duration }}</span>
                                             </a>
                                             @endforeach
@@ -485,7 +491,7 @@
                                                         @endif
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label for="featuring_artist"  class="form-label">Featuring Artist*</label>
+                                                        <label for="featuring_artist"  class="form-label">Featuring Artist</label>
                                                         
                                                         @if(count($release->tracks) > 1)
                                                           <button type="button" class="apply_click click_btn">Apply Now</button>
@@ -496,7 +502,7 @@
                                                         @endif
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label for="track_remixer"  class="form-label">Remixer*</label>
+                                                        <label for="track_remixer"  class="form-label">Remixer</label>
                                                         @if(count($release->tracks) > 1)
                                                           <button type="button" class="apply_click click_btn">Apply Now</button>
                                                         @endif
@@ -634,7 +640,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Next</button>
+                                <button type="submit" class="btn btn-primary">Save</button>
                             </form>
                        @endif
                  </div>
@@ -677,7 +683,7 @@
                                 <label class="form-check-label" for="worldwide">worldwide</label>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Next</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
                     </form>
 
                 </div>

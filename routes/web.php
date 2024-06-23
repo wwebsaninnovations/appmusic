@@ -84,6 +84,7 @@ Route::post('/releases/create/removeartwork', [ReleaseController::class, 'remove
 //Ajax URL
 
 Route::get('/releases/getReleaseData', [ReleaseController::class, 'getReleaseData']);
+Route::post('/releases/delete', [ReleaseController::class, 'deleteReleaseData']);
 
 
 Route::resources([
