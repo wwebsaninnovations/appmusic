@@ -61,25 +61,38 @@ $('.apply_radio_click').click(function() {
 
  });
 
- $('.apply_select_click').click(function() {
-     var container = $(this).closest('.wrap-field'); 
-     var selects = container.find('.input-ownership_for_sound_rec'); 
-     var all_selects = $('.input-ownership_for_sound_rec'); 
-     if (selects.length > 0) {
-         var value = selects.val();
-         if (value !== "") {
-             all_selects.each(function() {
-                 $(this).val("").change(); 
-                 $(this).val(value).change(); 
-             });
-         }
-     } 
- });
+ var changeHandler = function(){
+    console.log("***");
+    jQuery(this).closest('.wrap-field').find('.apply_select_click').html("Apply Now");
+};
+
+$(document).on("change", '.input-ownership_for_sound_rec', changeHandler);
+
+$('.apply_select_click').click(function() {
+    var container = $(this).closest('.wrap-field');
+    $(this).html("Apply Now <b> ✓ </b>");
+    var selects = container.find('.input-ownership_for_sound_rec');
+    var all_selects = $('.input-ownership_for_sound_rec');
+
+    if (selects.length > 0) {
+        var value = selects.val();
+        if (value !== "") {
+            $(document).off("change", '.input-ownership_for_sound_rec', changeHandler); // Unbind change handler
+            all_selects.each(function() {
+                $(this).val(value).change();
+            });
+            $(document).on("change", '.input-ownership_for_sound_rec', changeHandler); // Rebind change handler
+        }
+    }
+});
+
 
  $('.apply_checkbox_click').click(function() {
     var container = $(this).closest('.wrap-field'); 
     var checkbox  = container.find('.input-primary_performers:checked');
+    jQuery(this).html("Apply Now <b> ✓ </b>");
     if(checkbox.length > 0) {
+  
         jQuery(this).closest('.wrap-field').find('.apply_radio_click').html("Apply Now");
         $('.input-primary_performers').prop("checked", true); 
     }else{
@@ -88,6 +101,13 @@ $('.apply_radio_click').click(function() {
  });
 
 });
+
+ 
+jQuery(document).on("change", '.input-primary_performers', function(){
+    console.log("***")
+    jQuery(this).closest('.wrap-field').find('.apply_checkbox_click').html("Apply Now");
+
+ });
 
 // $(document).ready(function() {
 //     $('#droparea').on('click', function() {
