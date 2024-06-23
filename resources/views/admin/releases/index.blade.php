@@ -5,8 +5,8 @@
   <!-- Content wrapper -->
   <div class="content-wrapper">
         <!-- Content -->
-        <div class="container-xxl flex-grow-1 container-p-y">
-                <div class="row g-4 mb-4">
+        <div class="container-xxl flex-grow-1 container-p-y" >
+                <div class="row g-4 mb-4" style="display:none">
                     <div class="col-sm-6 col-xl-3">
                     <div class="card">
                         <div class="card-body">
@@ -155,8 +155,9 @@
               <table id="example" class="display" style="width:100%">
                         <thead>
                             <tr>
-                               <th>Select</th>
-                                <th>id</th>
+                                <th></th> 
+                                <th>Id</th>                      
+                                <th>Release Id</th>
                                 <th>Thumbnail</th>
                                 <th>Release Name</th>
                                 <th>Format</th>

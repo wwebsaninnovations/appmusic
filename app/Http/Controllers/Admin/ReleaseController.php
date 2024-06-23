@@ -27,7 +27,7 @@ class ReleaseController extends Controller
     public function getReleaseData(Request $request)
     {
         $user_id = Auth::id(); // Using Auth::id() directly to get the authenticated user's ID
-        $columns = ['id', 'thumbnail_path', 'release_name', 'format', 'release_code', 'upc', 'status'];
+        $columns = ['srn','id', 'thumbnail_path', 'release_name', 'format', 'release_code', 'upc', 'status'];
     
         $length = $request->input('length');
         $column = $request->input('order.0.column', 0); // Index of column to sort, default to 0
@@ -74,6 +74,7 @@ class ReleaseController extends Controller
         $data = [];
     
         if ($releases->isNotEmpty()) {
+            $count = 1;
             foreach ($releases as $release) {
                 $status = match ($release->status) {
                     0 => 'Pending',
@@ -88,6 +89,7 @@ class ReleaseController extends Controller
 
     
                 $data[] = [
+                    'srn'         =>$count++,
                     'id'           => $release->id,
                     'thumbnail'    => $release->thumbnail_path, // Adjust this to match your actual attribute name
                     'release_name' => $release->release_name,

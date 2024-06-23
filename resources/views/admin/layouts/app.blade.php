@@ -68,13 +68,7 @@
 <script src="{{ asset('assets/vendor/js/template-customizer.js') }}"></script>
 <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
 <script src="{{ asset('assets/js/config.js') }}"></script>
-<style>tr.selected {
-    background:blue;
-}
-tr.selected td{
-    color:#fff;
-}
-</style>
+
 
 <!-- Core CSS -->
 @php $classDark =""; @endphp
@@ -201,6 +195,7 @@ $('#example').DataTable({
         },
         columns: [
           { data: '' },  
+          { data: 'srn' },  
           { data: 'id' },
           { 
             data: 'thumbnail',
@@ -297,11 +292,9 @@ $('#example').DataTable({
                         columns: ':not(:first-child):not(:last-child)' 
                     }
                 },
-        ]
-
-       
-       
-    });
+        ],
+           
+});
 
 
   // Listen for the `xhr` event to update HTML elements with summary information

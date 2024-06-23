@@ -343,7 +343,7 @@
                             <h5 class="card-header">Multiple</h5>
                                 <!-- Display general error message -->
                             <div class="alert alert-danger track_upload_error" style="display:none;"></div>
-                            <div class="alert alert-danger track_upload_success" style="display:none;"></div>
+                            <div class="alert alert-success track_upload_success" style="display:none;"></div>
                             <div class="card-body">
                                 <form action="{{route('releases.uploadTrack.save')}}"  method="post" enctype="multipart/form-data" id="image-upload" class="dropzone">
                                     @csrf
@@ -688,7 +688,7 @@
 
                 </div>
                  <div class="tab-pane fade release_summary {{($level=='summary')? ' show active':''}}" id="v-pills-summary" role="tabpanel" aria-labelledby="v-pills-summary-tab">
-                    <div class="container mt-5">
+                    <div class=" mt-2">
                         <h2>Release Summary</h2>
 
                         <div class="card mb-4">
