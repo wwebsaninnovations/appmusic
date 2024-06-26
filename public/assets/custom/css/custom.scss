@@ -351,6 +351,13 @@ thead, tbody, tfoot, tr, td, th{
     table.dataTable th, table.dataTable td{
         color: #000;
     }
+    .release-nav-link{
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        padding: 12px 15px;
+        background: #fff;
+        height: 300px;
+    }  
+    
 }
 
 .dark-mode{
@@ -396,10 +403,4 @@ div.dt-container div.dt-paging{
         }
     }
 }
-.release-nav-link{
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-    padding: 12px 15px;
-    background: #fff;
-    height: 300px;
-}  
 

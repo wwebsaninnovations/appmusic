@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('platform_release', function (Blueprint $table) {
-            $table->foreignId('release_id')->constrained('releases')->onDelete('cascade');
-            $table->foreignId('platform_id')->constrained('platforms')->onDelete('cascade');
-            $table->primary(['release_id', 'platform_id']);
+        Schema::create('platforms', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->bigInteger('user_id');
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('platform_release');
+        Schema::dropIfExists('platforms');
     }
 };

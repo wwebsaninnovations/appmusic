@@ -56,8 +56,8 @@
             @canany(['create-user', 'edit-user', 'delete-user'])
             <li class="menu-item {{ request()->routeIs('users.*') ? 'active' : '' }}">
               <a href="{{ route('users.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-detail"></i>
-                <div data-i18n="Manage User">Manage User</div>
+                <i class="menu-icon tf-icons bx bx-user"></i>
+                <div data-i18n=" User"> User</div>
               </a>
             </li>
             @endcanany
@@ -65,23 +65,54 @@
             @canany(['create-role', 'edit-role', 'delete-role'])
             <li class="menu-item {{ request()->routeIs('roles.*') ? 'active' : '' }}">
               <a href="{{ route('roles.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div data-i18n="Manage Roles">Manage Roles</div>
+                <i class="menu-icon tf-icons bx bx-check-shield"></i>
+                <div data-i18n="Roles & Permission">Roles & Permission</div>
               </a>
             </li>
             @endcanany
-
-            <li class="menu-item">
-                <a href="#" class="menu-link">
-                <i class="fa-solid fa-headphones menu-icon tf-icons"></i>
-                  <div data-i18n=" Manage Genere"> Manage Genere</div>
+            <li class="menu-item {{ request()->routeIs('genre.*') ? 'active' : '' }}">
+                <a  href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons  bx bx-headphone"></i>
+                  <div data-i18n=" Genre">  Genre</div>
                 </a>
+                <ul class="menu-sub">
+                <li class="menu-item   {{ request()->routeIs('genre.index') ? 'active' : '' }}">
+                  <a href="{{ route('genre.index') }}"  class="menu-link">
+                    <div data-i18n="List">List</div>
+                  </a>
+                </li>
+             
+                <li class="menu-item  {{ request()->routeIs('genre.create') ? 'active' : '' }}">
+                  <a href="{{ route('genre.create') }}" class="menu-link">
+                    <div data-i18n="Add">Add</div>
+                  </a>
+                </li>
+              </ul>
+              </li>
+              <li class="menu-item {{ request()->routeIs('platforms.*') ? 'active' : '' }}">
+                <a  href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons  bx bx-desktop"></i>
+                  <div data-i18n="Platform"> Platform</div>
+                </a>
+                <ul class="menu-sub">
+                <li class="menu-item   {{ request()->routeIs('platforms.index') ? 'active' : '' }}">
+                  <a href="{{ route('platforms.index') }}"  class="menu-link">
+                    <div data-i18n="List">List</div>
+                  </a>
+                </li>
+             
+                <li class="menu-item  {{ request()->routeIs('platforms.create') ? 'active' : '' }}">
+                  <a href="{{ route('platforms.create') }}" class="menu-link">
+                    <div data-i18n="Add">Add</div>
+                  </a>
+                </li>
+              </ul>
               </li>
 
             <li class="menu-item ">
                 <a href="#" class="menu-link">
 
-                <i class="fa-solid   fa-line-chart menu-icon tf-icons"></i>
+                <i class="fa-solid fa-line-chart menu-icon tf-icons"></i>
                   <div data-i18n="Analytics"> Analytics</div>
                 </a>
               </li>

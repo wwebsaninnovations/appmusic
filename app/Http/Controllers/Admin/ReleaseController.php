@@ -12,6 +12,7 @@ use App\Http\Requests\ValidateTrackRequest;
 use DB;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Platform;
+use App\Models\Genre;
 class ReleaseController extends Controller
 {
     /**
@@ -176,11 +177,13 @@ class ReleaseController extends Controller
         $release = Release::with('tracks')->find($request->release_id);
         $level = $request->level;
         $platforms = Platform::all();
+        $genres = Genre::all();
         
         $viewData = [
             'release' => $release,
             'level' => $level,
-            'platforms' => $platforms
+            'platforms' => $platforms,
+            'genres'=>$genres 
         ];
     
 

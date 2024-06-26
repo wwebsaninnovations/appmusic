@@ -315,6 +315,12 @@ thead, tbody, tfoot, tr, td, th {
 .white-mode table.dataTable th, .white-mode table.dataTable td {
   color: #000;
 }
+.white-mode .release-nav-link {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+  padding: 12px 15px;
+  background: #fff;
+  height: 300px;
+}
 
 .dark-mode table.dataTable td, .dark-mode th {
   border: 1px solid;
@@ -354,11 +360,4 @@ div.dt-container div.dt-paging {
   margin-bottom: 30px;
   margin-top: 10px;
   width: 120px;
-}
-
-.release-nav-link {
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-  padding: 12px 15px;
-  background: #fff;
-  height: 300px;
 }/*# sourceMappingURL=custom.css.map */

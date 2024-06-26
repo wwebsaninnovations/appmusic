@@ -52,7 +52,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="release_code" class="form-label">Release Code</label>
+                            <label for="release_code" class="form-label">Release Code (Only Numeric)</label>
                             <input type="text" class="form-control" id="release_code" name="release_code" value="{{ old('release_code') }}">
                             @if ($errors->has('release_code'))
                                 <div class="text-danger">
@@ -62,7 +62,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="upc" class="form-label">UPC</label>
+                            <label for="upc" class="form-label">UPC (Only Numeric)</label>
                             <input type="text" class="form-control" id="upc" name="upc" value="{{ old('upc') }}">
                             @if ($errors->has('upc'))
                                 <div class="text-danger">

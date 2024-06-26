@@ -6,7 +6,8 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BookController;
 use App\Http\Controllers\Admin\MusicController;
 use App\Http\Controllers\Admin\ReleaseController;
-use App\Http\Controllers\Admin\SearchController;
+use App\Http\Controllers\Admin\GenreController;
+use App\Http\Controllers\Admin\PlatformController;
 use App\Http\Controllers\ThemeController;
 /*
 |--------------------------------------------------------------------------
@@ -50,7 +51,6 @@ Route::post('/musics/create/step2', [MusicController::class, 'saveStep2'])->name
 Route::get('/musics/create/step3', [MusicController::class, 'step3'])->name('musics.step3');
 
 
-Route::get('/search',  [SearchController::class, 'search'])->name('search');
 
 //Edit Route
 Route::get('/musics/edit/step1/{id}', [MusicController::class, 'editStep1'])->name('musics.editStep1');
@@ -87,8 +87,13 @@ Route::get('/releases/getReleaseData', [ReleaseController::class, 'getReleaseDat
 Route::post('/releases/delete', [ReleaseController::class, 'deleteReleaseData']);
 
 
+//GENRE RAUTE
+
+
 Route::resources([
     // 'books' => BookController::class,
+    'platforms' => PlatformController::class,
+    'genre' => GenreController::class,
     'roles' => RoleController::class,
     'users' => UserController::class,
     'musics'=> MusicController::class,

@@ -31,7 +31,7 @@
                             @csrf
 
                             <div class="mb-3">
-                                <label for="upc" class="form-label">UPC*</label>
+                                <label for="upc" class="form-label">UPC (Only Numeric)*</label>
                                 <input type="text" class="form-control" id="upc" name="upc" value="{{ old('upc', $release->upc ?? '') }}">
                                 @if ($errors->has('upc'))
                                     <div class="text-danger">
@@ -44,7 +44,7 @@
                             <input type="hidden" name="summary" value="{{ $summary ?? '' }}">
 
                             <div class="mb-3">
-                                <label for="release_code" class="form-label">Release Code*</label>
+                                <label for="release_code" class="form-label">Release Code (Only Numeric)*</label>
                                 <input type="text" class="form-control" id="release_code" name="release_code" value="{{ old('release_code', $release->release_code ?? '') }}">
                                 @if ($errors->has('release_code'))
                                     <div class="text-danger">
@@ -140,11 +140,18 @@
 
                             <div class="mb-3">
                                 <label for="genre" class="form-label">Genre*</label>
-                                <select class="form-select" id="genre" name="genre">
-                                    <option value="">Select Genre</option>
-                                    <option value="pop" {{ old('genre', $release->genre) == 'pop' ? 'selected' : '' }}>Pop</option>
-                                    <!-- Add additional genres as needed -->
-                                </select>
+                                    <select name="genre" id="genre" class="form-control @error('genre') is-invalid @enderror">
+                                        @foreach($genres as $genre)
+                                            <option value="{{ $genre->name }}" {{ old('genre', $release->genre) == $genre->name ? 'selected' : '' }}>
+                                                {{ ucfirst($genre->name) }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('genre')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+
+
                                 @if ($errors->has('genre'))
                                     <div class="text-danger">
                                         {{ $errors->first('genre') }}
@@ -156,7 +163,11 @@
                                 <label for="sub_genre" class="form-label">Sub Genre*</label>
                                 <select class="form-select" id="sub_genre" name="sub_genre">
                                     <option value="">Select Sub Genre</option>
-                                    <option value="pop" {{ old('sub_genre', $release->sub_genre) == 'pop' ? 'selected' : '' }}>Pop</option>
+                                       @foreach($genres as $genre)
+                                            <option value="{{ $genre->name }}" {{ old('sub_genre', $release->sub_genre) == $genre->name ? 'selected' : '' }}>
+                                                {{ ucfirst($genre->name) }}
+                                            </option>
+                                        @endforeach
                                 </select>
                                 @if ($errors->has('sub_genre'))
                                     <div class="text-danger">
@@ -181,7 +192,9 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="cname_basic" class="form-label">C Name*</label>
+                            <label for="pname_basic" class="form-label">C Name (Year with Company Name)*
+                              <span class="small text-warning">(The C Name should follow the pattern: Year with Company Name)</span>
+                              </label>
                                 <input type="text" class="form-control" id="cname_basic" name="cname_basic" placeholder="Year with Company Name" value="{{ old('cname_basic', $release->cname ?? '') }}">
                                 @if ($errors->has('cname_basic'))
                                     <div class="text-danger">
@@ -191,7 +204,9 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="pname_basic" class="form-label">P Name*</label>
+                            <label for="pname_basic" class="form-label">P Name (Year with Company Name)*
+                            <span class="small text-warning">(The P Name should follow the pattern: Year with Company Name)</span>
+                            </label>
                                 <input type="text" class="form-control" id="pname_basic" name="pname_basic" placeholder="Year with Company Name" value="{{ old('pname_basic', $release->pname ?? '') }}">
                                 @if ($errors->has('pname_basic'))
                                     <div class="text-danger">
@@ -203,7 +218,10 @@
                             <h5>Release Date info</h5>
 
                             <div class="mb-3">
-                                <label for="original_release_date" class="form-label">Original Release Date*</label>
+                            <label for="original_release_date" class="form-label">Original Release Date* 
+                                <span class="small text-warning">(Release date should be at least 7 days from the current date)</span>
+                            </label>
+
                                 <input type="date" class="form-control" name="original_release_date" value="{{ old('original_release_date', $release->original_release_date) }}">
                                 @if ($errors->has('original_release_date'))
                                     <div class="text-danger">
@@ -213,7 +231,8 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="sales_date" class="form-label">Sales Date*</label>
+                                <label for="sales_date" class="form-label">Sales Date* <span class="small text-warning">(Sales date should be at least 7 days from the current date)</span>
+                                </label>
                                 <input type="date" class="form-control" name="sales_date" value="{{ old('sales_date', $release->sales_date) }}">
                                 @if ($errors->has('sales_date'))
                                     <div class="text-danger">
@@ -579,7 +598,9 @@
                                                     </div>
                                                     <h5>Master Right</h5>
                                                     <div class="mb-3">
-                                                        <label for="pname"  class="form-label">Publisher Name* </label>
+                                                        <label for="pname"  class="form-label">P Name* 
+                                                        <span class="small text-warning">(The P Name should follow the pattern: Year with Company Name)</span>
+                                                        </label>
                                                         @if(count($release->tracks) > 1)
                                                           <button type="button" class="apply_click click_btn">Apply Now</button>
                                                         @endif
@@ -590,7 +611,9 @@
                                                         @endif
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label for="cname"  class="form-label">C Name* </label>
+                                                        <label for="cname"  class="form-label">C Name* 
+                                                        <span class="small text-warning">(The C Name should follow the pattern: Year with Company Name)</span>
+                                                        </label>
                                                         @if(count($release->tracks) > 1)
                                                           <button type="button" class="apply_click click_btn">Apply Now</button>
                                                         @endif
@@ -606,9 +629,14 @@
                                                         @endif
                                                         
                                                         <select name="ownership_for_sound_rec[]" class="form-control input-ownership_for_sound_rec" data-name="ownership_for_sound_rec" id="ownership_for_sound_rec{{ $index }}">
-                                                            <option value="I am the owner" {{ old('ownership_for_sound_rec.'.$index, $track->ownership_for_sound_rec) == 'I am the owner' ? 'selected' : '' }}>I am the owner</option>
-                                                            <option value="I am the manager" {{ old('ownership_for_sound_rec.'.$index, $track->ownership_for_sound_rec) == 'I am the manager' ? 'selected' : '' }}>I am the manager</option>
+                                                            <option value="">Select Ownership Type</option>
+                                                            <option value="I am the original master copyright owner" {{ old('ownership_for_sound_rec.'.$index, $track->ownership_for_sound_rec) == 'I am the original master copyright owner' ? 'selected' : '' }}>I am the original master copyright owner</option>
+                                                            <option value="I acquired the master copyright" {{ old('ownership_for_sound_rec.'.$index, $track->ownership_for_sound_rec) == 'I acquired the master copyright' ? 'selected' : '' }}>I acquired the master copyright</option>
+                                                            <option value="I am the exclusive licensee (Not the owner)" {{ old('ownership_for_sound_rec.'.$index, $track->ownership_for_sound_rec) == 'I am the exclusive licensee (Not the owner)' ? 'selected' : '' }}>I am the exclusive licensee (Not the owner)</option>
+                                                            <option value="I am a non exclusive licensee (Not the owner)" {{ old('ownership_for_sound_rec.'.$index, $track->ownership_for_sound_rec) == 'I am a non exclusive licensee (Not the owner)' ? 'selected' : '' }}>I am a non exclusive licensee (Not the owner)</option>
+                                                            <option value="I am the master" {{ old('ownership_for_sound_rec.'.$index, $track->ownership_for_sound_rec) == 'I am the master' ? 'selected' : '' }}>I am the master</option>
                                                         </select>
+
                                                         @if ($errors->edittrack->has('ownership_for_sound_rec.' . $index))
                                                             <div class="text-danger">{{ $errors->edittrack->first('ownership_for_sound_rec.' . $index) }}</div>
                                                         @endif

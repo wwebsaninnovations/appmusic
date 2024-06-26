@@ -281,7 +281,7 @@ $('#example').DataTable({
         paging: true,
         lengthMenu: [10, 25, 50, 100],
         pageLength: 10,
-        order: [[1, 'desc']],
+        order: [[2, 'desc']],
         searchDelay: 500 ,
         dom: 'Blfrtip',  //enabel all datatables functionality
         buttons: [
