@@ -12,6 +12,7 @@
                 <a class="nav-link {{($level=='edittrack')? ' active':''}}" id="v-pills-edittrack-tab" data-bs-toggle="pill" href="#v-pills-edittrack" role="tab" aria-controls="v-pills-edittrack" aria-selected="false" data-href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'edittrack'])}}">Edit Track</a>
                 <a class="nav-link {{($level=='platforms')? ' active':''}}" id="v-pills-platforms-tab" data-bs-toggle="pill" href="#v-pills-platforms" role="tab" aria-controls="v-pills-edittrack" aria-selected="false" data-href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'platforms'])}}">Platforms-Configuration</a>
                 <a class="nav-link {{($level=='summary')? ' active':''}}" id="v-pills-summary-tab" data-bs-toggle="pill" href="#v-pills-summary" role="tab" aria-controls="v-pills-summary" aria-selected="false" data-href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'summary'])}}">Summary</a>
+                <a class="nav-link {{($level=='approval')? ' active':''}}" id="v-pills-approval-tab" data-bs-toggle="pill" href="#v-pills-approval" role="tab" aria-controls="v-pills-approval" aria-selected="false" data-href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'approval'])}}">Approval Status</a>
             </div>
         </div>
 
@@ -750,35 +751,12 @@
 
                 </div>
                  <div class="tab-pane fade release_summary {{($level=='summary')? ' show active':''}}" id="v-pills-summary" role="tabpanel" aria-labelledby="v-pills-summary-tab">
+                  <h2 class="text-center">Release Summary</h2>
                         <!-- Notice to complete all steps -->
                     <div class="alert alert-info mt-4">
-                        Please complete all required steps and then click the "Save Release" button.
+                         Please complete all required steps and review the release summary carefully before clicking the "Save Release" button to finish the release process. If any steps are incomplete, the release will be marked as incomplete.
                     </div>
                     <div class=" mt-2">
-                        <h2>Release Summary</h2>
-
-                        <div class="card mb-4">
-                            <div class="card-body">
-                                <form method="POST" action="{{route('releases.status.update')}}" class="d-flex flex-column flex-sm-row align-items-center">
-                                    @csrf
-                                    @method('PUT')
-                                    <div class="form-group mb-2 mb-sm-0 mr-sm-3 flex-grow-1">
-                                        <label for="status">Release Status</label>
-                                        <select class="form-control" id="status" name="status">
-                                            <option value="0" {{ $release->status == 0 ? 'selected' : '' }}>Pending</option>
-                                            <option value="1" {{ $release->status == 1 ? 'selected' : '' }}>Approved</option>
-                                            <option value="2" {{ $release->status == 2 ? 'selected' : '' }}>Rejected</option>
-                                        </select>
-                                        <input type="hidden" name="release_id" value="{{$release->id}}" />
-                                        <button type="submit" class="btn btn-primary">Update</button>
-                                    </div>
-                                 
-                                </form>
-                            </div>
-                        </div>
-
-
-
                         <div class="card mb-4">
                             <div class="card-body">
                                 @php $status = 1; @endphp
@@ -951,25 +929,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card mb-4">
-                            <div class="card-body">
-                                <form method="POST" action="{{route('releases.status.update')}}" class="d-flex flex-column flex-sm-row align-items-center">
-                                    @csrf
-                                    @method('PUT')
-                                    <div class="form-group mb-2 mb-sm-0 mr-sm-3 flex-grow-1">
-                                        <label for="status">Release Status</label>
-                                        <select class="form-control" id="status" name="status">
-                                            <option value="0" {{ $release->status == 0 ? 'selected' : '' }}>Pending</option>
-                                            <option value="1" {{ $release->status == 1 ? 'selected' : '' }}>Approved</option>
-                                            <option value="2" {{ $release->status == 2 ? 'selected' : '' }}>Rejected</option>
-                                        </select>
-                                        <input type="hidden" name="release_id" value="{{$release->id}}" />
-                                        <button type="submit" class="btn btn-primary">Update</button>
-                                    </div>
-                                 
-                                </form>
-                            </div>
-                        </div>
+                
                      
                         <form method="POST" action="{{ route('releases.final.release.submit') }}">
                             @csrf
@@ -980,6 +940,27 @@
                         </form>
 
               </div>
+              <div class="tab-pane fade {{($level=='approval')? ' show active':''}}" id="v-pills-approval" role="tabpanel" aria-labelledby="v-pills-approval-tab">
+                            <h5>Update Approval Status</h5>
+                            <div class="col-12">
+                                    <form method="POST" action="{{route('releases.status.update')}}" class="d-flex flex-column flex-sm-row align-items-center">
+                                            @csrf
+                                            @method('PUT')
+                                            <div class="form-group mb-2 mb-sm-0 mr-sm-3 flex-grow-1">
+                                                <label for="status">Current Release Status</label>
+                                                <select class="form-control" id="status" name="status">
+                                                    <option value="0" {{ $release->status == 0 ? 'selected' : '' }}>Pending</option>
+                                                    <option value="1" {{ $release->status == 1 ? 'selected' : '' }}>Approved</option>
+                                                    <option value="2" {{ $release->status == 2 ? 'selected' : '' }}>Rejected</option>
+                                                </select>
+                                                <input type="hidden" name="release_id" value="{{$release->id}}" />
+                                                <button type="submit" class="btn btn-primary">Update</button>
+                                            </div>
+                                        </form>
+                                </div>
+                        </div>
+
+
         </div>
     </div>
 </div>
