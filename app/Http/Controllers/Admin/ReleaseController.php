@@ -13,6 +13,10 @@ use DB;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Platform;
 use App\Models\Genre;
+use App\Models\Country;
+use App\Models\Language;
+use App\Models\Ownershiptype;
+use Spatie\Permission\Models\Role;
 class ReleaseController extends Controller
 {
     /**
@@ -28,6 +32,7 @@ class ReleaseController extends Controller
     public function getReleaseData(Request $request)
     {
         $user_id = Auth::id(); // Using Auth::id() directly to get the authenticated user's ID
+     
         $columns = ['srn','id', 'thumbnail_path', 'release_name', 'format', 'release_code', 'upc', 'status'];
     
         $length = $request->input('length');
@@ -39,10 +44,16 @@ class ReleaseController extends Controller
         if (!isset($columns[$column])) {
             $column = 0; // Default to the first column if invalid
         }
+
+
+        $query = Release::with('tracks') // Assuming 'tracks' is a relationship defined in your Release model
+        ->orderBy($columns[$column], $dir);
     
-        $query = Release::where('user_id', $user_id)
-                        ->with('tracks') // Assuming 'tracks' is a relationship defined in your Release model
-                        ->orderBy($columns[$column], $dir);
+        if (!Auth::user()->hasRole('Super Admin')) {
+            $query->where('user_id', $user_id);
+        }
+    
+       
     
         if ($searchValue) {
             $query->where(function($q) use ($searchValue) {
@@ -87,8 +98,6 @@ class ReleaseController extends Controller
                     1 => 'Complete',
                 };
 
-
-    
                 $data[] = [
                     'srn'         =>$count++,
                     'id'           => $release->id,
@@ -178,12 +187,18 @@ class ReleaseController extends Controller
         $level = $request->level;
         $platforms = Platform::all();
         $genres = Genre::all();
+        $countries = Country::all();
+        $languages = Language::all();
+        $ownershiptypes = Ownershiptype::all();
         
         $viewData = [
             'release' => $release,
             'level' => $level,
             'platforms' => $platforms,
-            'genres'=>$genres 
+            'genres'=>$genres ,
+            'countries'=>$countries,
+            'languages'=> $languages,
+            'ownershiptypes' => $ownershiptypes
         ];
     
 
@@ -424,6 +439,7 @@ class ReleaseController extends Controller
 
 
     public function saveEditTrack(Request $request) {
+
         $track_ids = $request->track_id;
         $release_id = $request->release_id;
     
@@ -505,15 +521,12 @@ class ReleaseController extends Controller
                     $track->nationality = $request->nationality[$key];
                     $track->save();
             }
-               // If all tracks are saved successfully, then update the release status
-                $release = Release::findOrFail($release_id);
-                $release->form_status = 1;
-                $release->save();
+               
                 DB::commit(); // Commit the transaction
 
                 if($request->summary){
         
-                    return redirect()->route('releases.step2', ['release_id'=>$release->id, 'level'=>$request->summary])->with('success', 'Tracks updated successfully.');
+                    return redirect()->route('releases.step2', ['release_id'=>$release_id, 'level'=>$request->summary])->with('success', 'Tracks updated successfully.');
                 }
               return redirect()->route('releases.step2',['release_id'=>$release_id, 'level'=>'platforms'])->with('success', 'Tracks and release updated successfully.');
 
@@ -663,7 +676,29 @@ class ReleaseController extends Controller
     }
 
 
+    public function updateReleaseStatus(Request $request) {
 
+        $release_id = $request->release_id;
+        $status = $request->status;
+        $release = Release::find($release_id);
+        if($release){
+            $release->status =$status ;
+            $release->save();
+        }
+        return redirect()->back()->with('success', 'Release status updated successfully!');
+    }
+
+    public function finalReleaseSubmit(Request $request) {
+
+        $release_id = $request->release_id;
+        $form_status = $request->form_status;
+        $release = Release::find($release_id);
+        if($release){
+            $release->form_status =$form_status ;
+            $release->save();
+        }
+        return redirect()->route('releases.index')->with('success', 'Release added successfully!');
+    }
     
     /**
      * Store a newly created resource in storage.

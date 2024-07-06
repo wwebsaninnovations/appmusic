@@ -86,6 +86,65 @@ $('.apply_select_click').click(function() {
     }
 });
 
+$(document).on("change", '.input-country_of_rec', changeHandler);
+
+$('.apply_select_click').click(function() {
+    var container = $(this).closest('.wrap-field');
+    $(this).html("Apply Now <b> ✓ </b>");
+    var selects = container.find('.input-country_of_rec');
+    var all_selects = $('.input-country_of_rec');
+
+    if (selects.length > 0) {
+        var value = selects.val();
+        if (value !== "") {
+            $(document).off("change", '.input-country_of_rec', changeHandler); // Unbind change handler
+            all_selects.each(function() {
+                $(this).val(value).change();
+            });
+            $(document).on("change", '.input-country_of_rec', changeHandler); // Rebind change handler
+        }
+    }
+});
+
+$(document).on("change", '.input-nationality', changeHandler);
+
+$('.apply_select_click').click(function() {
+    var container = $(this).closest('.wrap-field');
+    $(this).html("Apply Now <b> ✓ </b>");
+    var selects = container.find('.input-nationality');
+    var all_selects = $('.input-nationality');
+
+    if (selects.length > 0) {
+        var value = selects.val();
+        if (value !== "") {
+            $(document).off("change", '.input-nationality', changeHandler); // Unbind change handler
+            all_selects.each(function() {
+                $(this).val(value).change();
+            });
+            $(document).on("change", '.input-nationality', changeHandler); // Rebind change handler
+        }
+    }
+});
+
+$(document).on("change", '.input-lyrics_language', changeHandler);
+
+$('.apply_select_click').click(function() {
+    var container = $(this).closest('.wrap-field');
+    $(this).html("Apply Now <b> ✓ </b>");
+    var selects = container.find('.input-lyrics_language');
+    var all_selects = $('.input-lyrics_language');
+
+    if (selects.length > 0) {
+        var value = selects.val();
+        if (value !== "") {
+            $(document).off("change", '.input-lyrics_language', changeHandler); // Unbind change handler
+            all_selects.each(function() {
+                $(this).val(value).change();
+            });
+            $(document).on("change", '.input-lyrics_language', changeHandler); // Rebind change handler
+        }
+    }
+});
 
  $('.apply_checkbox_click').click(function() {
     var container = $(this).closest('.wrap-field'); 

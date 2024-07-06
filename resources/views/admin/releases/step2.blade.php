@@ -55,17 +55,23 @@
 
                             <div class="mb-3">
                                 <label for="meta_language" class="form-label">Meta Language*</label>
+                                
                                 <select class="form-select" id="meta_language" name="meta_language">
-                                    <option value="">Select Language</option>
-                                    <option value="Hindi" {{ old('meta_language', $release->meta_language) == 'Hindi' ? 'selected' : '' }}>Hindi</option>
-                                    <option value="English" {{ old('meta_language', $release->meta_language) == 'English' ? 'selected' : '' }}>English</option>
-                                    <option value="Bhojpuri" {{ old('meta_language', $release->meta_language) == 'Bhojpuri' ? 'selected' : '' }}>Bhojpuri</option>
+                                    <option value="" disabled selected>Select a language</option>
+                                    @foreach($languages as $language)
+                                        <option value="{{ $language->name }}" {{ old('meta_language', $release->meta_language) == $language->name ? 'selected' : '' }}>
+                                            {{ $language->name }}
+                                        </option>
+                                    @endforeach
                                 </select>
+
                                 @if ($errors->has('meta_language'))
                                     <div class="text-danger">
                                         {{ $errors->first('meta_language') }}
                                     </div>
                                 @endif
+
+
                             </div>
 
                             <div class="mb-3">
@@ -463,15 +469,25 @@
                                                             <div class="text-danger">{{ $errors->edittrack->first('track_version.' . $index) }}</div>
                                                         @endif
                                                     </div>   
-                                                    <div class="mb-3">
+                                                    <div class="mb-3 wrap-field">
                                                         <label for="lyrics_language" class="form-label">Lyrics Language*</label>
                                                         @if(count($release->tracks) > 1)
-                                                            <button type="button" class="apply_click click_btn" style="display: block;">Apply Now</button>
+                                                           <button type="button" class="apply_select_click click_btn">Apply Now</button>
                                                         @endif
-                                                        <input type="text" class="form-control input-lyrics_language" data-name="lyrics_language" id="lyrics_language{{ $index }}" name="lyrics_language[]" value="{{ old('lyrics_language.'.$index,$track->lyrics_language) }}">
+
+                                                        <select class="form-control input-lyrics_language" data-name="lyrics_language" id="lyrics_language{{ $index }}" name="lyrics_language[]">
+                                                            <option value="" disabled selected>Select a language</option>
+                                                            @foreach($languages as $language)
+                                                                <option value="{{ $language->name }}" {{ old('lyrics_language.'.$index, $track->lyrics_language) == $language->name ? 'selected' : '' }}>
+                                                                    {{ $language->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+
                                                         @if ($errors->edittrack->has('lyrics_language.' . $index))
                                                             <div class="text-danger">{{ $errors->edittrack->first('lyrics_language.' . $index) }}</div>
                                                         @endif
+
                                                     </div>
                                                     <div class="mb-3 wrap-field">
                                                     <label for="explicit_content" class="form-label">Explicit Content*</label>
@@ -629,12 +645,13 @@
                                                         @endif
                                                         
                                                         <select name="ownership_for_sound_rec[]" class="form-control input-ownership_for_sound_rec" data-name="ownership_for_sound_rec" id="ownership_for_sound_rec{{ $index }}">
-                                                            <option value="">Select Ownership Type</option>
-                                                            <option value="I am the original master copyright owner" {{ old('ownership_for_sound_rec.'.$index, $track->ownership_for_sound_rec) == 'I am the original master copyright owner' ? 'selected' : '' }}>I am the original master copyright owner</option>
-                                                            <option value="I acquired the master copyright" {{ old('ownership_for_sound_rec.'.$index, $track->ownership_for_sound_rec) == 'I acquired the master copyright' ? 'selected' : '' }}>I acquired the master copyright</option>
-                                                            <option value="I am the exclusive licensee (Not the owner)" {{ old('ownership_for_sound_rec.'.$index, $track->ownership_for_sound_rec) == 'I am the exclusive licensee (Not the owner)' ? 'selected' : '' }}>I am the exclusive licensee (Not the owner)</option>
-                                                            <option value="I am a non exclusive licensee (Not the owner)" {{ old('ownership_for_sound_rec.'.$index, $track->ownership_for_sound_rec) == 'I am a non exclusive licensee (Not the owner)' ? 'selected' : '' }}>I am a non exclusive licensee (Not the owner)</option>
-                                                            <option value="I am the master" {{ old('ownership_for_sound_rec.'.$index, $track->ownership_for_sound_rec) == 'I am the master' ? 'selected' : '' }}>I am the master</option>
+                                                            <option value="" disabled selected>Select Ownership Type</option>
+                                                            @foreach($ownershiptypes as $ownershiptype)
+                                                                <option value="{{ $ownershiptype->name }}" {{ old('ownership_for_sound_rec.' . $index, $track->ownership_for_sound_rec) == $ownershiptype->name ? 'selected' : '' }}>
+                                                                    {{ $ownershiptype->name }}
+                                                                </option>
+
+                                                            @endforeach
                                                         </select>
 
                                                         @if ($errors->edittrack->has('ownership_for_sound_rec.' . $index))
@@ -642,23 +659,40 @@
                                                         @endif
 
                                                     </div>
-                                                    <div class="mb-3">
+                                                    <div class="mb-3 wrap-field">
                                                         <label for="country_of_rec"  class="form-label">Country of recording* </label>
                                                         @if(count($release->tracks) > 1)
-                                                          <button type="button" class="apply_click click_btn">Apply Now</button>
+                                                          <button type="button" class="apply_select_click click_btn">Apply Now</button>
                                                         @endif
-                                                      
-                                                        <input type="text" class="form-control input-country_of_rec" data-name="country_of_rec"  id="country_of_rec{{ $index }}" name="country_of_rec[]" value="{{old('country_of_rec.'.$index, $track->country_of_rec)}}" />
+                                                        <select name="country_of_rec[]" class="form-control input-country_of_rec" data-name="country_of_rec" id="country_of_rec{{ $index }}">
+                                                            <option value="" disabled selected>Select a country of recording</option>
+                                                            @foreach($countries as $country)
+                                                                <option value="{{ $country->name }}" {{ old('country_of_rec.' . $index, $track->country_of_rec) == $country->name ? 'selected' : '' }}>
+                                                                    {{ $country->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+
                                                         @if ($errors->edittrack->has('country_of_rec.' . $index))
                                                             <div class="text-danger">{{ $errors->edittrack->first('country_of_rec.' . $index) }}</div>
                                                         @endif
+
+
                                                     </div>
-                                                    <div class="mb-3">
+                                                    <div class="mb-3 wrap-field">
                                                         <label for="nationality" class="form-label">Nationality of original copyright owner* </label>
                                                         @if(count($release->tracks) > 1)
-                                                          <button type="button" class="apply_click click_btn">Apply Now</button>
+                                                           <button type="button" class="apply_select_click click_btn">Apply Now</button>
                                                         @endif
-                                                        <input type="text" name="nationality[]"  class="form-control input-nationality" data-name="nationality"  id="nationality{{ $index }}"   value="{{old('nationality.'.$index, $track->nationality)}}" />
+                                                        <select name="nationality[]" id="nationality{{ $index }}" class="form-control input-nationality" data-name="nationality">
+                                                            <option value="" disabled selected>Select a nationality</option>
+                                                            @foreach($countries as $country)
+                                                                <option value="{{ $country->name }}" {{ old('nationality.'.$index, $track->nationality) == $country->name ? 'selected' : '' }}>
+                                                                    {{ $country->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+
                                                         @if ($errors->edittrack->has('nationality.' . $index))
                                                             <div class="text-danger">{{ $errors->edittrack->first('nationality.' . $index) }}</div>
                                                         @endif
@@ -716,76 +750,117 @@
 
                 </div>
                  <div class="tab-pane fade release_summary {{($level=='summary')? ' show active':''}}" id="v-pills-summary" role="tabpanel" aria-labelledby="v-pills-summary-tab">
+                        <!-- Notice to complete all steps -->
+                    <div class="alert alert-info mt-4">
+                        Please complete all required steps and then click the "Save Release" button.
+                    </div>
                     <div class=" mt-2">
                         <h2>Release Summary</h2>
 
                         <div class="card mb-4">
                             <div class="card-body">
+                                <form method="POST" action="{{route('releases.status.update')}}" class="d-flex flex-column flex-sm-row align-items-center">
+                                    @csrf
+                                    @method('PUT')
+                                    <div class="form-group mb-2 mb-sm-0 mr-sm-3 flex-grow-1">
+                                        <label for="status">Release Status</label>
+                                        <select class="form-control" id="status" name="status">
+                                            <option value="0" {{ $release->status == 0 ? 'selected' : '' }}>Pending</option>
+                                            <option value="1" {{ $release->status == 1 ? 'selected' : '' }}>Approved</option>
+                                            <option value="2" {{ $release->status == 2 ? 'selected' : '' }}>Rejected</option>
+                                        </select>
+                                        <input type="hidden" name="release_id" value="{{$release->id}}" />
+                                        <button type="submit" class="btn btn-primary">Update</button>
+                                    </div>
+                                 
+                                </form>
+                            </div>
+                        </div>
+
+
+
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                @php $status = 1; @endphp
                                 @if(empty($release->upc))
+                                    @php $status = 0; @endphp
                                     <div class="alert alert-warning">Basic Details Not Completed</div>
                                 @else
                                     <h5 class="card-title">Basic Information</h5>
-                                    <p><strong>UPC:</strong> {{ $release->upc }}</p>
-                                    <p><strong>Release Code:</strong> {{ $release->release_code ?? '' }}</p>
-                                    <p><strong>Meta Language:</strong> {{ $release->meta_language ?? '' }}</p>
-                                    <p><strong>Release Name:</strong> {{ $release->release_name ?? '' }}</p>
-                                    <p><strong>Release Version:</strong> {{ $release->release_version ?? '' }}</p>
-                                    <p><strong>Release Name Displayed As:</strong> {{ $release->release_name.'('.$release->release_version.')' }}</p>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p><strong>UPC:</strong> {{ $release->upc }}</p>
+                                            <p><strong>Release Code:</strong> {{ $release->release_code ?? '' }}</p>
+                                            <p><strong>Meta Language:</strong> {{ $release->meta_language ?? '' }}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><strong>Release Name:</strong> {{ $release->release_name ?? '' }}</p>
+                                            <p><strong>Release Version:</strong> {{ $release->release_version ?? '' }}</p>
+                                            <p><strong>Release Name Displayed As:</strong> {{ $release->release_name.'('.$release->release_version.')' }}</p>
+                                        </div>
+                                    </div>
 
                                     <h5 class="card-title mt-4">Artist & Contributor</h5>
-                                    <p><strong>Primary Artist:</strong> {{ $release->primary_artist ?? '' }}</p>
-                                    <p><strong>Featuring Artist:</strong> {{ $release->featuring_artist ?? '' }}</p>
-                                    <p><strong>Remixer:</strong> {{ $release->remixer ?? '' }}</p>
-                                    <p><strong>Producer:</strong> {{ $release->producer ?? '' }}</p>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p><strong>Primary Artist:</strong> {{ $release->primary_artist ?? '' }}</p>
+                                            <p><strong>Featuring Artist:</strong> {{ $release->featuring_artist ?? '' }}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><strong>Remixer:</strong> {{ $release->remixer ?? '' }}</p>
+                                            <p><strong>Producer:</strong> {{ $release->producer ?? '' }}</p>
+                                        </div>
+                                    </div>
 
                                     <h5 class="card-title mt-4">Release Details</h5>
-                                    <p><strong>Genre:</strong> {{ $release->genre ?? '' }}</p>
-                                    <p><strong>Sub Genre:</strong> {{ $release->sub_genre ?? '' }}</p>
-                                    <p><strong>Format:</strong> {{ $release->format ?? '' }}</p>
-                                    <p><strong>C Name:</strong> {{ $release->cname ?? '' }}</p>
-                                    <p><strong>P Name:</strong> {{ $release->pname ?? '' }}</p>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p><strong>Genre:</strong> {{ $release->genre ?? '' }}</p>
+                                            <p><strong>Sub Genre:</strong> {{ $release->sub_genre ?? '' }}</p>
+                                            <p><strong>Format:</strong> {{ $release->format ?? '' }}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><strong>C Name:</strong> {{ $release->cname ?? '' }}</p>
+                                            <p><strong>P Name:</strong> {{ $release->pname ?? '' }}</p>
+                                        </div>
+                                    </div>
 
                                     <h5 class="card-title mt-4">Release Date Info</h5>
-                                    <p><strong>Original Release Date:</strong> {{ $release->original_release_date ?? '' }}</p>
-                                    <p><strong>Sales Date:</strong> {{ $release->sales_date ?? '' }}</p>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p><strong>Original Release Date:</strong> {{ $release->original_release_date ?? '' }}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><strong>Sales Date:</strong> {{ $release->sales_date ?? '' }}</p>
+                                        </div>
+                                    </div>
 
-                                    <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'basic', 'summary'=>'basic' ])}}" class="btn btn-primary mt-4">Edit</a>
+                                    <a href="{{ route('releases.step2', ['release_id' => $release->id, 'level' => 'basic', 'summary' => 'basic']) }}" class="btn btn-primary mt-4">Edit</a>
                                 @endif
                             </div>
                         </div>
+
 
                         <div class="card mb-4">
                             <div class="card-body">
                                 <h5 class="card-title">Artwork</h5>
                                 @if(empty($release->thumbnail_path))
+                                    @php $status =0; @endphp
                                     <div class="alert alert-warning">Thumbnail Not Completed</div>
                                 @else
                                     <img src="{{ asset('storage/' . $release->thumbnail_path) }}" width="150px" alt="Thumbnail">
                                 @endif
-                                <p><strong>Artwork Instructions:</strong></p>
-                                <ul>
-                                    <li>TIF or JPG format</li>
-                                    <li>Square</li>
-                                    <li>Minimum size: 3000 x 3000 pixels</li>
-                                    <li>Maximum size: 6000 x 6000 pixels</li>
-                                    <li>RGB format</li>
-                                    <li>Opaque</li>
-                                    <li>If you are scanning a CD, remove product sticker and crop marks</li>
-                                </ul>
-
-                                <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'artwork', 'summary'=>'artwork'])}}" class="btn btn-primary mt-4">Edit</a>
+                                
+                                <p><a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'artwork', 'summary'=>'artwork'])}}" class="btn btn-primary mt-4">Edit</a></p>
                             </div>
                         </div>
 
                         <div class="card mb-4">
-                            <ul>
-                                <li><strong>Single</strong> : maximum 1 file.</li>
-                                <li><strong>EP</strong> : maximum 5 files.</li>
-                                <li><strong>Album</strong> : maximum 30 files.</li>
-                            </ul>
+                           
                             <div class="card-body">
                                 <h5 class="card-title">Uploaded Tracks</h5>
                                   @if($release->tracks->isEmpty())
+                                       @php $status =0; @endphp
                                        <div class="alert alert-warning">Not Completed</div>
                                   @else
                                         @foreach($release->tracks as $index => $track)
@@ -805,6 +880,7 @@
                                     <div class="col-6">
                                         <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                                             @if($release->tracks->isEmpty())
+                                                 @php $status =0; @endphp
                                                 <div class="alert alert-warning">Not Completed</div>
                                             @else
                                                 @foreach($release->tracks as $index => $track)
@@ -862,6 +938,7 @@
                             <div class="card-body">
                                 <h5 class="card-title">PlatForms</h5>
                                 @if($release->platforms->isEmpty())
+                                   @php $status =0; @endphp
                                     <div class="alert alert-warning">Not Completed</div>
                                 @else
                                     @foreach($release->platforms as $platform)
@@ -874,7 +951,34 @@
                             </div>
                         </div>
                     </div>
-                    <a href="{{route('releases.index')}}" class="btn btn-primary text-center">Save Release</a>
+                    <div class="card mb-4">
+                            <div class="card-body">
+                                <form method="POST" action="{{route('releases.status.update')}}" class="d-flex flex-column flex-sm-row align-items-center">
+                                    @csrf
+                                    @method('PUT')
+                                    <div class="form-group mb-2 mb-sm-0 mr-sm-3 flex-grow-1">
+                                        <label for="status">Release Status</label>
+                                        <select class="form-control" id="status" name="status">
+                                            <option value="0" {{ $release->status == 0 ? 'selected' : '' }}>Pending</option>
+                                            <option value="1" {{ $release->status == 1 ? 'selected' : '' }}>Approved</option>
+                                            <option value="2" {{ $release->status == 2 ? 'selected' : '' }}>Rejected</option>
+                                        </select>
+                                        <input type="hidden" name="release_id" value="{{$release->id}}" />
+                                        <button type="submit" class="btn btn-primary">Update</button>
+                                    </div>
+                                 
+                                </form>
+                            </div>
+                        </div>
+                     
+                        <form method="POST" action="{{ route('releases.final.release.submit') }}">
+                            @csrf
+                            @method('PUT')
+                            <input type="hidden" name="release_id" value="{{$release->id}}" />
+                            <input type="hidden" name="form_status" value="{{$status}}" />
+                            <button type="submit" class="btn btn-primary">Save Release</button>
+                        </form>
+
               </div>
         </div>
     </div>

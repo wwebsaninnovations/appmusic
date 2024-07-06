@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\MusicController;
 use App\Http\Controllers\Admin\ReleaseController;
 use App\Http\Controllers\Admin\GenreController;
 use App\Http\Controllers\Admin\PlatformController;
+use App\Http\Controllers\Admin\OwnershiptypeController;
 use App\Http\Controllers\ThemeController;
 /*
 |--------------------------------------------------------------------------
@@ -85,6 +86,8 @@ Route::post('/releases/create/removeartwork', [ReleaseController::class, 'remove
 
 Route::get('/releases/getReleaseData', [ReleaseController::class, 'getReleaseData']);
 Route::post('/releases/delete', [ReleaseController::class, 'deleteReleaseData']);
+Route::put('/releases/updateReleaseStatus', [ReleaseController::class, 'updateReleaseStatus'])->name('releases.status.update');
+Route::put('/releases/finalReleaseSubmit', [ReleaseController::class, 'finalReleaseSubmit'])->name('releases.final.release.submit');
 
 
 //GENRE RAUTE
@@ -97,7 +100,8 @@ Route::resources([
     'roles' => RoleController::class,
     'users' => UserController::class,
     'musics'=> MusicController::class,
-    'releases' =>ReleaseController:: class
+    'releases' =>ReleaseController:: class,
+    'ownershiptypes'=>OwnershiptypeController::class
 ]);
 
 

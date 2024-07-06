@@ -250,7 +250,7 @@ $('#example').DataTable({
             data: null,
             orderable: false,
             render: function(data, type, full, meta) {
-                const editUrl = `/releases/create/step2?release_id=${data.id}&level=basic`;
+                const editUrl = `/releases/create/step2?release_id=${data.id}&level=summary`;
                 return `
                     <a class="badge bg-label-primary rounded p-2 " href="${editUrl}">
                         <i class="bx bxs-edit bx-sm"></i>

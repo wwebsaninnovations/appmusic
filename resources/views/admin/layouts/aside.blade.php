@@ -23,7 +23,7 @@
                 </a>
             </li>
            @canany(['create-music', 'edit-music', 'delete-music'])
-             @if(!Auth::user()->hasRole('Super Admin'))
+           
               <!-- <li class="menu-item {{ request()->routeIs('musics.*') ? 'active' : '' }}">
                 <a href="{{ route('musics.index') }}" class="menu-link">
                 <i class="fa-solid fa-music menu-icon tf-icons"></i>
@@ -49,7 +49,7 @@
                 </li>
               </ul>
               </li>
-             @endif
+        
           
             @endcanany
 
@@ -108,7 +108,25 @@
                 </li>
               </ul>
               </li>
-
+              <li class="menu-item {{ request()->routeIs('ownershiptype.*') ? 'active' : '' }}">
+                <a  href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons  bx bx-key"></i>
+                  <div data-i18n="Ownershiptype"> Ownershiptype</div>
+                </a>
+                <ul class="menu-sub">
+                <li class="menu-item   {{ request()->routeIs('ownershiptypes.index') ? 'active' : '' }}">
+                  <a href="{{ route('ownershiptypes.index') }}"  class="menu-link">
+                    <div data-i18n="List">List</div>
+                  </a>
+                </li>
+             
+                <li class="menu-item  {{ request()->routeIs('ownershiptypes.create') ? 'active' : '' }}">
+                  <a href="{{ route('ownershiptypes.create') }}" class="menu-link">
+                    <div data-i18n="Add">Add</div>
+                  </a>
+                </li>
+              </ul>
+              </li>
             <li class="menu-item ">
                 <a href="#" class="menu-link">
 
