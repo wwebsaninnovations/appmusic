@@ -376,6 +376,8 @@ $('#example').on('click', '.delete-btn', function (e) {
                             dataType: 'html',
                             success: function(response) {
                                 var path = "{{ asset('storage') }}/" + response;
+                                // Clear the src attribute before setting a new path
+                                $('#uploaded_current_artwork').attr('src', '');
                                 $('#existing-thumbnail').css('display', 'none');
                                 $('#uploaded_current_artwork').css('display', 'block');
                                 $('#uploaded_current_artwork').attr('src', path);
