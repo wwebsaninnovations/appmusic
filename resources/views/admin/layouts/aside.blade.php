@@ -24,12 +24,6 @@
             </li>
            @canany(['create-music', 'edit-music', 'delete-music'])
            
-              <!-- <li class="menu-item {{ request()->routeIs('musics.*') ? 'active' : '' }}">
-                <a href="{{ route('musics.index') }}" class="menu-link">
-                <i class="fa-solid fa-music menu-icon tf-icons"></i>
-                  <div data-i18n="Catalog"> Catalog</div>
-                </a>
-              </li> -->
               <li class="menu-item {{ request()->routeIs('releases.*') ? 'active' : '' }}">
                 <a  href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="fa-solid fa-music menu-icon tf-icons"></i>
@@ -38,13 +32,13 @@
                 <ul class="menu-sub">
                 <li class="menu-item   {{ request()->routeIs('releases.index') ? 'active' : '' }}">
                   <a href="{{ route('releases.index') }}"  class="menu-link">
-                    <div data-i18n="List">List</div>
+                    <div data-i18n="Catalog">Catalog</div>
                   </a>
                 </li>
              
                 <li class="menu-item  {{ request()->routeIs('releases.step1') ? 'active' : '' }}">
                   <a href="{{ route('releases.step1') }}" class="menu-link">
-                    <div data-i18n="Add">Add</div>
+                    <div data-i18n="Create new release"> Create new release</div>
                   </a>
                 </li>
               </ul>

@@ -310,9 +310,6 @@ $('#example').DataTable({
         $('#totalTracksApproved').text(json.totalTracksApproved);
     });
 
-
-
-
 // Handle delete button click
 $('#example').on('click', '.delete-btn', function (e) {
     e.preventDefault();
@@ -336,13 +333,6 @@ $('#example').on('click', '.delete-btn', function (e) {
         });
     }
 });
-
-
-
-
-
-
-
 
 
   const myDropzone = new Dropzone('#dropzone-basic', {

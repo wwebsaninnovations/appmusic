@@ -6,7 +6,8 @@ use App\Models\Track;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator; 
-use App\Rules\FutureDate;
+use App\Rules\TodayOrPast;
+use App\Rules\TodayOrFuture;
 // use FFMpeg\FFMpeg;
 use App\Http\Requests\ValidateTrackRequest;
 use DB;
@@ -188,7 +189,7 @@ class ReleaseController extends Controller
         $platforms = Platform::all();
         $genres = Genre::all();
         $countries = Country::all();
-        $languages = Language::all();
+        $languages = Language::orderBy('name', 'asc')->get();
         $ownershiptypes = Ownershiptype::all();
         
         $viewData = [
@@ -227,16 +228,18 @@ class ReleaseController extends Controller
             'release_name' => 'required|string|max:255',
             'release_version' => 'required|string',
             'primary_artist_basic' => 'required|string|max:255',
-            'featuring_artist_basic' => 'required|string|max:255',
+            'featuring_artist_basic' => 'nullable|string|max:255',
             'producer_artist_basic'=> 'required|string|max:255',
-            'remixer_artist_basic'=>'required|string|max:255',
+            'remixer_artist_basic'=>'nullable|string|max:255',
             'genre'=> 'required|string|max:255',
             'sub_genre' => 'required|string|max:255',
             'format' => 'required|in:single,ep,album',
             'cname_basic' => 'required|string|max:255|regex:/^\d{4}.*$/',
             'pname_basic' => 'required|string|max:255|regex:/^\d{4}.*$/',
-            'original_release_date' => ['required', new FutureDate],
-            'sales_date' => ['required', new FutureDate],
+            'original_release_date' => ['required', new TodayOrPast],
+            'sales_date' => ['required', new TodayOrFuture],
+            
+
 
         ],
         [

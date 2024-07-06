@@ -114,7 +114,7 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="featuring_artist_basic" class="form-label">Featuring Artist*</label>
+                                <label for="featuring_artist_basic" class="form-label">Featuring Artist</label>
                                 <input type="text" class="form-control" id="featuring_artist_basic" name="featuring_artist_basic" value="{{ old('featuring_artist_basic', $release->featuring_artist ?? '') }}">
                                 @if ($errors->has('featuring_artist_basic'))
                                     <div class="text-danger">
@@ -124,7 +124,7 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="remixer_artist_basic" class="form-label">Remixer*</label>
+                                <label for="remixer_artist_basic" class="form-label">Remixer</label>
                                 <input type="text" class="form-control" id="remixer_artist_basic" name="remixer_artist_basic" value="{{ old('remixer_artist_basic', $release->remixer ?? '') }}">
                                 @if ($errors->has('remixer_artist_basic'))
                                     <div class="text-danger">
@@ -199,9 +199,7 @@
                             </div>
 
                             <div class="mb-3">
-                            <label for="pname_basic" class="form-label">C Name (Year with Company Name)*
-                              <span class="small text-warning">(The C Name should follow the pattern: Year with Company Name)</span>
-                              </label>
+                            <label for="pname_basic" class="form-label">C Name (COPY RIGHT)* </label>
                                 <input type="text" class="form-control" id="cname_basic" name="cname_basic" placeholder="Year with Company Name" value="{{ old('cname_basic', $release->cname ?? '') }}">
                                 @if ($errors->has('cname_basic'))
                                     <div class="text-danger">
@@ -211,9 +209,7 @@
                             </div>
 
                             <div class="mb-3">
-                            <label for="pname_basic" class="form-label">P Name (Year with Company Name)*
-                            <span class="small text-warning">(The P Name should follow the pattern: Year with Company Name)</span>
-                            </label>
+                            <label for="pname_basic" class="form-label">P Name (PUBLISHER)* </label>
                                 <input type="text" class="form-control" id="pname_basic" name="pname_basic" placeholder="Year with Company Name" value="{{ old('pname_basic', $release->pname ?? '') }}">
                                 @if ($errors->has('pname_basic'))
                                     <div class="text-danger">
@@ -225,11 +221,9 @@
                             <h5>Release Date info</h5>
 
                             <div class="mb-3">
-                            <label for="original_release_date" class="form-label">Original Release Date* 
-                                <span class="small text-warning">(Release date should be at least 7 days from the current date)</span>
-                            </label>
+                            <label for="original_release_date" class="form-label">Original Release Date*</label>
 
-                                <input type="date" class="form-control" name="original_release_date" value="{{ old('original_release_date', $release->original_release_date) }}">
+                                <input type="date" class="form-control" name="original_release_date" id="original_release_date" value="{{ old('original_release_date', $release->original_release_date) }}">
                                 @if ($errors->has('original_release_date'))
                                     <div class="text-danger">
                                         {{ $errors->first('original_release_date') }}
@@ -238,9 +232,8 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="sales_date" class="form-label">Sales Date* <span class="small text-warning">(Sales date should be at least 7 days from the current date)</span>
-                                </label>
-                                <input type="date" class="form-control" name="sales_date" value="{{ old('sales_date', $release->sales_date) }}">
+                                <label for="sales_date" class="form-label">Sales Date* </label>
+                                <input type="date" class="form-control" name="sales_date" id="sales_date" value="{{ old('sales_date', $release->sales_date) }}">
                                 @if ($errors->has('sales_date'))
                                     <div class="text-danger">
                                         {{ $errors->first('sales_date') }}
@@ -615,9 +608,7 @@
                                                     </div>
                                                     <h5>Master Right</h5>
                                                     <div class="mb-3">
-                                                        <label for="pname"  class="form-label">P Name* 
-                                                        <span class="small text-warning">(The P Name should follow the pattern: Year with Company Name)</span>
-                                                        </label>
+                                                        <label for="pname"  class="form-label">P Name(PUBLISHER)*</label>
                                                         @if(count($release->tracks) > 1)
                                                           <button type="button" class="apply_click click_btn">Apply Now</button>
                                                         @endif
@@ -628,8 +619,7 @@
                                                         @endif
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label for="cname"  class="form-label">C Name* 
-                                                        <span class="small text-warning">(The C Name should follow the pattern: Year with Company Name)</span>
+                                                        <label for="cname"  class="form-label">C Name(Copyright)* 
                                                         </label>
                                                         @if(count($release->tracks) > 1)
                                                           <button type="button" class="apply_click click_btn">Apply Now</button>
@@ -754,7 +744,7 @@
                   <h2 class="text-center">Release Summary</h2>
                         <!-- Notice to complete all steps -->
                     <div class="alert alert-info mt-4">
-                         Please complete all required steps and review the release summary carefully before clicking the "Save Release" button to finish the release process. If any steps are incomplete, the release will be marked as incomplete.
+                         Please complete all required steps and review the release summary carefully before clicking the <strong>Save Release</strong> button to finish the release process. If any steps are incomplete, the release will be marked as incomplete.
                     </div>
                     <div class=" mt-2">
                         <div class="card mb-4">
