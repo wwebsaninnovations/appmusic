@@ -146,7 +146,7 @@
 
 
                 </div>
-              <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Manage Release/</span>All</h4>
+              <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Catalog/</span>All</h4>
 
               <!-- DataTable with Buttons -->
               <a class="btn btn-primary mb-3" href="{{ route('releases.step1') }}">Add New Release</a>

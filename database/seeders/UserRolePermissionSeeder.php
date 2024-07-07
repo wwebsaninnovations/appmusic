@@ -22,15 +22,34 @@ class UserRolePermissionSeeder extends Seeder
             'create-user',
             'edit-user',
             'delete-user',
-            'create-music',
-            'edit-music',
-            'delete-music',
+            'create-release',
+            'edit-release',
+            'delete-release',
+            'approve-release',
+            'create-genre',
+            'edit-genre',
+            'delete-genre',
+            'create-platform',
+            'edit-platform',
+            'delete-platform',
+            'create-ownershiptype',
+            'edit-ownershiptype',
+            'delete-ownershiptype'
         ];
+        
        //Created Permission
        foreach ($permissions as $permission) {
-        Permission::create(['name' => $permission]);
+        Permission::updateOrCreate(['name' => $permission]);
        }
-       
+    
+        // Create roles
+        $superAdminRole = Role::create(['name' => 'Super Admin']);
+    
+        //Asign Role to the user
+        $permissions = Permission::pluck('id')->all();
+        $superAdminRole->syncPermissions($permissions);
+
+           
         $superAdminUser = User::updateOrCreate([
             'email' => 'superadmin@gmail.com',
             'name' => 'Tabrej', 
@@ -40,44 +59,16 @@ class UserRolePermissionSeeder extends Seeder
 
         ]);
 
-          $adminUser = User::updateOrCreate([
-            'email' => 'krishna@gmail.com',
-            'name' => 'krishna', 
-            'mobile' =>'8284910963',
-            'password' => Hash::make('12345678'),
-            'client_id' => 100002
-        ]);
-
-           // Create roles
-         $superAdminRole = Role::create(['name' => 'Super Admin']);
-         $adminRole = Role::create(['name' => 'Admin']);
-        // Create roles for regular users
-         $userRole = Role::create(['name'=> 'User']);
-
-    
-      
-        // Assign specific permissions to admin role
-        $adminRole->givePermissionTo([
-            'create-user',
-            'edit-user',
-            'delete-user',
-        ]);
-
-        // Assign specific permissions to product manager role
-        $userRole->givePermissionTo([
-            'create-music',
-            'edit-music',
-            'delete-music',
-        ]);
-
-        //Asign Role to the user
-        $permissions = Permission::pluck('id')->all();
-        $superAdminRole->syncPermissions($permissions);
-
         $superAdminUser->assignRole($superAdminRole);
-        $adminUser->assignRole($adminRole);
 
-
+        // Create roles for regular users
+        $userRole = Role::updateOrCreate(['name'=> 'User']);
+            // Assign default permissions to user
+        $userRole->givePermissionTo([
+            'create-release',
+            'edit-release',
+            'delete-release',
+        ]);
     }
 
 

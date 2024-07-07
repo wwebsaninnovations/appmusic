@@ -22,7 +22,7 @@
                   <div data-i18n="Dashboard"> Dashboard</div>
                 </a>
             </li>
-           @canany(['create-music', 'edit-music', 'delete-music'])
+           @canany(['create-release', 'edit-release', 'delete-release'])
            
               <li class="menu-item {{ request()->routeIs('releases.*') ? 'active' : '' }}">
                 <a  href="javascript:void(0);" class="menu-link menu-toggle">
@@ -32,7 +32,7 @@
                 <ul class="menu-sub">
                 <li class="menu-item   {{ request()->routeIs('releases.index') ? 'active' : '' }}">
                   <a href="{{ route('releases.index') }}"  class="menu-link">
-                    <div data-i18n="Catalog">Catalog</div>
+                    <div data-i18n=" All Catalog"> All Catalog</div>
                   </a>
                 </li>
              

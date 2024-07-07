@@ -338,7 +338,7 @@ $('#example').on('click', '.delete-btn', function (e) {
   const myDropzone = new Dropzone('#dropzone-basic', {
     thumbnailWidth: 200,
     paramName: "file",
-    maxFilesize: 5, // in MB
+    maxFilesize: 10, // in MB
     addRemoveLinks: true, 
     maxFiles: 1,
     acceptedFiles: 'image/jpeg, image/jpg, image/tiff, image/tif', // Specify accepted file types

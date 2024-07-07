@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Release;
 use App\Models\Track;
+use Spatie\Permission\Models\Role;
 class HomeController extends Controller
 {
     /**
@@ -28,14 +29,27 @@ class HomeController extends Controller
     {
 
         $user_id = Auth::user()->id;
-        $releases = Release::where('user_id', $user_id)->with('tracks')->get();
-        // Count total approved, pending, rejected, and incomplete
-        $totalRelease = Release::where('user_id', $user_id)->count();
-        $totalApproved = Release::where('user_id', $user_id)->where('status', 1)->count();
-        $totalPending = Release::where('user_id', $user_id)->where('status', 0)->count();
-        $totalRejected = Release::where('user_id', $user_id)->where('status', 2)->count();
-        $totalComplete = Release::where('user_id', $user_id)->where('form_status', 1)->count();
-        $totalIncomplete = Release::where('user_id', $user_id)->where('form_status', 0)->count();
+        if (Auth::user()->hasRole('Super Admin')) {
+            $releases = Release::with('tracks')->get();
+            // Count total approved, pending, rejected, and incomplete for all users
+            $totalRelease = Release::count();
+            $totalApproved = Release::where('status', 1)->count();
+            $totalPending = Release::where('status', 0)->count();
+            $totalRejected = Release::where('status', 2)->count();
+            $totalComplete = Release::where('form_status', 1)->count();
+            $totalIncomplete = Release::where('form_status', 0)->count();
+        } else {
+           
+            $releases = Release::where('user_id', $user_id)->with('tracks')->get();
+            // Count total approved, pending, rejected, and incomplete for the authenticated user
+            $totalRelease = Release::where('user_id', $user_id)->count();
+            $totalApproved = Release::where('user_id', $user_id)->where('status', 1)->count();
+            $totalPending = Release::where('user_id', $user_id)->where('status', 0)->count();
+            $totalRejected = Release::where('user_id', $user_id)->where('status', 2)->count();
+            $totalComplete = Release::where('user_id', $user_id)->where('form_status', 1)->count();
+            $totalIncomplete = Release::where('user_id', $user_id)->where('form_status', 0)->count();
+        }
+        
 
         // Count total tracks across all releases
         $totalTracks = 0;

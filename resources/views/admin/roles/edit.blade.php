@@ -31,22 +31,26 @@
 
                     <div class="mb-3 row">
                         <label for="permissions" class="col-md-4 col-form-label text-md-end text-start">Permissions</label>
-                        <div class="col-md-6">           
-                            <select class="form-select @error('permissions') is-invalid @enderror" multiple aria-label="Permissions" id="permissions" name="permissions[]" style="height: 210px;">
-                               @forelse ($permissions as $permission)
+                        <div class="col-md-6">
+                            @forelse ($permissions as $permission)
                                 @if (!in_array($permission->name, ['create-role', 'edit-role', 'delete-role']))
-                                    <option value="{{ $permission->id }}" {{ in_array($permission->id, old('permissions', $role->permissions->pluck('id')->toArray()) ?? []) ? 'selected' : '' }}>
-                                        {{ $permission->name }}
-                                    </option>
+                                    <div class="form-check">
+                                        <input class="form-check-input @error('permissions') is-invalid @enderror" type="checkbox" 
+                                            id="permission_{{ $permission->id }}" name="permissions[]" value="{{ $permission->id }}"
+                                            {{ in_array($permission->id, old('permissions', $role->permissions->pluck('id')->toArray()) ?? []) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="permission_{{ $permission->id }}">
+                                            {{ $permission->name }}
+                                        </label>
+                                    </div>
                                 @endif
                             @empty
-                                <!-- Handle empty permissions list -->
+                                <p>No permissions available</p>
                             @endforelse
-                            </select>
                             @if ($errors->has('permissions'))
                                 <span class="text-danger">{{ $errors->first('permissions') }}</span>
                             @endif
                         </div>
+
                     </div>
                     
                     <div class="mb-3 row">

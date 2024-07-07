@@ -21,6 +21,10 @@ class DatabaseSeeder extends Seeder
 
         $this->call([ PlatformSeeder::class ]);
         $this->call([ UserRolePermissionSeeder::class ]);
+        $this->call([ CountriesTableSeeder::class ]);
+        $this->call([ LanguagesTableSeeder::class ]);
+
+        
 
     }
 }
