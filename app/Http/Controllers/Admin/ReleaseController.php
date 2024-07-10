@@ -20,6 +20,14 @@ use App\Models\Ownershiptype;
 use Spatie\Permission\Models\Role;
 class ReleaseController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('permission:create-release|edit-release|delete-release', ['only' => ['index','getReleaseData','getArtwork']]);
+        $this->middleware('permission:create-release', ['only' => ['step1','saveStep1','step2','saveBasic','saveArtwork','saveUploadTrack','saveEditTrack','savePlatforms','removeUploadTrack','removeArtwork','updateReleaseStatus','finalReleaseSubmit','getArtwork']]);
+        $this->middleware('permission:edit-release', ['only' => ['step2','saveBasic','saveArtwork','saveUploadTrack','saveEditTrack','savePlatforms','removeUploadTrack','removeArtwork','updateReleaseStatus','finalReleaseSubmit','getArtwork']]);
+        $this->middleware('permission:delete-release', ['only' => ['deleteReleaseData']]);
+    }
     /**
      * Display a listing of the resource.
      */

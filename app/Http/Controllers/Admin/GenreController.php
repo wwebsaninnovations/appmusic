@@ -9,14 +9,14 @@ use Illuminate\Support\Facades\Auth;
 class GenreController extends Controller
 {
 
-    // public function __construct()
-    // {
-    //     $this->middleware('auth');
-    //     $this->middleware('permission:create-book|edit-book|delete-book|view-book', ['only' => ['index','show']]);
-    //     $this->middleware('permission:create-book', ['only' => ['create','store']]);
-    //     $this->middleware('permission:edit-book', ['only' => ['edit','update']]);
-    //     $this->middleware('permission:delete-book', ['only' => ['destroy','trashedBooks','restoreBook','deleteBook']]);
-    // }
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('permission:create-genre|edit-genre|delete-genre', ['only' => ['index']]);
+        $this->middleware('permission:create-genre', ['only' => ['create','store']]);
+        $this->middleware('permission:edit-genre', ['only' => ['edit','update']]);
+        $this->middleware('permission:delete-genre', ['only' => ['destroy']]);
+    }
     /**
      * Display a listing of the resource.
      */

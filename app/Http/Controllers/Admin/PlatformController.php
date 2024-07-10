@@ -6,6 +6,15 @@ use App\Models\Platform;
 use Illuminate\Support\Facades\Auth;
 class PlatformController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('permission:create-platform|edit-platform|delete-platform', ['only' => ['index']]);
+        $this->middleware('permission:create-platform', ['only' => ['create','store']]);
+        $this->middleware('permission:edit-platform', ['only' => ['edit','update']]);
+        $this->middleware('permission:delete-genre', ['only' => ['destroy']]);
+    }
     /**
      * Display a listing of the resource.
      */

@@ -12,7 +12,9 @@
                 <a class="nav-link {{($level=='edittrack')? ' active':''}}" id="v-pills-edittrack-tab" data-bs-toggle="pill" href="#v-pills-edittrack" role="tab" aria-controls="v-pills-edittrack" aria-selected="false" data-href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'edittrack'])}}">Edit Track</a>
                 <a class="nav-link {{($level=='platforms')? ' active':''}}" id="v-pills-platforms-tab" data-bs-toggle="pill" href="#v-pills-platforms" role="tab" aria-controls="v-pills-edittrack" aria-selected="false" data-href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'platforms'])}}">Platforms-Configuration</a>
                 <a class="nav-link {{($level=='summary')? ' active':''}}" id="v-pills-summary-tab" data-bs-toggle="pill" href="#v-pills-summary" role="tab" aria-controls="v-pills-summary" aria-selected="false" data-href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'summary'])}}">Summary</a>
-                <a class="nav-link {{($level=='approval')? ' active':''}}" id="v-pills-approval-tab" data-bs-toggle="pill" href="#v-pills-approval" role="tab" aria-controls="v-pills-approval" aria-selected="false" data-href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'approval'])}}">Approval Status</a>
+                @canany(['approve-release' ])
+                    <a class="nav-link {{($level=='approval')? ' active':''}}" id="v-pills-approval-tab" data-bs-toggle="pill" href="#v-pills-approval" role="tab" aria-controls="v-pills-approval" aria-selected="false" data-href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'approval'])}}">Approval Status</a>
+                @endcanany
             </div>
         </div>
 
@@ -930,6 +932,7 @@
                         </form>
 
               </div>
+              @canany(['approve-release'])
               <div class="tab-pane fade {{($level=='approval')? ' show active':''}}" id="v-pills-approval" role="tabpanel" aria-labelledby="v-pills-approval-tab">
                             <h5>Update Approval Status</h5>
                             <div class="col-12">
@@ -949,7 +952,7 @@
                                         </form>
                                 </div>
                         </div>
-
+                 @endcanany
 
         </div>
     </div>

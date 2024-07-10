@@ -64,6 +64,8 @@
               </a>
             </li>
             @endcanany
+
+            @canany(['create-genre', 'edit-genre', 'delete-genre'])
             <li class="menu-item {{ request()->routeIs('genre.*') ? 'active' : '' }}">
                 <a  href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons  bx bx-headphone"></i>
@@ -83,6 +85,8 @@
                 </li>
               </ul>
               </li>
+              @endcanany
+              @canany(['create-platform', 'edit-platform', 'delete-platform'])
               <li class="menu-item {{ request()->routeIs('platforms.*') ? 'active' : '' }}">
                 <a  href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons  bx bx-desktop"></i>
@@ -102,6 +106,8 @@
                 </li>
               </ul>
               </li>
+              @endcanany
+              @canany(['create-ownershiptype', 'edit-ownershiptype', 'delete-ownershiptype'])
               <li class="menu-item {{ request()->routeIs('ownershiptype.*') ? 'active' : '' }}">
                 <a  href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons  bx bx-key"></i>
@@ -121,6 +127,7 @@
                 </li>
               </ul>
               </li>
+              @endcanany
             <li class="menu-item ">
                 <a href="#" class="menu-link">
 

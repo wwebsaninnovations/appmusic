@@ -8,14 +8,14 @@ use Illuminate\Support\Facades\Auth;
 class OwnershiptypeController extends Controller
 {
 
-    // public function __construct()
-    // {
-    //     $this->middleware('auth');
-    //     $this->middleware('permission:create-book|edit-book|delete-book|view-book', ['only' => ['index','show']]);
-    //     $this->middleware('permission:create-book', ['only' => ['create','store']]);
-    //     $this->middleware('permission:edit-book', ['only' => ['edit','update']]);
-    //     $this->middleware('permission:delete-book', ['only' => ['destroy','trashedBooks','restoreBook','deleteBook']]);
-    // }
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('permission:create-ownershiptype|edit-ownershiptype|delete-ownershiptype', ['only' => ['index',]]);
+        $this->middleware('permission:create-ownershiptype', ['only' => ['create','store']]);
+        $this->middleware('permission:edit-ownershiptype', ['only' => ['edit','update']]);
+        $this->middleware('permission:delete-ownershiptype', ['only' => ['destroy']]);
+    }
     /**
      * Display a listing of the resource.
      */
