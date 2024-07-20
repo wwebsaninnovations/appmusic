@@ -27,7 +27,8 @@ class User extends Authenticatable
         'theme_mode', 
         'client_id',
         'full_address',
-        'company_label'
+        'company_label',
+        'platform_id'
 
     ];
 

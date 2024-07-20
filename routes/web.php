@@ -89,6 +89,9 @@ Route::post('/releases/delete', [ReleaseController::class, 'deleteReleaseData'])
 Route::put('/releases/updateReleaseStatus', [ReleaseController::class, 'updateReleaseStatus'])->name('releases.status.update');
 Route::put('/releases/finalReleaseSubmit', [ReleaseController::class, 'finalReleaseSubmit'])->name('releases.final.release.submit');
 
+Route::get('/releases/search-primary-artist', [ReleaseController::class, 'searchPrimaryArtist'])->name('searchPrimaryArtist');
+
+
 
 //GENRE RAUTE
 

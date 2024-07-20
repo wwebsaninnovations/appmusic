@@ -112,7 +112,7 @@
                                         {{ $errors->first('primary_artist_basic') }}
                                     </div>
                                 @endif
-                                <div>Suggestions and create new</div>
+                                <div id="suggestions"></div>
                             </div>
 
                             <div class="mb-3">
@@ -718,7 +718,13 @@
                         <input type="hidden" name="release_id" value="{{ $release->id }}">
                         <div class="row">
                             <!-- Platform checkboxes -->
+                            @php
+                                // Decode the JSON string into an array or use an empty array if null
+                                $userPlatformIds = json_decode(Auth::user()->platform_id, true) ?? [];
+                            @endphp
+
                             @foreach($platforms as $platform)
+                                @if(in_array($platform->id, $userPlatformIds))
                                 <div class="col-md-4">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="{{ $platform->id }}" id="platform{{ $platform->id }}" name="platforms[]" 
@@ -726,8 +732,10 @@
                                         <label class="form-check-label" for="platform{{ $platform->id }}">{{ $platform->name }}</label>
                                     </div>
                                 </div>
+                                @endif
                             @endforeach
                         </div>
+
                         </div>
 
                         <h3>Territories Configuration</h3>

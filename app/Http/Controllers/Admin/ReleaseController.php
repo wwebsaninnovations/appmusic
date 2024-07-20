@@ -711,6 +711,22 @@ class ReleaseController extends Controller
         return redirect()->route('releases.index')->with('success', 'Release added successfully!');
     }
     
+    public function searchPrimaryArtist(Request $request)
+    {
+        $searchData = $request->input('search_input');
+        
+        $releaseArtists = Release::where('primary_artist', 'like', '%' . $searchData . '%')->pluck('primary_artist');
+        $trackArtists = Track::where('track_primary_artist', 'like', '%' . $searchData . '%')->pluck('track_primary_artist');
+        
+        $artists = $releaseArtists->merge($trackArtists)->unique()->values();
+        
+        return response()->json($artists);
+    }
+    
+
+
+
+
     /**
      * Store a newly created resource in storage.
      */

@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Platform;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+
 
 class UserController extends Controller
 {
@@ -59,8 +61,10 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::pluck('name')->all();
+        $platforms = Platform::all();
         return view('admin.users.create', [
-            'roles' => $roles
+            'roles'      => $roles,
+            'platforms'  =>$platforms
         ]);
     }
 
@@ -76,13 +80,17 @@ class UserController extends Controller
             'password' => 'required|string|min:8|confirmed',
             'roles' => 'required',
             'full_address' => 'required|string', 
-            'company_label' => 'required|string'
+            'company_label' => 'required|string',
+            'platform_id' => 'required|array', // Ensure platforms is an array
+            'platform_id.*' => 'integer|exists:platforms,id' // Validate each platform ID
          ]);
          $input = $request->all();
          $input['password'] = Hash::make($request->password);
          $input['created_by'] = Auth::user()->id;
          $lastClientId = User::latest('id')->first()->client_id;
-         $input['client_id'] = $lastClientId + 1;         
+         $input['client_id'] = $lastClientId + 1;    
+            // Convert platforms array to JSON
+         $input['platform_id'] = json_encode($request->platform_id);     
          $user = User::create($input);
          $user->assignRole($request->roles);
 
@@ -105,11 +113,13 @@ class UserController extends Controller
                 abort(403, 'USER DOES NOT HAVE THE RIGHT PERMISSIONS');
             }
         }
+        $platforms = Platform::all();
 
         return view('admin.users.edit', [
             'user' => $user,
             'roles' => Role::pluck('name')->all(),
-            'userRoles' => $user->roles->pluck('name')->all()
+            'userRoles' => $user->roles->pluck('name')->all(),
+            'platforms'  =>$platforms
         ]);
     }
 
@@ -122,7 +132,9 @@ class UserController extends Controller
             'password' => 'nullable|string|min:8|confirmed',
             'roles' => 'required',
             'full_address' => 'required|string', 
-            'company_label' => 'required|string'
+            'company_label' => 'required|string',
+            'platform_id' => 'required|array', // Ensure platforms is an array
+            'platform_id.*' => 'integer|exists:platforms,id' // Validate each platform ID
          ]);
         
          $input = $request->all();
@@ -132,6 +144,7 @@ class UserController extends Controller
         }else{
             $input = $request->except('password');
         }
+        $input['platform_id'] = json_encode($request->platform_id); 
 
         $user->update($input);
 

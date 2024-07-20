@@ -494,8 +494,40 @@ var dropzone = new Dropzone('#image-upload', {
     }
 });
 
+</script>
 
-  
+<script>
+$(document).ready(function() {
+    $('#primary_artist_basic').on('input', function() {
+        var query = $(this).val();
+        if (query.length >0 ) { // Start searching atleast 1 characters
+            $.ajax({
+                url: '{{ route("searchPrimaryArtist") }}',
+                type: 'GET',
+                data: { search_input: query },
+                success: function(data) {
+                    $('#suggestions').empty();
+                    if (data.length > 0) {
+                        $('#suggestions').append('<div class="suggestion-item">Select Suggestion or Add New</div>');
+                        $.each(data, function(index, value) {
+                          
+                            $('#suggestions').append('<div class="suggestion-item" onclick="selectSuggestion(\'' + value + '\')">' + value + '</div>');
+                        });
+                    } else {
+                        $('#suggestions').append('<div>No suggestions found, Add New</div>');
+                    }
+                }
+            });
+        } else {
+            $('#suggestions').empty();
+        }
+    });
+});
+
+function selectSuggestion(value) {
+    $('#primary_artist_basic').val(value);
+    $('#suggestions').empty();
+}
 </script>
 
 </body>

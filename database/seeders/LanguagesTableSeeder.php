@@ -21,6 +21,7 @@ class LanguagesTableSeeder extends Seeder
             ['name' => 'Basque', 'code' => 'eu'],
             ['name' => 'Belarusian', 'code' => 'be'],
             ['name' => 'Bengali', 'code' => 'bn'],
+            ['name' => 'Bhojpuri', 'code' => 'bho'],
             ['name' => 'Bosnian', 'code' => 'bs'],
             ['name' => 'Bulgarian', 'code' => 'bg'],
             ['name' => 'Catalan', 'code' => 'ca'],

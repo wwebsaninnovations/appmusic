@@ -116,6 +116,31 @@
                             @endif
                         </div>
                     </div>
+              
+                    <div class="mb-3 row">
+                        <label for="platform" class="col-md-4 col-form-label text-md-end text-start">Select Platform</label>
+                        <div class="col-md-6">
+                            <div style="height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;">
+                                @forelse($platforms as $platform)
+                                    <div class="form-check">
+                                        <input class="form-check-input @error('platform_id') is-invalid @enderror" type="checkbox" id="platform_id_{{ $platform->id }}" name="platform_id[]" value="{{ $platform->id }}" {{ in_array($platform->id, old('platform_id', [])) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="platform_{{ $platform->id }}">
+                                            {{ $platform->name }}
+                                        </label>
+                                    </div>
+                                @empty
+                                    <span>No platforms available</span>
+                                @endforelse
+                            </div>
+                            @error('platform_id')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
+
+
+
                     <div class="mb-3 row">
                         <input type="submit" class="col-md-3 offset-md-5 btn btn-primary" value="Add User">
                     </div>
