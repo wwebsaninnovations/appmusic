@@ -2,7 +2,7 @@
           <div class="app-brand demo mb-4 ">
             <a href="{{route('dashboard')}}" class="app-brand-link">
               <span class="app-brand-logo demo ">
-                 <img src="{{asset('assets/img/avatars/km-new-logo.png')}}" width="150" />
+                 <img src="{{asset('assets/img/avatars/logoKha.png')}}" width="150" />
               </span>
             </a>
             <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
@@ -38,7 +38,7 @@
              
                 <li class="menu-item  {{ request()->routeIs('releases.step1') ? 'active' : '' }}">
                   <a href="{{ route('releases.step1') }}" class="menu-link">
-                    <div data-i18n="Create new release"> Create new release</div>
+                    <div data-i18n=" Create New Catalog"> Create New Catalog</div>
                   </a>
                 </li>
               </ul>
@@ -74,13 +74,13 @@
                 <ul class="menu-sub">
                 <li class="menu-item   {{ request()->routeIs('genre.index') ? 'active' : '' }}">
                   <a href="{{ route('genre.index') }}"  class="menu-link">
-                    <div data-i18n="List">List</div>
+                    <div data-i18n="All Genre">All Genre</div>
                   </a>
                 </li>
              
                 <li class="menu-item  {{ request()->routeIs('genre.create') ? 'active' : '' }}">
                   <a href="{{ route('genre.create') }}" class="menu-link">
-                    <div data-i18n="Add">Add</div>
+                    <div data-i18n="Add New Genre">Add New Genre</div>
                   </a>
                 </li>
               </ul>
@@ -95,13 +95,13 @@
                 <ul class="menu-sub">
                 <li class="menu-item   {{ request()->routeIs('platforms.index') ? 'active' : '' }}">
                   <a href="{{ route('platforms.index') }}"  class="menu-link">
-                    <div data-i18n="List">List</div>
+                    <div data-i18n="All Platform">All Platform</div>
                   </a>
                 </li>
              
                 <li class="menu-item  {{ request()->routeIs('platforms.create') ? 'active' : '' }}">
                   <a href="{{ route('platforms.create') }}" class="menu-link">
-                    <div data-i18n="Add">Add</div>
+                    <div data-i18n="Add New Platform">Add New Platform</div>
                   </a>
                 </li>
               </ul>
@@ -122,7 +122,7 @@
              
                 <li class="menu-item  {{ request()->routeIs('ownershiptypes.create') ? 'active' : '' }}">
                   <a href="{{ route('ownershiptypes.create') }}" class="menu-link">
-                    <div data-i18n="Add">Add</div>
+                    <div data-i18n="Add New">Add New</div>
                   </a>
                 </li>
               </ul>
@@ -146,10 +146,39 @@
               <li class="menu-item ">
                 <a href="#" class="menu-link">
                 <i class="fa-solid fa-dollar menu-icon tf-icons"></i>
-                  <div data-i18n="Finential"> Finential</div>
+                  <div data-i18n="financial"> Financial</div>
+                </a>
+              </li>
+
+
+              <li class="menu-item ">
+                <a href="{{route('profile')}}"  class="menu-link">
+                 <i class="bx bx-user-voice menu-icon tf-icons"></i>  
+                 <div data-i18n="Profile"> Profile</div>
+                 
                 </a>
               </li>
        
+              <li class="menu-item ">
+                <a id="theme-toggle" class="nav-link style-switcher-toggle hide-arrow menu-link" href="javascript:void(0);" onclick="changeTheme()">
+                  <i class="bx bx-sm menu-icon tf-icons @if(Auth::user()->theme_mode =='dark') bx-sun @else bx-moon @endif"></i>Mode
+                </a>
+              </li>
+
+                <li class="menu-item ">
+                  <a class="nav-link style-switcher-toggle hide-arrow menu-link"  href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                      <i class="bx bx-power-off me-2"></i>
+                      <span class="align-middle">  {{ __('Log Out') }}</span>
+                  </a>
+                  <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                      @csrf
+                  </form>
+              </li>
+        
+
+
+
+
           </ul>
   </aside>
 

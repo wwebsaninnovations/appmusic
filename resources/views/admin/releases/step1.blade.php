@@ -17,7 +17,7 @@
                         @csrf
                         <!-- Step 1: Choose Format -->
                         <div class="mb-3">
-                            <label for="format" class="form-label">Format</label>
+                            <label for="format" class="form-label">Format <span class="required">*</span></label>
                             <select class="form-select" id="format" name="format">
                                 <option value="">Select Format</option>
                                 <option value="single" {{ old('format') == 'single' ? 'selected' : '' }}>Single</option>
@@ -32,7 +32,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="release_name" class="form-label">Release Name</label>
+                            <label for="release_name" class="form-label">Release Name <span class="required">*</span></label>
                             <input type="text" class="form-control" id="release_name" name="release_name" value="{{ old('release_name') }}">
                             @if ($errors->has('release_name'))
                                 <div class="text-danger">

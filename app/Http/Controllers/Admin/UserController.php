@@ -82,7 +82,9 @@ class UserController extends Controller
             'full_address' => 'required|string', 
             'company_label' => 'required|string',
             'platform_id' => 'required|array', // Ensure platforms is an array
-            'platform_id.*' => 'integer|exists:platforms,id' // Validate each platform ID
+            'platform_id.*' => 'integer|exists:platforms,id', // Validate each platform ID
+            'social_links.name.*' => 'nullable|string', // Ensure social link name is a string if provided
+            'social_links.url.*' => 'nullable|url' // Ensure social link URL is a valid URL if provided
          ]);
          $input = $request->all();
          $input['password'] = Hash::make($request->password);
@@ -90,7 +92,20 @@ class UserController extends Controller
          $lastClientId = User::latest('id')->first()->client_id;
          $input['client_id'] = $lastClientId + 1;    
             // Convert platforms array to JSON
-         $input['platform_id'] = json_encode($request->platform_id);     
+         $input['platform_id'] = json_encode($request->platform_id);    
+         
+         // Prepare social links data
+        $socialLinks = [];
+        if (isset($validatedData['social_links']['name']) && isset($validatedData['social_links']['url'])) {
+            foreach ($validatedData['social_links']['name'] as $index => $name) {
+                $url = $validatedData['social_links']['url'][$index] ?? null;
+                if ($name && $url) {
+                    $socialLinks[$name] = $url;
+                }
+            }
+        }
+         
+         $input['sociallinks'] =  json_encode($socialLinks);
          $user = User::create($input);
          $user->assignRole($request->roles);
 
@@ -125,16 +140,19 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
+    
         $validatedData = $request->validate([
             'name' => 'required|string|max:250',
             'email' => 'required|string|email:rfc,dns|max:250|unique:users,email,'.$user->id,
             'mobile' => 'required|digits:10|unique:users,mobile,'.$user->id,
             'password' => 'nullable|string|min:8|confirmed',
-            'roles' => 'required',
+             'roles' => 'required',
             'full_address' => 'required|string', 
             'company_label' => 'required|string',
             'platform_id' => 'required|array', // Ensure platforms is an array
-            'platform_id.*' => 'integer|exists:platforms,id' // Validate each platform ID
+            'platform_id.*' => 'integer|exists:platforms,id', // Validate each platform ID
+            'social_links.name.*' => 'nullable|string', // Ensure social link name is a string if provided
+            'social_links.url.*' => 'nullable|url' // Ensure social link URL is a valid URL if provided
          ]);
         
          $input = $request->all();
@@ -145,10 +163,27 @@ class UserController extends Controller
             $input = $request->except('password');
         }
         $input['platform_id'] = json_encode($request->platform_id); 
+          // Prepare social links data
+          $socialLinks = [];
+          if (isset($validatedData['social_links']['name']) && isset($validatedData['social_links']['url'])) {
+              foreach ($validatedData['social_links']['name'] as $index => $name) {
+                  $url = $validatedData['social_links']['url'][$index] ?? null;
+                  if ($name && $url) {
+                      $socialLinks[$name] = $url;
+                  }
+              }
+          }
+          
 
+        $input['sociallinks'] = json_encode($socialLinks);
+     
         $user->update($input);
-
         $user->syncRoles($request->roles);
+    
+        if (isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'profile') !== false) {
+            return redirect()->route('profile');
+        }
+        
 
         return redirect()->route('users.index')
                 ->withSuccess('User is updated successfully.');

@@ -36,6 +36,11 @@ Route::post('/theme/change', [ThemeController::class, 'changeTheme'])->name('the
 
 Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('dashboard');
 Route::get('/profile', [App\Http\Controllers\HomeController::class, 'profile'])->name('profile');
+Route::get('/profile/edit', [App\Http\Controllers\HomeController::class, 'profileEdit'])->name('profileEdit');
+Route::put('/profile/update', [App\Http\Controllers\HomeController::class, 'profileUpdate'])->name('profileUpdate');
+
+
+
 
 Route::get('/users/trashed', [UserController::class, 'trashedUsers'])->name('users.trashed');
 Route::post('/users/{id}/restore', [UserController::class, 'restoreUser'])->name('users.restore');
@@ -69,7 +74,6 @@ Route::get('/musics/generateTrackCode', [MusicController::class, 'generateTrackC
 //RELEASE CONTROLLER
 Route::get('/releases/create/step1', [ReleaseController::class, 'step1'])->name('releases.step1');
 Route::post('/releases/create/step1', [ReleaseController::class, 'saveStep1'])->name('releases.step1.save');
-
 Route::get('/releases/create/step2', [ReleaseController::class, 'step2'])->name('releases.step2');
 Route::post('/releases/create/basic', [ReleaseController::class, 'saveBasic'])->name('releases.basic.save');
 Route::post('/releases/create/artwork', [ReleaseController::class, 'saveArtwork'])->name('releases.artwork.save');

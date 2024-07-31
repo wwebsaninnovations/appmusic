@@ -137,7 +137,30 @@
                             @enderror
                         </div>
                     </div>
-
+                    <!-- Social Links -->
+                    <div class="mb-3 row">
+                        <label class="col-md-4 col-form-label text-md-end text-start">Social Links</label>
+                        <div class="col-md-6">
+                            <div id="social-links-container">
+                                <!-- Social link template -->
+                                <div class="social-link mb-2" style="display: none;">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="social_links[name][]" placeholder="Social Link Name">
+                                        <input type="url" class="form-control" name="social_links[url][]" placeholder="Social Link URL">
+                                        <button type="button" class="btn btn-danger remove-social-link">Remove</button>
+                                    </div>
+                                </div>
+                                <!-- Initial social link -->
+                                <div class="social-link mb-2">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="social_links[name][]" placeholder="Social Link Name">
+                                        <input type="url" class="form-control" name="social_links[url][]" placeholder="Social Link URL">
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-success" id="add-social-link">Add More</button>
+                        </div>
+                    </div>
 
 
 
@@ -150,4 +173,25 @@
         </div>
     </div>
 </div>    
+<!-- JavaScript to handle adding and removing social links -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.getElementById('social-links-container');
+        const template = document.querySelector('.social-link').cloneNode(true);
+        template.style.display = 'block';
+        template.querySelector('.remove-social-link').style.display = 'inline-block'; // Ensure remove button is shown for new links
+        const addButton = document.getElementById('add-social-link');
+
+        addButton.addEventListener('click', function() {
+            const newLink = template.cloneNode(true);
+            container.appendChild(newLink);
+        });
+
+        container.addEventListener('click', function(event) {
+            if (event.target.classList.contains('remove-social-link')) {
+                event.target.closest('.social-link').remove();
+            }
+        });
+    });
+</script>
 @endsection

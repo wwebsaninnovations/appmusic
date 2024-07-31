@@ -28,7 +28,8 @@ class User extends Authenticatable
         'client_id',
         'full_address',
         'company_label',
-        'platform_id'
+        'platform_id',
+        'sociallinks'
 
     ];
 

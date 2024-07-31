@@ -1,9 +1,10 @@
 <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
-            id="layout-navbar">
+            id="layout-navbar" style="display:none;">
             <div class="navbar-nav align-items-center">
-            <a id="theme-toggle" class="nav-link style-switcher-toggle hide-arrow" href="javascript:void(0);" onclick="changeTheme()">
+
+            <!-- <a id="theme-toggle" class="nav-link style-switcher-toggle hide-arrow" href="javascript:void(0);" onclick="changeTheme()">
                 <i class="bx bx-sm  @if(Auth::user()->theme_mode =='dark') bx-sun @else bx-moon @endif"></i>
-            </a>
+            </a> -->
 
             <form id="theme-form" action="{{ route('theme.change') }}" method="POST" class="d-none">
                 @csrf

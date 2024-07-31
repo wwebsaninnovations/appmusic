@@ -19,7 +19,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'Karhari Media Industry') }}</title>
+    <title>Karhari media music distribution</title>
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <!-- <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet"> -->
@@ -30,7 +30,7 @@
 <!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
 <!-- Icons -->
-<link rel="icon" type="image/x-icon" href="{{ asset('assets/img/favicon/favicon.ico') }}" />
+<link rel="icon" type="image/x-icon" href="{{ asset('assets/img/favicon/favicon-32x32.png') }}" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
@@ -174,38 +174,40 @@
 
 <script type="text/javascript">
 
-  //   dataSrc: function (json) {
-        //         // Update your HTML elements with the response data
-        //         $('#recordsTotal').text(json.recordsTotal);
-        //         $('#totalApproved').text(json.totalApproved);
-        //         $('#totalPending').text(json.totalPending);
-        //         $('#totalRejected').text(json.totalRejected);
-        //         $('#totalIncomplete').text(json.totalIncomplete);
-
-        //         // Return the data to DataTables for rendering
-        //         return json.data;
-        //     }
-
+<?php 
+$url = "/releases/getReleaseData";
+if (isset($_GET['user_id'])) {
+    $url .= "?user_id=" . $_GET['user_id'];
+}
+?>
 //DataTables
-$('#example').DataTable({
+$('#releaseTable').DataTable({
+    
         ajax: {
-          url: '/releases/getReleaseData',
+          url: '<?php echo $url; ?>',
           type: 'GET',
-      
         },
         columns: [
           { data: '' },  
-          { data: 'srn' },  
-          { data: 'id' },
+          { data: 'srn',
+            orderable: false, // Disable ordering for the first column
+          },  
+          { 
+             data: 'id',
+             visible:false,
+             orderable: false, // Disable ordering for the first column
+           },
           { 
             data: 'thumbnail',
+            orderable: false, // Disable ordering for the first column
             render: function(data, type, full, meta) {
-              return '<img src="/storage/' + data + '" width="50px" />';
+              return '<img src="/public/storage/' + data + '" width="50px" />';
             }
           },
           { data: 'release_name' },
           { 
             data: 'format',
+            orderable: false, // Disable ordering for the first column
             render: function(data, type, full, meta) {
                 let badgeClass = '';
                 if (data === 'single') {
@@ -218,10 +220,11 @@ $('#example').DataTable({
                 return `<span class="${badgeClass}">${data}</span>`;
             }
            },
-          { data: 'code' },
-          { data: 'upc' },
+          { data: 'code',visible:false, },
+          { data: 'upc',visible:false, },
           { 
             data: 'status',
+            orderable: false, // Disable ordering for the first column
             render: function(data, type, full, meta) {
                 let badgeClass = '';
                 if (data === 'Pending') {
@@ -236,6 +239,7 @@ $('#example').DataTable({
            },
           {
             data: 'form_status',
+            visible:false,
             render: function(data, type, full, meta) {
                 let badgeClass = '';
                 if (data === 'Incomplete') {
@@ -251,9 +255,21 @@ $('#example').DataTable({
             orderable: false,
             render: function(data, type, full, meta) {
                 const editUrl = `/releases/create/step2?release_id=${data.id}&level=summary`;
+                let editicon = '<i class="bx bx-edit bx-sm"></i>';
+                let viewSummary = '';
+                if (data.form_status === "Complete") {
+                    editicon = '<span title="Note: If you want to make any changes to the release, please contact the administrator."><i class="bx bx-lock-alt bx-sm"></i></span>';
+                }
+                if (data.form_status === "Complete") {
+                    viewSummary = '<div style="font-size: 10px;"><i class="bx bx-show bx-sm"></i></div>';
+                }
+              
                 return `
                     <a class="badge bg-label-primary rounded p-2 " href="${editUrl}">
-                        <i class="bx bxs-edit bx-sm"></i>
+                       ${editicon}
+                    </a>
+                    <a class="badge bg-label-primary rounded p-2 " href="${editUrl}">
+                       ${viewSummary}
                     </a>
                     <a href="#" class="badge bg-label-danger rounded p-2 delete-btn" data-id="${data.id}">
                         <i class="bx bx-trash bx-sm"></i>
@@ -263,52 +279,39 @@ $('#example').DataTable({
         ],
 
         columnDefs: [
-        {
-            orderable: false,
-            render: DataTable.render.select(),
-            targets: 0
-        }
-    ],
-    select: {
-        style: 'multi',
-        selector: 'td:first-child',
-        headerCheckbox: 'select-all'
-    },
-
-
+            {
+                orderable: false, // Disable ordering for the first column
+                render: DataTable.render.select(),
+                targets: 0
+            }
+         
+       ],
+        select: {
+            style: 'multi',
+            selector: 'td:first-child',
+            headerCheckbox: 'select-all'
+        },
         processing: true,
         serverSide: true,
         paging: true,
         lengthMenu: [10, 25, 50, 100],
         pageLength: 10,
-        order: [[2, 'desc']],
+        order: [[1, 'desc']],
         searchDelay: 500 ,
         dom: 'Blfrtip',  //enabel all datatables functionality
         buttons: [
-                {
-                    extend: 'excel',
-                    text: 'Download Excelsheet',
-                    exportOptions: {
-                        columns: ':not(:first-child):not(:last-child)' 
-                    }
-                },
+            {
+                extend: 'excel',
+                text: 'Download Excelsheet',
+                exportOptions: {
+                    columns: ':not(:first-child):not(:last-child)' 
+                }
+            },
         ],
            
 });
 
 
-  // Listen for the `xhr` event to update HTML elements with summary information
-  $('#example').on('xhr.dt', function (e, settings, json, xhr) {
-        // Update your HTML elements with the response data
-        $('#recordsTotal').text(json.recordsTotal);
-        $('#totalApproved').text(json.totalApproved);
-        $('#totalPending').text(json.totalPending);
-        $('#totalRejected').text(json.totalRejected);
-        $('#totalComplete').text(json.totalComplete);
-        $('#totalIncomplete').text(json.totalIncomplete);
-        $('#totalTracks').text(json.totalTracks);
-        $('#totalTracksApproved').text(json.totalTracksApproved);
-    });
 
 // Handle delete button click
 $('#example').on('click', '.delete-btn', function (e) {
@@ -338,7 +341,7 @@ $('#example').on('click', '.delete-btn', function (e) {
   const myDropzone = new Dropzone('#dropzone-basic', {
     thumbnailWidth: 200,
     paramName: "file",
-    maxFilesize: 10, // in MB
+    maxFilesize: 50, // in MB
     addRemoveLinks: true, 
     maxFiles: 1,
     acceptedFiles: 'image/jpeg, image/jpg, image/tiff, image/tif', // Specify accepted file types
@@ -442,7 +445,7 @@ $('#example').on('click', '.delete-btn', function (e) {
 var dropzone = new Dropzone('#image-upload', {
     thumbnailWidth: 200,
     paramName: "file",
-    maxFilesize: 10, // in MB
+    maxFilesize: 50, // in MB
     acceptedFiles: "audio/*",
     addRemoveLinks: true, 
     uploadMultiple: true,

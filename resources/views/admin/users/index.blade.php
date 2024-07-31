@@ -22,14 +22,19 @@
 
                 @if(Auth::user()->hasRole('Super Admin'))
                 <form action="{{ route('users.index') }}" method="GET">
-                    <label>Filter By:</label>
-                    <select class="form-control" name="role">
-                        <option value="">All Roles</option>
-                        @foreach ($roles as $role)
-                            <option value="{{ $role }}" {{ request('role') == $role ? 'selected' : '' }}>{{ $role }}</option>
-                        @endforeach
-                    </select>
-                    <button class="btn btn-secondary" type="submit">Filter</button>
+                     <div class="_filter">
+                            <div class="rolesFilter">
+                                <label>Filter By</label>
+                                <select class="form-control" name="role">
+                                    <option value="">All Roles</option>
+                                    @foreach ($roles as $role)
+                                    <option value="{{ $role }}" {{ request('role') == $role ? 'selected' : '' }}>{{ $role }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                          <button class="btn btn-secondary" type="submit">Search</button>
+                     </div>
+                  
                 </form>
                  @endif
 
@@ -83,12 +88,18 @@
                                     @if (in_array('Super Admin', $user->getRoleNames()->toArray() ?? []) )
                                         @if (Auth::user()->hasRole('Super Admin'))
                                             <a href="{{ route('users.edit', $user->id) }}" class="btn btn-primary btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>
+                                            <a href="{{ route('releases.index', ['user_id' => $user->id]) }}" class="btn btn-primary btn-sm">View Release</a>
                                         @endif
                                     @else
+
                                         @can('edit-user')
                                             <a href="{{ route('users.edit', $user->id) }}" class="btn btn-primary btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>   
                                         @endcan
 
+                                        @can('create-user')
+                                          <a href="{{ route('releases.index', ['user_id' => $user->id]) }}" class="btn btn-primary btn-sm">View Release</a>
+                                        @endcan
+                                    
                                         @can('delete-user')
                                             @if (Auth::user()->id!=$user->id)
                                                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Do you want to delete this user?');"><i class="bi bi-trash"></i> Trash</button>

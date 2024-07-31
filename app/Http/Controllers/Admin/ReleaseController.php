@@ -40,13 +40,18 @@ class ReleaseController extends Controller
 
     public function getReleaseData(Request $request)
     {
-        $user_id = Auth::id(); // Using Auth::id() directly to get the authenticated user's ID
-     
-        $columns = ['srn','id', 'thumbnail_path', 'release_name', 'format', 'release_code', 'upc', 'status'];
+
     
-        $length = $request->input('length');
-        $column = $request->input('order.0.column', 0); // Index of column to sort, default to 0
-        $dir = $request->input('order.0.dir', 'desc'); // Order direction
+        $user_id = Auth::id(); // Using Auth::id() directly to get the authenticated user's ID
+        // Include form_status in the columns array
+        $columns = ['srn', 'id', 'thumbnail_path', 'release_name', 'format', 'release_code', 'upc', 'status', 'form_status'];
+    
+
+ 
+      
+        $length  = $request->input('length');
+        $column  = $request->input('order.0.column', 1); // Index of column to sort, default to 0
+        $dir     = $request->input('order.0.dir', 'desc'); // Order direction
         $searchValue = $request->input('search.value');
     
         // Validate column index
@@ -54,15 +59,23 @@ class ReleaseController extends Controller
             $column = 0; // Default to the first column if invalid
         }
 
-
         $query = Release::with('tracks') // Assuming 'tracks' is a relationship defined in your Release model
-        ->orderBy($columns[$column], $dir);
+        ->orderBy($columns[$column], $dir) // Primary order by user selection
+        ->orderBy('id', 'desc'); // Secondary order by 'id' descending
+
+
+        if($request->user_id) {
+            $query = Release::with('tracks')->where('user_id',$request->user_id) // Assuming 'tracks' is a relationship defined in your Release model
+            ->orderBy($columns[$column], $dir) // Primary order by user selection
+            ->orderBy('id', 'desc'); // Secondary order by 'id' descending
+        }
+
+
+      
     
         if (!Auth::user()->hasRole('Super Admin')) {
             $query->where('user_id', $user_id);
         }
-    
-       
     
         if ($searchValue) {
             $query->where(function($q) use ($searchValue) {
@@ -80,12 +93,12 @@ class ReleaseController extends Controller
                       }
                   })
                   ->orWhere(function ($q) use ($searchValue) {
-                    if (strtolower($searchValue) == 'incomplete') {
-                        $q->orWhere('form_status', 0);
-                    } elseif (strtolower($searchValue) == 'complete') {
-                        $q->orWhere('form_status', 1);
-                    } 
-                });
+                      if (strtolower($searchValue) == 'incomplete') {
+                          $q->orWhere('form_status', 0);
+                      } elseif (strtolower($searchValue) == 'complete') {
+                          $q->orWhere('form_status', 1);
+                      }
+                  });
             });
         }
     
@@ -106,9 +119,9 @@ class ReleaseController extends Controller
                     0 => 'Incomplete',
                     1 => 'Complete',
                 };
-
+    
                 $data[] = [
-                    'srn'         =>$count++,
+                    'srn'         => $count++,
                     'id'           => $release->id,
                     'thumbnail'    => $release->thumbnail_path, // Adjust this to match your actual attribute name
                     'release_name' => $release->release_name,
@@ -121,39 +134,14 @@ class ReleaseController extends Controller
             }
         }
     
-        // Count total approved, pending, rejected, and incomplete
-        $totalApproved = Release::where('user_id', $user_id)->where('status', 1)->count();
-        $totalPending = Release::where('user_id', $user_id)->where('status', 0)->count();
-        $totalRejected = Release::where('user_id', $user_id)->where('status', 2)->count();
-        $totalComplete = Release::where('user_id', $user_id)->where('form_status', 1)->count();
-        $totalIncomplete = Release::where('user_id', $user_id)->where('form_status', 0)->count();
-        // Count total tracks across all releases
-        $totalTracks = 0;
-        // Count total tracks from approved releases only
-        $totalTracksApproved = 0;
-
-        foreach ($releases as $release) {
-            $totalTracks += $release->tracks->count();
-
-            if ($release->status == 1) {
-                $totalTracksApproved += $release->tracks->count();
-            }
-        }
-
         return response()->json([
             'data' => $data,
             'draw' => intval($request->input('draw')),
             'recordsTotal' => $totalRecords,
             'recordsFiltered' => $totalRecords,
-            'totalApproved' => $totalApproved,
-            'totalPending' => $totalPending,
-            'totalRejected' => $totalRejected,
-            'totalComplete' => $totalComplete,
-            'totalIncomplete' => $totalIncomplete,
-            'totalTracks'=>$totalTracks,
-            'totalTracksApproved'=>$totalTracksApproved
         ]);
     }
+    
     
     
     
@@ -177,9 +165,9 @@ class ReleaseController extends Controller
         $validateData = $request->validate([
             'format' => 'required|in:single,ep,album',
             'release_name' => 'required|string|max:255',
-            'release_version' => 'required|string|max:255',
-            'release_code' =>'required|string|numeric', 
-            'upc' => 'required|string|numeric' 
+            'release_version' => 'nullable|string|max:255',
+            'release_code' =>'nullable|string|numeric', 
+            'upc' => 'nullable|string|numeric' 
             
         ]);
 
@@ -230,17 +218,17 @@ class ReleaseController extends Controller
 
         $validatedData = $request->validate([
           
-            'upc' => 'required|string|numeric',
-            'release_code' => 'required|string|numeric',
+            'upc' => 'nullable|string|numeric',
+            'release_code' => 'nullable|string|numeric',
             'meta_language' => 'required|string|max:255',
             'release_name' => 'required|string|max:255',
-            'release_version' => 'required|string',
+            'release_version' => 'nullable|string',
             'primary_artist_basic' => 'required|string|max:255',
             'featuring_artist_basic' => 'nullable|string|max:255',
             'producer_artist_basic'=> 'required|string|max:255',
             'remixer_artist_basic'=>'nullable|string|max:255',
             'genre'=> 'required|string|max:255',
-            'sub_genre' => 'required|string|max:255',
+            'sub_genre' => 'nullable|string|max:255',
             'format' => 'required|in:single,ep,album',
             'cname_basic' => 'required|string|max:255|regex:/^\d{4}.*$/',
             'pname_basic' => 'required|string|max:255|regex:/^\d{4}.*$/',
@@ -459,7 +447,7 @@ class ReleaseController extends Controller
     
         for ($i = 0; $i < count($track_ids); $i++) {
             $rules['track_name.' . $i] = 'required|string|max:255';
-            $rules['track_version.' . $i] = 'required|string|max:50';
+            $rules['track_version.' . $i] = 'nullable|string|max:50';
             $rules['lyrics_language.' . $i] = 'required|string|max:50';
             $rules['explicit_content.' . $i] = 'required|string|max:50';
             $rules['primary_artist.' . $i] = 'required|string|max:255';
@@ -469,7 +457,7 @@ class ReleaseController extends Controller
             $rules['track_producer.' . $i] = 'required|string|max:255';
             $rules['composer_name.' . $i] = 'required|string|max:255';
             $rules['label_name.' . $i] = 'required|string|max:255';
-            $rules['isrc.' . $i] = 'required|string|max:255';
+            $rules['isrc.' . $i] = 'nullable|string|max:255';
             $rules['primary_performers.' . $i] = 'required|string|max:255';
             $rules['pname.' . $i] = 'required|string|max:255';
             $rules['cname.' . $i] = 'required|string|max:255';
@@ -691,12 +679,14 @@ class ReleaseController extends Controller
 
         $release_id = $request->release_id;
         $status = $request->status;
+        $form_status =$request->form_status;
         $release = Release::find($release_id);
         if($release){
             $release->status =$status ;
+            $release->form_status =$form_status ;
             $release->save();
         }
-        return redirect()->back()->with('success', 'Release status updated successfully!');
+        return redirect()->back()->with('success', 'Release settings updated successfully!');
     }
 
     public function finalReleaseSubmit(Request $request) {
