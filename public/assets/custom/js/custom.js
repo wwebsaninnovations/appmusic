@@ -178,3 +178,14 @@ $(document).ready(function() {
 });
 
 
+$(document).ready(function() {
+    $('#list').click(function(event) {
+        event.preventDefault();
+        $('#products .item').removeClass('grid-group-item').addClass('list-group-item');
+    });
+
+    $('#grid').click(function(event) {
+        event.preventDefault();
+        $('#products .item').removeClass('list-group-item').addClass('grid-group-item');
+    });
+});

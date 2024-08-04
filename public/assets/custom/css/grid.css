@@ -1,0 +1,41 @@
+.view-group {
+    display: flex;
+    flex-direction: row;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.item.list-group-item {
+    display: flex;
+    width: 100%;
+    background-color: #fff;
+    margin-bottom: 30px;
+    flex: 0 0 100%;
+    max-width: 100%;
+    padding: 0 1rem;
+    border: 0;
+}
+
+.item.grid-group-item {
+    flex: 1 0 33.33%;
+    max-width: 33.33%;
+    padding: 0 15px;
+}
+
+.item.grid-group-item .card {
+    margin-bottom: 30px;
+}
+
+.item.list-group-item .img-event {
+    width: 30%;
+    margin-right: 10px;
+}
+
+.item.list-group-item .caption {
+    width: 70%;
+    margin: 0;
+}
+
+.item.grid-group-item .caption {
+    text-align: center;
+}

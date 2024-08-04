@@ -89,7 +89,8 @@ Route::post('/releases/create/removeartwork', [ReleaseController::class, 'remove
 //Ajax URL
 
 Route::get('/releases/getReleaseData', [ReleaseController::class, 'getReleaseData']);
-Route::post('/releases/delete', [ReleaseController::class, 'deleteReleaseData']);
+Route::post('/releases/delete', [ReleaseController::class, 'deleteReleaseData'])->name('releases.delete');
+
 Route::put('/releases/updateReleaseStatus', [ReleaseController::class, 'updateReleaseStatus'])->name('releases.status.update');
 Route::put('/releases/finalReleaseSubmit', [ReleaseController::class, 'finalReleaseSubmit'])->name('releases.final.release.submit');
 

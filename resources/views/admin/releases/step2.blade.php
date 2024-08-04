@@ -6,7 +6,9 @@
         <div class="col-md-12 tabs-item release-nav-link">
             <!-- Nav tabs -->
             <div class="nav  nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                @if(!$release->form_status)
+
+               <!-- 0 pending , 2 rejected -->
+                @if($release->status == 0 || $release->status == 2 )
                 
                 <div class="nav-item">
                     <a class="nav-link {{($level=='basic') ? 'active' : ''}}" id="v-pills-basic-tab" data-bs-toggle="pill" href="#v-pills-basic" role="tab" aria-controls="v-pills-basic" aria-selected="true" data-href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'basic'])}}">Basic</a>
@@ -29,12 +31,7 @@
                 <div class="nav-item">
                     <a class="nav-link {{($level=='summary') ? 'active' : ''}}" id="v-pills-summary-tab" data-bs-toggle="pill" href="#v-pills-summary" role="tab" aria-controls="v-pills-summary" aria-selected="false" data-href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'summary'])}}">Summary</a>
                 </div>
-                @canany(['approve-release' ])
-                <div class="nav-item">
-                    <a class="nav-link {{($level=='control_release') ? 'active' : ''}}" id="v-pills-control_release-tab" data-bs-toggle="pill" href="#v-pills-control_release" role="tab" aria-controls="v-pills-control_release" aria-selected="false" data-href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'control_release'])}}">Release</a>
-                </div>
-
-                @endcanany
+               
                 
             </div>
         </div>
@@ -182,6 +179,7 @@
                             <div class="col-6 mb-3">
                                 <label for="genre" class="form-label">Genre<span class="required">*</span></label>
                                     <select name="genre" id="genre" class="form-control @error('genre') is-invalid @enderror">
+                                    <option value="">Select Genre</option>
                                         @foreach($genres as $genre)
                                             <option value="{{ $genre->name }}" {{ old('genre', $release->genre) == $genre->name ? 'selected' : '' }}>
                                                 {{ ucfirst($genre->name) }}
@@ -469,7 +467,15 @@
                                         <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                                             @foreach($release->tracks as $index => $track)
                                             <a class="nav-link {{ ($index == 0) ? 'active' : '' }}" id="v-pills-track{{ $index }}-tab" data-bs-toggle="pill" href="#v-pills-track{{ $index }}" role="tab" aria-controls="v-pills-track{{ $index }}" aria-selected="{{ ($index == 0) ? 'true' : 'false' }}">
-                                                <span>{{ $index + 1 }}. </span> {{ basename($track->track_path) }}
+                                                <span>{{ $index + 1 }}. 
+
+                                                <audio controls style="width: 90%;">
+                                                    <source src="{{ asset('storage/' . $track->track_path) }}" type="audio/mpeg">
+                                                    Your browser does not support the audio element.
+                                                </audio>
+                                                
+                                                </span> {{ basename($track->track_path) }}
+                                               
                                                 <span class="track-duration">{{ $track->track_duration }}</span>
                                             </a>
                                             @endforeach
@@ -819,21 +825,58 @@
 
                 </div>
                  <div class="tab-pane fade release_summary {{($level=='summary')? ' show active':''}}" id="v-pills-summary" role="tabpanel" aria-labelledby="v-pills-summary-tab">
-                  <h2 class="siteTitle">Release Summary</h2>
-             
-                  @if($release->form_status)
-                        <p class="text-danger">Note: If you want to make any changes to the release, please contact the administrator.</p>
-                  @endif
-                    <!-- Notice to complete all steps -->
-                    <div class="alert alert-info mt-4">
-                      Please ensure all steps are complete before clicking <strong>Submit Release.</strong>
-                    </div>
+
+
+               
+                 @canany(['approve-release'])
+     
+                    <h2 class="siteTitle">Release</h2>
+                    <div class="col-12">
+                            @if($release->status == 0)
+                            <span class="badge bg-warning">Pending</span>
+                            @elseif($release->status == 1)
+                                <span class="badge bg-info">Sent</span>
+                            @elseif($release->status == 2)
+                                <span class="badge bg-danger">Rejected</span>
+                            @else
+                            <span class="badge bg-success">Approved</span>
+                           @endif
+                           <form method="POST" action="{{ route('releases.status.update') }}" class="d-flex flex-column flex-sm-row align-items-center">
+                            @csrf
+                            @method('PUT')
+                            <input type="hidden" name="release_id" value="{{ $release->id }}" />
+                            
+                            <!-- Button to set status to Draft -->
+                            <button type="submit" name="status" value="2" class="btn btn-warning me-2">
+                                Set to Draft
+                            </button>
+                            
+                            <!-- Button to set status to Approved -->
+                            <button type="submit" name="status" value="3" class="btn btn-success">
+                                Set to Approved
+                            </button>
+                        </form>
+
+                        </div>
+                        @else
+                            @if($release->status == 0)
+                            <span class="badge bg-warning">Pending</span>
+                            @elseif($release->status == 1)
+                                <span class="badge bg-info">Sent</span>
+                            @elseif($release->status == 2)
+                                <span class="badge bg-danger">Rejected</span>
+                            @else
+                            <span class="badge bg-success">Approved</span>
+                           @endif
+                    
+                 @endcanany
+
                     <div class=" mt-2">
                         <div class="card mb-4">
                             <div class="card-body">
-                                @php $status = 1; @endphp
+                            
                                 @if(empty($release->meta_language))
-                                    @php $status = 0; @endphp
+                                  
                                     <div class="alert alert-warning">Basic Details Not Completed</div>
                                 @else
                                     <h5 class="card-title">Basic Information</h5>
@@ -885,7 +928,17 @@
                                         </div>
                                     </div>
 
-                                    <a href="{{ route('releases.step2', ['release_id' => $release->id, 'level' => 'basic', 'summary' => 'basic']) }}" class="btn btn-primary mt-4">Edit</a>
+                                    @canany(['approve-release'])
+                                  
+                                        <a href="{{ route('releases.step2', ['release_id' => $release->id, 'level' => 'basic', 'summary' => 'basic']) }}" class="btn btn-primary mt-4">Edit</a>
+                                    @else
+                                        @if($release->status == 0|| $release->status == 2)
+                                        
+                                        <a href="{{ route('releases.step2', ['release_id' => $release->id, 'level' => 'basic', 'summary' => 'basic']) }}" class="btn btn-primary mt-4">Edit</a>
+                                     @endif
+
+                                    @endcanany
+
                                 @endif
                             </div>
                         </div>
@@ -895,13 +948,23 @@
                             <div class="card-body">
                                 <h5 class="card-title">Artwork</h5>
                                 @if(empty($release->thumbnail_path))
-                                    @php $status =0; @endphp
                                     <div class="alert alert-warning">Thumbnail Not Completed</div>
                                 @else
                                     <img src="{{ asset('storage/' . $release->thumbnail_path) }}" width="150px" alt="Thumbnail">
                                 @endif
                                 
-                                <p><a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'artwork', 'summary'=>'artwork'])}}" class="btn btn-primary mt-4">Edit</a></p>
+                                <p>
+                                 
+                                    @canany(['approve-release'])
+                                    <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'artwork', 'summary'=>'artwork'])}}" class="btn btn-primary mt-4">Edit</a>
+                                  @else
+                                    @if($release->status == 0|| $release->status == 2)
+                                        <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'artwork', 'summary'=>'artwork'])}}" class="btn btn-primary mt-4">Edit</a>
+                                    @endif
+
+                                    @endcanany
+                                
+                                </p>
                             </div>
                         </div>
 
@@ -910,7 +973,6 @@
                             <div class="card-body">
                                 <h5 class="card-title">Uploaded Tracks</h5>
                                   @if($release->tracks->isEmpty())
-                                       @php $status =0; @endphp
                                        <div class="alert alert-warning">Not Completed</div>
                                   @else
                                         @foreach($release->tracks as $index => $track)
@@ -918,8 +980,17 @@
                                                 <p><strong>Track {{ $index + 1 }}:</strong> {{ basename($track->track_path) }}</p>
                                             </div>
                                         @endforeach
-                                  @endif    
-                                <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'uploadtrack','summary'=>'uploadtrack' ])}}" class="btn btn-primary mt-4">Edit</a>
+                                  @endif   
+
+                                  @canany(['approve-release'])
+                                    <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'uploadtrack','summary'=>'uploadtrack' ])}}" class="btn btn-primary mt-4">Edit</a>
+                                  @else
+                                    @if($release->status == 0|| $release->status == 2)
+                                        <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'uploadtrack','summary'=>'uploadtrack' ])}}" class="btn btn-primary mt-4">Edit</a>
+                                    @endif
+
+                                  @endcanany
+                                  
                             </div>
                         </div>
 
@@ -930,12 +1001,14 @@
                                     <div class="col-6">
                                         <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                                             @if($release->tracks->isEmpty())
-                                                 @php $status =0; @endphp
                                                 <div class="alert alert-warning">Not Completed</div>
                                             @else
                                                 @foreach($release->tracks as $index => $track)
                                                     <a class="nav-link {{ ($index == 0) ? 'active' : '' }}" id="v-pills-summary-track{{ $index }}-tab" data-bs-toggle="pill" href="#v-pills-summary-track{{ $index }}" role="tab" aria-controls="v-pills-summary-track{{ $index }}" aria-selected="{{ ($index == 0) ? 'true' : 'false' }}">
-                                                        <span>{{$index+1}}</span> {{ basename($track->track_path) }}
+                                                        <span>{{$index+1}} <audio controls style="width: 90%;">
+                                                                <source src="{{ asset('storage/' . $track->track_path) }}" type="audio/mpeg">
+                                                                Your browser does not support the audio element.
+                                                        </audio></span> {{ basename($track->track_path) }}
                                                         <span class="track-duration">{{ $track->track_duration }}</span>
                                                     </a>
                                                 @endforeach
@@ -980,7 +1053,18 @@
                                         </div>
                                     </div>
                                 </div>
-                                <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'edittrack', 'summary'=>'edittrack'])}}" class="btn btn-primary mt-4">Edit</a>
+
+                                @canany(['approve-release'])
+                                  
+                                  <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'edittrack', 'summary'=>'edittrack'])}}" class="btn btn-primary mt-4">Edit</a>
+                                @else
+                                    @if($release->status == 0|| $release->status == 2)
+                                    
+                                    <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'edittrack', 'summary'=>'edittrack'])}}" class="btn btn-primary mt-4">Edit</a>
+                                    @endif
+  
+                                @endcanany
+                         
                             </div>
                         </div>
 
@@ -988,7 +1072,6 @@
                             <div class="card-body">
                                 <h5 class="card-title">PlatForms</h5>
                                 @if($release->platforms->isEmpty())
-                                   @php $status =0; @endphp
                                     <div class="alert alert-warning">Not Completed</div>
                                 @else
                                     @foreach($release->platforms as $platform)
@@ -997,61 +1080,53 @@
                                         </div>
                                     @endforeach
                                 @endif
+
+                            @canany(['approve-release'])
+                                  
                                 <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'platforms','summary'=>'platforms' ])}}" class="btn btn-primary mt-4">Edit</a>
+                              @else
+                                  @if($release->status == 0|| $release->status == 2)
+                                  
+                                  <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'platforms','summary'=>'platforms' ])}}" class="btn btn-primary mt-4">Edit</a>
+                                  @endif
+
+                              @endcanany
+                                
                             </div>
                         </div>
                     </div>
-                
-                     
-                        <form method="POST" action="{{ route('releases.final.release.submit') }}">
-                            @csrf
-                            @method('PUT')
-                            <input type="hidden" name="release_id" value="{{$release->id}}" />
-                            <input type="hidden" name="form_status" value="{{$status}}" />
-                            <div class="submitBTN">
-                                <button type="submit" class="btn btn-primary saveRelease">Submit Release</button>
-                            </div>
-                        </form>
+
+                @php
+                    // Initialize status with the current status
+                    $status = $release->status;
+                    // Only update status if it's 0 or 2
+                    if ($status == 0 || $status == 2) {
+                        // Update status to 1 if all the conditions are met
+                        if (!empty($release->thumbnail_path) &!empty($release->tracks) &&!empty($release->platforms)) {
+                            $status = 1;
+                        }
+                    }
+                @endphp
+
+                @if($release->status == 0 || $release->status == 2)
+                    <form method="POST" action="{{ route('releases.final.release.submit') }}">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" name="release_id" value="{{ $release->id }}" />
+                        <input type="hidden" name="status" value="{{ $status }}" />
+                        <div class="submitBTN">
+                            <button type="submit" class="btn btn-primary saveRelease">Submit Release</button>
+                        </div>
+                    </form>
+                @endif
+  
 
               </div>
-              @canany(['approve-release'])
-              <div class="tab-pane fade {{($level=='control_release')? ' show active':''}}" id="v-pills-control_release" role="tabpanel" aria-labelledby="v-pills-control_release-tab">
-                            <h5 class="siteTitle">Release Settings</h5>
-                            <div class="col-12">
-                                    <form method="POST" action="{{route('releases.status.update')}}" class="d-flex flex-column flex-sm-row align-items-center">
-                                            @csrf
-                                            @method('PUT')
-                                            <div class="form-group mb-2 mb-sm-0 mr-sm-3 flex-grow-1">
-                                                <input type="hidden" name="release_id" value="{{$release->id}}" />
-                                                <div class="wrap-inner">
-                                                    <label for="status">Release Status</label>
-                                                    <select class="form-control" id="status" name="status">
-                                                        <option value="0" {{ $release->status == 0 ? 'selected' : '' }}>Pending</option>
-                                                        <option value="1" {{ $release->status == 1 ? 'selected' : '' }}>Approved</option>
-                                                        <option value="2" {{ $release->status == 2 ? 'selected' : '' }}>Rejected</option>
-                                                    </select>
-                                                </div>
-                                                <div class="wrap-inner">
-                                                    <label for="status">Editing Permissions</label>
-                                                    <select class="form-control" id="form_status" name="form_status">
-                                                        <option value="0" {{ $release->form_status == 0 ? 'selected' : '' }}>Enabled</option>
-                                                        <option value="1" {{ $release->form_status == 1 ? 'selected' : '' }}>Disabled</option>
-                                                    </select>
-                                                </div>
-                                                <button type="submit" class="btn btn-primary">Update</button>
-                                            </div>
-                                        </form>
-                                </div>
-                    
-                           
-
-                        </div>
-                 @endcanany
+          
 
         </div>
     </div>
 </div>
-
 
 @endsection
 

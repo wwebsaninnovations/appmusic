@@ -73,8 +73,14 @@ label.form-label span.required {
   box-shadow: none;
   color: #fff;
 }
+.white-mode #products .customBox .card-title {
+  color: #000;
+}
 
 .dark-mode .tab-content {
+  background-color: #2b2c40;
+}
+.dark-mode .list-pills-tab {
   background-color: #2b2c40;
 }
 
@@ -615,4 +621,29 @@ button.saveBtn {
   background: #696cff;
   border: none;
   box-shadow: none;
+}
+
+#products .customBox .sts {
+  padding: 10px;
+}
+#products .customBox a i {
+  font-size: 13px;
+}
+#products .customBox .card-title {
+  margin-bottom: 0.875rem;
+  font-size: 15px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+#products .customBox.card-body {
+  padding: 15px 10px;
+}
+#products .card {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.list-pills-tab {
+  background-color: #fff;
+  padding: 10px 10px;
 }/*# sourceMappingURL=custom.css.map */

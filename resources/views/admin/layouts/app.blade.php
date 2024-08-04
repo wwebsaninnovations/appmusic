@@ -91,6 +91,7 @@
 @endauth
 
       <link rel="stylesheet"  type="text/css" href="{{ asset('assets/custom/css/custom.css') }}"/>
+      <link rel="stylesheet"  type="text/css" href="{{ asset('assets/custom/css/grid.css') }}"/>
 
 </head>
 <body class="{{$classDark}}">
@@ -152,6 +153,7 @@
 <script src="{{ asset('assets/js/dashboards-analytics.js') }}"></script>
 <script src="{{ asset('assets/js/pages-auth.js') }}"></script>
 <script src="{{ asset('assets/custom/js/custom.js') }}"></script>
+
 
   <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script> -->

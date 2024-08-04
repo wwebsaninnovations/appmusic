@@ -31,97 +31,46 @@ class ReleaseController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
         $user_id = Auth::user()->id;
-        $statusFilter = $request->get('status', null);
-        $search = $request->get('search', null);
-    
-        // Build the base query
-        $query = Release::with('tracks')->orderBy('created_at', 'desc');
-    
-        // Apply user-based filtering if not Super Admin
-        if (!Auth::user()->hasRole('Super Admin')) {
-            $query->where('user_id', $user_id);
-        }
-    
-        // Apply status filter if provided
-        if (!is_null($statusFilter)) {
-            if ($statusFilter === 'draft') {
-                $query->whereIn('status', [0, 2]); // Draft includes statuses 0 and 2
-            } else {
-                $query->where('status', $this->getStatusValue($statusFilter));
-            }
-        }
-
-           // Apply general search filter if provided
-        if (!is_null($search)) {
-            $query->where(function ($q) use ($search) {
-                $q->where('release_name', 'like', '%' . $search . '%')
-                ->orWhere('release_version', 'like', '%' . $search . '%')
-                ->orWhere('release_code', 'like', '%' . $search . '%')
-                ->orWhere('upc', 'like', '%' . $search . '%')
-                ->orWhere('meta_language', 'like', '%' . $search . '%')
-                ->orWhere('primary_artist', 'like', '%' . $search . '%')
-                ->orWhere('featuring_artist', 'like', '%' . $search . '%')
-                ->orWhere('remixer', 'like', '%' . $search . '%')
-                ->orWhere('producer', 'like', '%' . $search . '%');
-            });
-        }
-
-    
-        // Get paginated results
-        $releases = $query->paginate(10);
-    
-        // Count statistics based on the user's role
-        $counts = $this->getCounts($user_id);
-    
-        return view('admin.releases.index', array_merge(['releases' => $releases], $counts));
-    }
-    
-    private function getStatusValue($status)
-    {
-        $statusMap = [
-            'sent' => 1,
-            'pending' => 0,
-            'rejected' => 2,
-            'approved' => 3,
-            'secondary_qc' => 4,
-            'delivered' => 5,
-        ];
-    
-        return $statusMap[$status] ?? null; // Return null if status is not found in the map
-    }
-    
-    private function getCounts($user_id)
-    {
-        
-        
-        if (Auth::user()->hasRole('Super Admin')) {
-            return [
-                'totalRelease' => Release::count(),
-                'totalPending' => Release::where('status', 0)->count(),
-                'totalSent' => Release::where('status', 1)->count(),
-                'totalRejected' => Release::where('status', 2)->count(),
-                'totalApproved' => Release::where('status', 3)->count(),
-                'totalDraft' => Release::whereIn('status', [0, 2])->count(),
-            ];
-        } else {
+        if(Auth::user()->hasRole('Super Admin')) {
+            $releases = Release::with('tracks')->orderBy('created_at', 'desc')->paginate(5);
+            $totalRelease = Release::count();
             $totalPending = Release::where('user_id', $user_id)->where('status', 0)->count();
+            $totalSent = Release::where('user_id', $user_id)->where('status', 1)->count();
             $totalRejected = Release::where('user_id', $user_id)->where('status', 2)->count();
-            return [
-                'totalRelease' => Release::where('user_id', $user_id)->count(),
-                'totalPending' => $totalPending,
-                'totalSent' => Release::where('user_id', $user_id)->where('status', 1)->count(),
-                'totalRejected' => $totalRejected,
-                'totalApproved' => Release::where('user_id', $user_id)->where('status', 3)->count(),
-                'totalDraft' => $totalPending + $totalRejected,
-            ];
+            $totalApproved = Release::where('user_id', $user_id)->where('status', 3)->count();
+
+        }else{
+            $releases = Release::where('user_id', $user_id)->with('tracks')->orderBy('created_at', 'desc')->paginate(5);
+            // Count total approved, pending, rejected, and incomplete for the authenticated user
+            $totalRelease = Release::where('user_id', $user_id)->count();
+            $totalPending = Release::where('user_id', $user_id)->where('status', 0)->count();
+            $totalSent = Release::where('user_id', $user_id)->where('status', 1)->count();
+            $totalRejected = Release::where('user_id', $user_id)->where('status', 2)->count();
+            $totalApproved = Release::where('user_id', $user_id)->where('status', 3)->count();
         }
+
+        $totalDraft = $totalRejected + $totalPending;
+
+        //  // Count total tracks across all releases
+        //  $totalTracks = 0;
+
+        //  // Count total tracks from approved releases only
+        //  $totalTracksApproved = 0;
+ 
+        //  foreach ($releases as $release) {
+        //      $totalTracks += $release->tracks->count();
+ 
+        //      if ($release->status == 1) {
+        //          $totalTracksApproved += $release->tracks->count();
+        //      }
+        //  }
+
+          return view('admin.releases.index', compact('releases','totalRelease','totalDraft','totalApproved', 'totalPending', 'totalRejected', 'totalSent'));
+
     }
-    
-    
-    
 
     public function getReleaseData(Request $request)
     {
@@ -764,33 +713,18 @@ class ReleaseController extends Controller
 
     
 
-    // public function updateReleaseStatus(Request $request) {
+    public function updateReleaseStatus(Request $request) {
 
-    //     $release_id = $request->release_id;
-    //     $status = $request->status;
-    //     $form_status =$request->form_status;
-    //     $release = Release::find($release_id);
-    //     if($release){
-    //         $release->status =$status ;
-    //         $release->save();
-    //     }
-    //     return redirect()->back()->with('success', 'Release settings updated successfully!');
-    // }
-
-    public function updateReleaseStatus(Request $request)
-    {
-        $validated = $request->validate([
-            'release_id' => 'required|exists:releases,id',
-            'status' => 'required|in:2,3', // Accept only 'Draft' or 'Approved' statuses
-        ]);
-
-        $release = Release::findOrFail($validated['release_id']);
-        $release->status = $validated['status'];
-        $release->save();
-
-        return redirect()->back()->with('success', 'Release status updated successfully!');
+        $release_id = $request->release_id;
+        $status = $request->status;
+        $form_status =$request->form_status;
+        $release = Release::find($release_id);
+        if($release){
+            $release->status =$status ;
+            $release->save();
+        }
+        return redirect()->back()->with('success', 'Release settings updated successfully!');
     }
-
 
     public function finalReleaseSubmit(Request $request) {
 

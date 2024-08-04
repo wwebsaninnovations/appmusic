@@ -83,7 +83,6 @@ label.form-label{
               color: #000;
               padding: 14px 0;
               border-radius: 0;
-          
               &.active{
                 background-color: #696cff;
                 box-shadow: none;
@@ -95,9 +94,19 @@ label.form-label{
       }
     }
   }
+  #products{
+    .customBox{
+      .card-title{
+        color: #000;
+      }
+    }
+  }
 }
 .dark-mode {
   .tab-content {
+    background-color: #2b2c40;
+  }
+  .list-pills-tab{
     background-color: #2b2c40;
   }
 }
@@ -684,4 +693,34 @@ button.saveBtn{
       box-shadow: none;
     }
   }
+}
+
+#products{
+  .customBox{
+    .sts {
+      padding: 10px;
+    }
+    a{
+      i{
+        font-size: 13px;
+      }
+    }
+    .card-title {
+      margin-bottom: 0.875rem;
+      font-size: 15px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    &.card-body{
+      padding: 15px 10px;
+    }
+  }
+  .card{
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+.list-pills-tab{
+  background-color: #fff;
+  padding:10px 10px;
 }
