@@ -33,12 +33,26 @@ class ReleaseController extends Controller
      */
     public function index(Request $request)
     {
+        
+        // $rowID=4;
+        // $release = Release::find($rowID);
+
+        // if ($release) {
+        //     $newRelease = $release->replicate();
+        //     $newRelease->save();
+        // }
+
+      //  die();
         $user_id = Auth::user()->id;
         $statusFilter = $request->get('status', null);
         $search = $request->get('search', null);
+        $filter_user_id =  $request->get('user_id',null);
     
         // Build the base query
         $query = Release::with('tracks')->orderBy('created_at', 'desc');
+        if(!is_null($filter_user_id)){
+            $query->where('user_id', $filter_user_id);
+        }
     
         // Apply user-based filtering if not Super Admin
         if (!Auth::user()->hasRole('Super Admin')) {
@@ -47,11 +61,7 @@ class ReleaseController extends Controller
     
         // Apply status filter if provided
         if (!is_null($statusFilter)) {
-            if ($statusFilter === 'draft') {
-                $query->whereIn('status', [0, 2]); // Draft includes statuses 0 and 2
-            } else {
-                $query->where('status', $this->getStatusValue($statusFilter));
-            }
+            $query->where('status', $this->getStatusValue($statusFilter));
         }
 
            // Apply general search filter if provided
@@ -65,7 +75,9 @@ class ReleaseController extends Controller
                 ->orWhere('primary_artist', 'like', '%' . $search . '%')
                 ->orWhere('featuring_artist', 'like', '%' . $search . '%')
                 ->orWhere('remixer', 'like', '%' . $search . '%')
-                ->orWhere('producer', 'like', '%' . $search . '%');
+                ->orWhere('producer', 'like', '%' . $search . '%')
+                ->orWhere('lyricist', 'like', '%' . $search . '%')
+                ->orWhere('format', 'like', '%' . $search . '%');
             });
         }
 
@@ -82,12 +94,12 @@ class ReleaseController extends Controller
     private function getStatusValue($status)
     {
         $statusMap = [
-            'sent' => 1,
-            'pending' => 0,
+            'pending' => 1,
+            'draft' => 0,
             'rejected' => 2,
             'approved' => 3,
-            'secondary_qc' => 4,
-            'delivered' => 5,
+            'delivered' => 4,
+            'takedown' =>5,
         ];
     
         return $statusMap[$status] ?? null; // Return null if status is not found in the map
@@ -100,22 +112,23 @@ class ReleaseController extends Controller
         if (Auth::user()->hasRole('Super Admin')) {
             return [
                 'totalRelease' => Release::count(),
-                'totalPending' => Release::where('status', 0)->count(),
-                'totalSent' => Release::where('status', 1)->count(),
+                'totalPending' => Release::where('status', 1)->count(),
+                'totalDraft' => Release::where('status', 0)->count(),
                 'totalRejected' => Release::where('status', 2)->count(),
                 'totalApproved' => Release::where('status', 3)->count(),
-                'totalDraft' => Release::whereIn('status', [0, 2])->count(),
+                'totalDelivered' => Release::where('status', 4)->count(),
+                'totalTakedown' => Release::where('status', 5)->count(),
             ];
         } else {
-            $totalPending = Release::where('user_id', $user_id)->where('status', 0)->count();
-            $totalRejected = Release::where('user_id', $user_id)->where('status', 2)->count();
             return [
                 'totalRelease' => Release::where('user_id', $user_id)->count(),
-                'totalPending' => $totalPending,
-                'totalSent' => Release::where('user_id', $user_id)->where('status', 1)->count(),
-                'totalRejected' => $totalRejected,
+                'totalPending' =>  Release::where('user_id', $user_id)->where('status', 1)->count(),
+                'totalDraft' => Release::where('user_id', $user_id)->where('status', 0)->count(),
+                'totalRejected' => Release::where('user_id', $user_id)->where('status', 2)->count(),
                 'totalApproved' => Release::where('user_id', $user_id)->where('status', 3)->count(),
-                'totalDraft' => $totalPending + $totalRejected,
+                'totalDelivered' => Release::where('user_id', $user_id)->where('status', 4)->count(),
+                'totalTakedown' => Release::where('user_id', $user_id)->where('status', 5)->count(),
+               
             ];
         }
     }
@@ -273,6 +286,7 @@ class ReleaseController extends Controller
         $languages = Language::orderBy('name', 'asc')->get();
         $ownershiptypes = Ownershiptype::all();
         
+        
         $viewData = [
             'release' => $release,
             'level' => $level,
@@ -312,6 +326,7 @@ class ReleaseController extends Controller
             'featuring_artist_basic' => 'nullable|string|max:255',
             'producer_artist_basic'=> 'required|string|max:255',
             'remixer_artist_basic'=>'nullable|string|max:255',
+            'lyricist'=>'nullable|string|max:255',
             'genre'=> 'required|string|max:255',
             'sub_genre' => 'nullable|string|max:255',
             'format' => 'required|in:single,ep,album',
@@ -338,6 +353,7 @@ class ReleaseController extends Controller
         $release->featuring_artist = $validatedData['featuring_artist_basic'];
         $release->producer = $validatedData['producer_artist_basic'];
         $release->remixer = $validatedData['remixer_artist_basic'];
+        $release->lyricist = $validatedData['lyricist'];
         $release->genre = $validatedData['genre'];
         $release->sub_genre = $validatedData['sub_genre'];
         $release->format = $validatedData['format'];
@@ -783,13 +799,30 @@ class ReleaseController extends Controller
             'release_id' => 'required|exists:releases,id',
             'status' => 'required|in:2,3', // Accept only 'Draft' or 'Approved' statuses
         ]);
-
+    
         $release = Release::findOrFail($validated['release_id']);
         $release->status = $validated['status'];
+    
+        if ($validated['status'] == 2) {
+            $request->validate([
+                'reason' => 'required|string',
+            ]);
+    
+            $currentNotes = json_decode($release->note, true) ?? [];
+            $currentNotes[now()->toDateTimeString()] = $request->reason;
+    
+            $release->note = json_encode($currentNotes);
+            $message = 'Release has been rejected successfully!';
+        } else {
+            $message = 'Release has been approved successfully!';
+        }
+    
         $release->save();
-
-        return redirect()->back()->with('success', 'Release status updated successfully!');
+    
+        return redirect()->back()->with('success', $message);
     }
+    
+    
 
 
     public function finalReleaseSubmit(Request $request) {

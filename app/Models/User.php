@@ -29,7 +29,8 @@ class User extends Authenticatable
         'full_address',
         'company_label',
         'platform_id',
-        'sociallinks'
+        'sociallinks',
+        'profile_image'
 
     ];
 

@@ -8,6 +8,7 @@
               <div class="row g-4 mb-4">
                     <div class="col-sm-6 col-xl-3">
                     <div class="card">
+                        <a href="{{route('releases.index')}}">
                         <div class="card-body">
                         <div class="d-flex align-items-start justify-content-between">
                             <div class="content-left">
@@ -21,95 +22,12 @@
                             </span>
                         </div>
                         </div>
-                    </div>
-                    </div>
-                    <div class="col-sm-6 col-xl-3">
-                    <div class="card">
-                        <div class="card-body">
-                        <div class="d-flex align-items-start justify-content-between">
-                            <div class="content-left">
-                            <span>Approved</span>
-                            <div class="d-flex align-items-end mt-2" >
-                                <h4 class="mb-0 me-2" >{{$totalApproved}}</h4>
-                            </div>
-                            </div>
-                            <span class="badge bg-label-success rounded p-2">
-                            <i class="bx bxs-playlist bx-sm"></i>
-                            </span>
-                        </div>
-                        </div>
+                     </a>
                     </div>
                     </div>
                     <div class="col-sm-6 col-xl-3">
                         <div class="card">
-                            <div class="card-body">
-                            <div class="d-flex align-items-start justify-content-between">
-                                <div class="content-left">
-                                <span>Pending</span>
-                                <div class="d-flex align-items-end mt-2">
-                                    <h4 class="mb-0 me-2" >{{$totalPending}}</h4>
-                                </div>
-                                </div>
-                                <span class="badge bg-label-warning rounded p-2">
-                                <i class="bx bxs-playlist bx-sm"></i>
-                                </span>
-                            </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-xl-3">
-                        <div class="card">
-                                <div class="card-body">
-                                        <div class="d-flex align-items-start justify-content-between">
-                                            <div class="content-left">
-                                                <span>Rejected</span>
-                                                <div class="d-flex align-items-end mt-2">
-                                                    <h4 class="mb-0 me-2">{{$totalRejected}}</h4>
-                                                </div>
-                                            </div>
-                                            <span class="badge bg-label-danger rounded p-2">
-                                            <i class="bx bxs-playlist bx-sm"></i>
-                                            </span>
-                                        </div>
-                                </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-xl-3">
-                        <div class="card">
-                                <div class="card-body">
-                                        <div class="d-flex align-items-start justify-content-between">
-                                            <div class="content-left">
-                                                <span>Complete forms</span>
-                                                <div class="d-flex align-items-end mt-2">
-                                                    <h4 class="mb-0 me-2">{{$totalComplete}}</h4>
-                                                </div>
-                                            </div>
-                                            <span class="badge bg-label-success rounded p-2">
-                                            <i class="bx bx-detail bx-sm"></i>
-                                            </span>
-                                        </div>
-                                </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-xl-3">
-                        <div class="card">
-                                <div class="card-body">
-                                        <div class="d-flex align-items-start justify-content-between">
-                                            <div class="content-left">
-                                                <span>Incomplete forms</span>
-                                                <div class="d-flex align-items-end mt-2">
-                                                    <h4 class="mb-0 me-2" >{{$totalIncomplete}}</h4>
-                                                </div>
-                                            </div>
-                                            <span class="badge bg-label-danger rounded p-2">
-                                            <i class="bx bx-detail bx-sm"></i>
-                                            </span>
-                                        </div>
-                                </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-xl-3">
-                        <div class="card">
+                         <a href="{{route('releases.index')}}">
                             <div class="card-body">
                             <div class="d-flex align-items-start justify-content-between">
                                 <div class="content-left">
@@ -123,25 +41,126 @@
                                 </span>
                             </div>
                             </div>
+                          </a>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                    <div class="card">
+                    <a href="{{route('releases.index', ['status'=>'draft'])}}">
+                        <div class="card-body">
+                        <div class="d-flex align-items-start justify-content-between">
+                            <div class="content-left">
+                            <span>Draft</span>
+                            <div class="d-flex align-items-end mt-2" >
+                                <h4 class="mb-0 me-2" >{{$totalDraft}}</h4>
+                            </div>
+                            </div>
+                            <span class="badge bg-label-warning rounded p-2">
+                            <i class="bx bxs-playlist bx-sm"></i>
+                            </span>
+                        </div>
+                        </div>
+                     </a>
+                    </div>
+                    </div>
+              
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="card">
+                        <a href="{{route('releases.index', ['status'=>'pending'])}}">
+                            <div class="card-body">
+                            <div class="d-flex align-items-start justify-content-between">
+                                <div class="content-left">
+                                <span>Pending</span>
+                                <div class="d-flex align-items-end mt-2">
+                                    <h4 class="mb-0 me-2" >{{$totalPending}}</h4>
+                                </div>
+                                </div>
+                                <span class="badge bg-label-warning rounded p-2">
+                                <i class="bx bxs-playlist bx-sm"></i>
+                                </span>
+                            </div>
+                            </div>
+                          </a>
                         </div>
                     </div>
                     <div class="col-sm-6 col-xl-3">
                         <div class="card">
-                            <div class="card-body">
-                            <div class="d-flex align-items-start justify-content-between">
-                                <div class="content-left">
-                                <span> Approved Tracks</span>
-                                <div class="d-flex align-items-end mt-2">
-                                    <h4 class="mb-0 me-2">{{$totalTracksApproved}}</h4>
+                        <a href="{{route('releases.index', ['status'=>'rejected'])}}">
+                                <div class="card-body">
+                                        <div class="d-flex align-items-start justify-content-between">
+                                            <div class="content-left">
+                                                <span>Rejected</span>
+                                                <div class="d-flex align-items-end mt-2">
+                                                    <h4 class="mb-0 me-2">{{$totalRejected}}</h4>
+                                                </div>
+                                            </div>
+                                            <span class="badge bg-label-danger rounded p-2">
+                                            <i class="bx bxs-playlist bx-sm"></i>
+                                            </span>
+                                        </div>
                                 </div>
-                                </div>
-                                <span class="badge bg-label-success rounded p-2">
-                                <i class=" bx bx-play-circle bx-sm"></i>
-                                </span>
+                               </a>
+                        </div>
+                     
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                    <div class="card">
+                    <a href="{{route('releases.index', ['status'=>'approved'])}}">
+                        <div class="card-body">
+                        <div class="d-flex align-items-start justify-content-between">
+                            <div class="content-left">
+                            <span>Approved</span>
+                            <div class="d-flex align-items-end mt-2" >
+                                <h4 class="mb-0 me-2" >{{$totalApproved}}</h4>
                             </div>
                             </div>
+                            <span class="badge bg-label-success rounded p-2">
+                            <i class="bx bxs-playlist bx-sm"></i>
+                            </span>
+                        </div>
+                        </div>
+                     </a>
+                    </div>
+                    </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="card">
+                            <a href="{{route('releases.index', ['status'=>'delivered'])}}">
+                                <div class="card-body">
+                                        <div class="d-flex align-items-start justify-content-between">
+                                            <div class="content-left">
+                                                <span>Delivered</span>
+                                                <div class="d-flex align-items-end mt-2">
+                                                    <h4 class="mb-0 me-2">{{$totalDelivered}}</h4>
+                                                </div>
+                                            </div>
+                                            <span class="badge bg-label-success rounded p-2">
+                                            <i class="bx bx-detail bx-sm"></i>
+                                            </span>
+                                        </div>
+                                </div>
+                            </a>
                         </div>
                     </div>
+                    <div class="col-sm-6 col-xl-3">
+                        <div class="card">
+                            <a href="{{route('releases.index', ['status'=>'delivered'])}}">
+                                <div class="card-body">
+                                        <div class="d-flex align-items-start justify-content-between">
+                                            <div class="content-left">
+                                                <span>Take Down</span>
+                                                <div class="d-flex align-items-end mt-2">
+                                                    <h4 class="mb-0 me-2">{{$totalTakedown}}</h4>
+                                                </div>
+                                            </div>
+                                            <span class="badge bg-label-danger rounded p-2">
+                                            <i class="bx bx-detail bx-sm"></i>
+                                            </span>
+                                        </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                   
 
                 </div>
               </div>

@@ -41,7 +41,7 @@ Route::put('/profile/update', [App\Http\Controllers\HomeController::class, 'prof
 
 
 
-
+Route::put('/users/{user}/update-profile-image', [UserController::class, 'updateProfileImage'])->name('users.updateProfileImage');
 Route::get('/users/trashed', [UserController::class, 'trashedUsers'])->name('users.trashed');
 Route::post('/users/{id}/restore', [UserController::class, 'restoreUser'])->name('users.restore');
 Route::delete('/users/{id}/delete', [UserController::class, 'deleteUser'])->name('users.delete');

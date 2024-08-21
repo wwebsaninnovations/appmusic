@@ -6,10 +6,8 @@
         <div class="col-md-12 tabs-item release-nav-link">
             <!-- Nav tabs -->
             <div class="nav  nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-
                <!-- 0 pending , 2 rejected -->
                 @if($release->status == 0 || $release->status == 2 )
-                
                 <div class="nav-item">
                     <a class="nav-link {{($level=='basic') ? 'active' : ''}}" id="v-pills-basic-tab" data-bs-toggle="pill" href="#v-pills-basic" role="tab" aria-controls="v-pills-basic" aria-selected="true" data-href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'basic'])}}">Basic</a>
                 </div>
@@ -25,14 +23,10 @@
                 <div class="nav-item">
                     <a class="nav-link {{($level=='platforms') ? 'active' : ''}}" id="v-pills-platforms-tab" data-bs-toggle="pill" href="#v-pills-platforms" role="tab" aria-controls="v-pills-platforms" aria-selected="false" data-href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'platforms'])}}">Platforms</a>
                 </div>
-
                 @endif
-
                 <div class="nav-item">
                     <a class="nav-link {{($level=='summary') ? 'active' : ''}}" id="v-pills-summary-tab" data-bs-toggle="pill" href="#v-pills-summary" role="tab" aria-controls="v-pills-summary" aria-selected="false" data-href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'summary'])}}">Summary</a>
                 </div>
-               
-                
             </div>
         </div>
 
@@ -44,7 +38,7 @@
                 </div>
             @endif
             <!-- Tab panes -->
-            <div class="tab-content" id="v-pills-tabContent">
+            <div class="tab-content " id="v-pills-tabContent">
 
                 <div class="tab-pane fade  {{($level=='basic')? ' show active':''}}" id="v-pills-basic" role="tabpanel" aria-labelledby="v-pills-basic-tab">
                 <h5 class="siteTitle">Basic Information</h5>
@@ -150,7 +144,8 @@
 
                         <div class="row">
                             <div class="col-6 mb-3">
-                                <label for="remixer_artist_basic" class="form-label">Remixer</label>
+                              <!--Remixer change into Composer-->
+                                <label for="remixer_artist_basic" class="form-label">Composer</label>
                                 <input type="text" class="form-control" id="remixer_artist_basic" name="remixer_artist_basic" value="{{ old('remixer_artist_basic', $release->remixer ?? '') }}">
                                 @if ($errors->has('remixer_artist_basic'))
                                     <div class="text-danger">
@@ -164,6 +159,15 @@
                                 @if ($errors->has('producer_artist_basic'))
                                     <div class="text-danger">
                                         {{ $errors->first('producer_artist_basic') }}
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label for="lyricist" class="form-label">lyricist</label>
+                                <input type="text" class="form-control" id="lyricist" name="lyricist" value="{{ old('lyricist', $release->lyricist ?? '') }}">
+                                @if ($errors->has('lyricist'))
+                                    <div class="text-danger">
+                                        {{ $errors->first('lyricist') }}
                                     </div>
                                 @endif
                             </div>
@@ -282,14 +286,13 @@
                         
                         <div class="row">
                             <div class="col-12">
-                                <button type="submit" class="btn btn-primary">Save</button>
+                                <button type="submit" class="btn btn-primary saveBtn">Save</button>
                             </div>
                         </div>
 
                     </form>
                 </div>
-
-                <div class="tab-pane fade  {{($level=='artwork')? ' show active':''}}" id="v-pills-artwork" role="tabpanel" aria-labelledby="v-pills-artwork-tab">
+                <div class="tab-pane fade  {{($level=='artwork')? ' show active':''}} _artwork" id="v-pills-artwork" role="tabpanel" aria-labelledby="v-pills-artwork-tab">
                         <h3 class="siteTitle">Artwork</h3>
                         <div class="row">
                             <div class="alert alert-danger artwork_error" style="display:none;">
@@ -301,32 +304,28 @@
                             @endif
                         </div>
                         <div class="row">
-                                <div class="col-8 _artwork">
-                                        <div class="card ">                            
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <div class="col-md-12 col-12">
-                                                        <form action="{{ route('releases.artwork.save') }}" method="POST" enctype="multipart/form-data"  id="dropzone-basic" class="dropzone">
-                                                            @csrf
-                                                            <input type="hidden" name="release_id" id="artwork_release_id" value="{{ $release->id }}">
-                                                            <input type="hidden" name="summary" value="{{ $summary ?? '' }}">
-                                                        </form>
-                                                    </div>   
-                                                </div>
-                                            </div>
-                                        </div>
-                                
-                                        @if (!empty($release->thumbnail_path))                  
-                                        <div class="wrap_image">
-                                            <img id="existing-thumbnail" src="{{ asset('storage/' . $release->thumbnail_path) }}" width="150px" alt="Thumbnail" >
-                                        </div>
-                                        @endif
-                                        
+                                <div class="col-6">
+                                    @if (!empty($release->thumbnail_path))                  
+                                    <div class="wrap_image">
+                                        <img id="existing-thumbnail" src="{{ asset('storage/' . $release->thumbnail_path) }}" width="150px" alt="Thumbnail" >
+                                    </div>
+                                    @endif
+                                    <div class="card ">                            
+                                        <!-- <div class="row"> -->
+                                            <div class="upload_box">
+                                                <form action="{{ route('releases.artwork.save') }}" method="POST" enctype="multipart/form-data"  id="dropzone-basic" class="dropzone">
+                                                    @csrf
+                                                    <input type="hidden" name="release_id" id="artwork_release_id" value="{{ $release->id }}">
+                                                    <input type="hidden" name="summary" value="{{ $summary ?? '' }}">
+                                                </form>
+                                            </div>   
+                                        <!-- </div> -->
+                                    </div>
                                 </div>
-                                <div class="col-4 artwork-instruction">
+                                <div class="col-6 artwork-instruction">
 
                                     <p><b>Your Image Must Be :</b></p>
-                                    <p>TIF or JPG gormat</p>
+                                    <p>TIF or JPG Format</p>
                                     <p>Square</p>
                                     <p>Minimum size: 3000 x 3000 pixels.</p>
                                     <p>Maximum size: 6000 x 6000 pixels.</p>
@@ -335,49 +334,9 @@
                                     <p>If you are scanning a CD, remove product sticker and crop marks</p>
                                </div>
                                <div class="col-12"> 
-                                    <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'uploadtrack'])}}" class="btn btn-primary mt-3">Next</a>
+                                    <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'uploadtrack'])}}" class="btn btn-primary saveBtn mt-3">Next</a>
                                 </div>
                         </div>
-
-                    <!-- <form action="{{route('releases.artwork.save')}}" method="POST" enctype="multipart/form-data" class="dropzone needsclick" id="dropzone-basic">
-                        @csrf
-                        <h3>Artwork</h3>
-                      <div class ="row">
-                           <div class="col-7 col-6 artwork-area">
-                                <label for="thumbnail" class="form-label">Upload Your Artwork*</label>
-                                 <div id="droparea" class="droparea">
-                                    <p>Drag and drop your artwork here or click to select a file.</p>
-                                </div>
-                                <div class="progress">
-                                    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                                <input type="file" class="form-control" id="artworkimage" name="thumbnail" style="display: none;" />
-                                <input type="hidden" name ="release_id" value="{{$release->id}}">
-                                <div id="image-info" class="mt-2"></div>
-                                <div id="image-preview" class="image-preview">
-                                    @if(!empty($release->thumbnail_path))
-                                        <img src="{{ asset('storage/' . $release->thumbnail_path) }}" width="150px" alt="Thumbnail">
-                                    @endif
-                                </div>
-                             <div id="error-message" class="text-danger mt-2"></div>
-                            </div> 
-                       
-                            <div class="col-5 artwork-instruction">
-                                <p><b>Your Image Must Be :</b></p>
-                                <p>TIF or JPG gormat</p>
-                                <p>Square</p>
-                                <p>Minimum size: 3000 x 3000 pixels.</p>
-                                <p>Maximum size: 6000 x 6000 pixels.</p>
-                                <p>RGB format</p>
-                                <p>Opaque</p>
-                                <p>If you are scanning a CD, remove product sticker and crop marks</p>
-
-                            </div>
-                        </div>
-                         </div>
-                        <button type="submit" class="btn btn-primary">Save & Next</button>
-                    </form> -->
-
                 </div>
            
                 <div class="tab-pane fade {{($level=='uploadtrack')? ' show active':''}}" id="v-pills-uploadtrack" role="tabpanel" aria-labelledby="v-pills-uploadtrack-tab">
@@ -390,25 +349,18 @@
                                 <li><strong>EP</strong> : maximum 5 files.</li>
                                 <li><strong>Album</strong> : maximum 30 files.</li>
                             </ul>
-                            <h5 class="card-header">Multiple</h5>
+                            <!-- <h5 class="card-header">Multiple</h5> -->
                             <div class="alert alert-danger track_upload_error" style="display:none;"></div>
                             <div class="alert alert-success track_upload_success" style="display:none;"></div>
                             <div class="card-body">
-                                <form action="{{route('releases.uploadTrack.save')}}"  method="post" enctype="multipart/form-data" id="image-upload" class="dropzone">
-                                    @csrf
-                                    <input type="hidden" name ="release_id" id="release_id" value="{{$release->id}}">
-                                    <input type="hidden" name="summary" value="{{ $summary ?? '' }}">
-                                    <input type="hidden" name="release_format"  id="release_format" value="{{ $release->format}}">
-                                </form>
-                                <div class="row mt-5">
-                    
 
+                                <div class="row mt-5">
                                 <div class="col-12">
                                 @if(!$release->tracks->isEmpty())                       
                                     @foreach($release->tracks as $index => $track)
                                         <div class="col-6 trackList">
                                             <div style="width: 60%;">
-                                                <p><strong>Track {{ $index + 1 }}:</strong> {{ basename($track->track_path) }}</p>
+                                                <p style="margin-bottom:0px;"><strong>Track {{ $index + 1 }}:</strong> {{ basename($track->track_path) }}</p>
                                             </div>
                                             <div style="width: 30%;">
                                                 <audio controls style="width: 90%;">
@@ -429,9 +381,15 @@
                                     @endforeach
                                 @endif
                                 </div>
+                                <form action="{{route('releases.uploadTrack.save')}}"  method="post" enctype="multipart/form-data" id="image-upload" class="dropzone">
+                                    @csrf
+                                    <input type="hidden" name ="release_id" id="release_id" value="{{$release->id}}">
+                                    <input type="hidden" name="summary" value="{{ $summary ?? '' }}">
+                                    <input type="hidden" name="release_format"  id="release_format" value="{{ $release->format}}">
+                                </form>
                                 <div class="col-12">
                                     <div class="nextBTN">
-                                        <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'edittrack'])}}" class="btn btn-primary mt-3">Next</a>
+                                        <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'edittrack'])}}" class="btn btn-primary saveBtn mt-3">Next</a>
                                     </div>
                                 </div>
 
@@ -450,7 +408,6 @@
                                     <strong>Alert:</strong> You have missed the some required fields, please check each track manually.
                                 </div>
                             @endif    
-
                         @endif
 
                         @if($release->tracks->isEmpty())
@@ -467,14 +424,14 @@
                                         <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                                             @foreach($release->tracks as $index => $track)
                                             <a class="nav-link {{ ($index == 0) ? 'active' : '' }}" id="v-pills-track{{ $index }}-tab" data-bs-toggle="pill" href="#v-pills-track{{ $index }}" role="tab" aria-controls="v-pills-track{{ $index }}" aria-selected="{{ ($index == 0) ? 'true' : 'false' }}">
-                                                <span>{{ $index + 1 }}. 
+                                                <span>
 
                                                 <audio controls style="width: 90%;">
                                                     <source src="{{ asset('storage/' . $track->track_path) }}" type="audio/mpeg">
                                                     Your browser does not support the audio element.
                                                 </audio>
                                                 
-                                                </span> {{ basename($track->track_path) }}
+                                                </span> <span class="trackName">{{ $index + 1 }}.  {{ basename($track->track_path) }}</span>
                                                
                                                 <span class="track-duration">{{ $track->track_duration }}</span>
                                             </a>
@@ -760,7 +717,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Save</button>
+                                <button type="submit" class="btn btn-primary saveBtn">Save</button>
                             </form>
                        @endif
                  </div>
@@ -778,11 +735,11 @@
                         @endif
                     <form  action="{{ route('releases.platforms.save') }}" method="POST">
                         @csrf
-                        <div class="col-6 _platforms">
+                        <div class="col-xl-12  _platforms">
                             
 
                             <!-- <label class="form-label">Choose platforms</label> -->
-                            <button type="button" id="toggle-select" class="btn btn-primary">Select All</button>
+                            <button type="button" id="toggle-select" class="btn btn-primary saveBtn">Select All</button>
                             <input type="hidden" name="release_id" value="{{ $release->id }}">
                             <div class="row">
                                 <!-- Platform checkboxes -->
@@ -793,7 +750,7 @@
 
                                 @foreach($platforms as $platform)
                                     @if(in_array($platform->id, $userPlatformIds))
-                                    <div class="col-md-4">
+                                    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" value="{{ $platform->id }}" id="platform{{ $platform->id }}" name="platforms[]" 
                                                 @if(in_array($platform->id, $release->platforms->pluck('id')->toArray())) checked @endif>
@@ -818,58 +775,105 @@
                         </div>
                         <div class="col-12">
                            <div class="wrap-btn">
-                                <button type="submit" class="btn btn-primary saveBtn">Save</button>
+                                <button type="submit" class="btn btn-primary saveBtn saveBtn">Save</button>
                            </div>
                         </div>
                     </form>
 
                 </div>
                  <div class="tab-pane fade release_summary {{($level=='summary')? ' show active':''}}" id="v-pills-summary" role="tabpanel" aria-labelledby="v-pills-summary-tab">
-
-
-               
                  @canany(['approve-release'])
      
-                    <h2 class="siteTitle">Release</h2>
-                    <div class="col-12">
-                            @if($release->status == 0)
-                            <span class="badge bg-warning">Pending</span>
-                            @elseif($release->status == 1)
-                                <span class="badge bg-info">Sent</span>
-                            @elseif($release->status == 2)
-                                <span class="badge bg-danger">Rejected</span>
-                            @else
-                            <span class="badge bg-success">Approved</span>
-                           @endif
-                           <form method="POST" action="{{ route('releases.status.update') }}" class="d-flex flex-column flex-sm-row align-items-center">
-                            @csrf
-                            @method('PUT')
-                            <input type="hidden" name="release_id" value="{{ $release->id }}" />
-                            
-                            <!-- Button to set status to Draft -->
-                            <button type="submit" name="status" value="2" class="btn btn-warning me-2">
-                                Set to Draft
-                            </button>
-                            
-                            <!-- Button to set status to Approved -->
-                            <button type="submit" name="status" value="3" class="btn btn-success">
-                                Set to Approved
-                            </button>
-                        </form>
+                        <h2 class="siteTitle">Release</h2>
+                        <div class="col-12">
 
+                           <div class="wrapStatus">
+                                @if($release->status == 0)
+                                    <span class="badge bg-warning draft trackStatus">Draft</span>
+                                @elseif($release->status == 1)
+                                    <span class="badge bg-info pedning trackStatus">Pending</span>
+                                @elseif($release->status == 2)
+                                    <span class="badge bg-danger rejected trackStatus">Rejected</span>
+                                @elseif($release->status == 3)
+                                    <span class="badge bg-success approved trackStatus">Approved</span>
+                                @else
+                                    <span class="badge bg-info delivered trackStatus">Delivered</span>
+                                @endif
+
+
+                                    <div class="wrapStatusLeft">
+                                        <button type="submit" name="status" value="2" class="btn btn-warning" id="rejectButton">
+                                            Reject
+                                        </button>
+                                        <button type="submit" name="status" value="3" class="btn btn-success" id="approveButton">
+                                             Approve
+                                        </button>
+                                        @canany(['delivered-release'])
+                                            <button type="submit" name="status" value="4" class="btn btn-info" id="delveredButton">
+                                                Delivered
+                                            </button>
+                                        @endcanany
+                                        
+                                        @canany(['take-down-release'])
+                                        <button type="submit" name="status" value="5" class="btn btn-danger" id="takedownButton">
+                                             Take Down
+                                        </button>
+                                        @endcanany
+                                     
+                                    </div>
+
+
+                            </div>
+                            <form method="POST" action="{{ route('releases.status.update') }}" class="d-flex flex-column flex-sm-row align-items-center">
+                                    @csrf
+                                    @method('PUT')
+                                    <input type="hidden" name="release_id" value="{{ $release->id }}" />
+                                    <!-- Button to set status to Draft -->
+                            </form>
+                            
                         </div>
                         @else
-                            @if($release->status == 0)
-                            <span class="badge bg-warning">Pending</span>
-                            @elseif($release->status == 1)
-                                <span class="badge bg-info">Sent</span>
-                            @elseif($release->status == 2)
-                                <span class="badge bg-danger">Rejected</span>
-                            @else
-                            <span class="badge bg-success">Approved</span>
-                           @endif
-                    
-                 @endcanany
+                        <h2 class="siteTitle">Release</h2>
+                        <div class="col-12">
+                               <div class="wrapStatus">
+                                    @if($release->status == 0)
+                                        <span class="badge bg-warning">Draft</span>
+                                    @elseif($release->status == 1)
+                                        <span class="badge bg-info">Pending</span>
+                                    @elseif($release->status == 2)
+                                        <span class="badge bg-danger">Rejected</span>
+
+                                        <i class="bx bx-bell bx-tada-hover" data-bs-toggle="tooltip" data-bs-html="true" title="
+                                        @if($release->note)
+                                            @php
+                                                $notes = json_decode($release->note, true);
+                                            @endphp
+                                            @foreach($notes as $date => $reason)
+                                            <b> {{ \Carbon\Carbon::parse($date)->format('d M Y') }}:</b> {{ $reason }}<br>
+                                            @endforeach
+                                        @endif
+                                        "></i>
+
+                                    @else
+                                        <span class="badge bg-success">Approved</span>
+                                    @endif
+
+                                    @canany(['take-down-release'])
+                                        <div class="wrapStatusLeft">
+                                            <button type="submit" name="status" value="5" class="btn btn-danger" id="takedownButton">
+                                                    Take Down
+                                            </button>
+                                        </div>
+                                    @endcanany
+                                </div>
+                                <form method="POST" action="{{ route('releases.status.update') }}" class="d-flex flex-column flex-sm-row align-items-center">
+                                        @csrf
+                                        @method('PUT')
+                                        <input type="hidden" name="release_id" value="{{ $release->id }}" />
+                                        <!-- Button to set status to Draft -->
+                                </form>
+                          </div>
+                        @endcanany
 
                     <div class=" mt-2">
                         <div class="card mb-4">
@@ -880,6 +884,7 @@
                                     <div class="alert alert-warning">Basic Details Not Completed</div>
                                 @else
                                     <h5 class="card-title">Basic Information</h5>
+                                    <div class="sepeartor"></div>
                                     <div class="row">
                                         <div class="col-md-6">
                                             <p><strong>UPC:</strong> {{ $release->upc }}</p>
@@ -893,19 +898,22 @@
                                         </div>
                                     </div>
 
-                                    <h5 class="card-title mt-4">Artist & Contributor</h5>
+                                    <h5 class="card-title">Artist & Contributor</h5>
                                     <div class="row">
                                         <div class="col-md-6">
                                             <p><strong>Primary Artist:</strong> {{ $release->primary_artist ?? '' }}</p>
                                             <p><strong>Featuring Artist:</strong> {{ $release->featuring_artist ?? '' }}</p>
+                                            <p><strong>Composer:</strong> {{ $release->remixer ?? '' }}</p>
                                         </div>
                                         <div class="col-md-6">
-                                            <p><strong>Remixer:</strong> {{ $release->remixer ?? '' }}</p>
+                                            <!--Remixer change into Composer-->
+                                     
                                             <p><strong>Producer:</strong> {{ $release->producer ?? '' }}</p>
+                                            <p><strong>Lyricist:</strong> {{ $release->lyricist ?? '' }}</p>
                                         </div>
                                     </div>
 
-                                    <h5 class="card-title mt-4">Release Details</h5>
+                                    <h5 class="card-title">Release Details</h5>
                                     <div class="row">
                                         <div class="col-md-6">
                                             <p><strong>Genre:</strong> {{ $release->genre ?? '' }}</p>
@@ -918,7 +926,7 @@
                                         </div>
                                     </div>
 
-                                    <h5 class="card-title mt-4">Release Date Info</h5>
+                                    <h5 class="card-title">Release Date Info</h5>
                                     <div class="row">
                                         <div class="col-md-6">
                                             <p><strong>Original Release Date:</strong> {{ $release->original_release_date ?? '' }}</p>
@@ -930,11 +938,11 @@
 
                                     @canany(['approve-release'])
                                   
-                                        <a href="{{ route('releases.step2', ['release_id' => $release->id, 'level' => 'basic', 'summary' => 'basic']) }}" class="btn btn-primary mt-4">Edit</a>
+                                        <a href="{{ route('releases.step2', ['release_id' => $release->id, 'level' => 'basic', 'summary' => 'basic']) }}" class="btn btn-primary saveBtn mt-4">Edit</a>
                                     @else
                                         @if($release->status == 0|| $release->status == 2)
                                         
-                                        <a href="{{ route('releases.step2', ['release_id' => $release->id, 'level' => 'basic', 'summary' => 'basic']) }}" class="btn btn-primary mt-4">Edit</a>
+                                        <a href="{{ route('releases.step2', ['release_id' => $release->id, 'level' => 'basic', 'summary' => 'basic']) }}" class="btn btn-primary saveBtn mt-4">Edit</a>
                                      @endif
 
                                     @endcanany
@@ -956,10 +964,10 @@
                                 <p>
                                  
                                     @canany(['approve-release'])
-                                    <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'artwork', 'summary'=>'artwork'])}}" class="btn btn-primary mt-4">Edit</a>
+                                    <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'artwork', 'summary'=>'artwork'])}}" class="btn btn-primary saveBtn mt-4">Edit</a>
                                   @else
                                     @if($release->status == 0|| $release->status == 2)
-                                        <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'artwork', 'summary'=>'artwork'])}}" class="btn btn-primary mt-4">Edit</a>
+                                        <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'artwork', 'summary'=>'artwork'])}}" class="btn btn-primary saveBtn mt-4">Edit</a>
                                     @endif
 
                                     @endcanany
@@ -975,20 +983,21 @@
                                   @if($release->tracks->isEmpty())
                                        <div class="alert alert-warning">Not Completed</div>
                                   @else
+                                  <div class="row">
                                         @foreach($release->tracks as $index => $track)
-                                            <div class="col-6">
+                                            <div class="col-xl-3 col-lg-3 col-md-4 col-12">
                                                 <p><strong>Track {{ $index + 1 }}:</strong> {{ basename($track->track_path) }}</p>
                                             </div>
                                         @endforeach
+                                  </div>
                                   @endif   
 
                                   @canany(['approve-release'])
-                                    <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'uploadtrack','summary'=>'uploadtrack' ])}}" class="btn btn-primary mt-4">Edit</a>
+                                    <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'uploadtrack','summary'=>'uploadtrack' ])}}" class="btn btn-primary saveBtn mt-4">Edit</a>
                                   @else
                                     @if($release->status == 0|| $release->status == 2)
-                                        <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'uploadtrack','summary'=>'uploadtrack' ])}}" class="btn btn-primary mt-4">Edit</a>
+                                        <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'uploadtrack','summary'=>'uploadtrack' ])}}" class="btn btn-primary saveBtn mt-4">Edit</a>
                                     @endif
-
                                   @endcanany
                                   
                             </div>
@@ -1005,10 +1014,12 @@
                                             @else
                                                 @foreach($release->tracks as $index => $track)
                                                     <a class="nav-link {{ ($index == 0) ? 'active' : '' }}" id="v-pills-summary-track{{ $index }}-tab" data-bs-toggle="pill" href="#v-pills-summary-track{{ $index }}" role="tab" aria-controls="v-pills-summary-track{{ $index }}" aria-selected="{{ ($index == 0) ? 'true' : 'false' }}">
-                                                        <span>{{$index+1}} <audio controls style="width: 90%;">
+                                                        <span> <audio controls style="width: 90%;">
                                                                 <source src="{{ asset('storage/' . $track->track_path) }}" type="audio/mpeg">
                                                                 Your browser does not support the audio element.
-                                                        </audio></span> {{ basename($track->track_path) }}
+                                                        </audio>
+                                                       </span>
+                                                       <span class="trackName">{{$index+1}}. {{ basename($track->track_path) }}</span>
                                                         <span class="track-duration">{{ $track->track_duration }}</span>
                                                     </a>
                                                 @endforeach
@@ -1022,31 +1033,40 @@
                                                     @if(empty($track->track_name))
                                                         <div class="alert alert-warning">Not Completed Track Details</div>
                                                     @else
-                                                        <h4 class="siteTitle">Track Info {{ $index+1}}</h4>
-                                                        <p><strong>Track Name:</strong> {{ pathinfo(basename($track->track_path), PATHINFO_FILENAME) }}</p>
-                                                        <p><strong>Version:</strong> {{ $track->track_version }}</p>
-                                                        <p><strong>Lyrics Language:</strong> {{ $track->lyrics_language }}</p>
-                                                        <p><strong>Explicit Content:</strong> {{ $track->explicit_content }}</p>
+                                                    <h4 class="siteTitle">Track Info {{ $index+1}}</h4>
+                                                    <div class="row">
+                                                        <div class="col-xl-6 col-12">
+                                                            <h5>Track</h5>
+                                                            <p><strong>Track Name:</strong> {{ pathinfo(basename($track->track_path), PATHINFO_FILENAME) }}</p>
+                                                            <p><strong>Version:</strong> {{ $track->track_version }}</p>
+                                                            <p><strong>Lyrics Language:</strong> {{ $track->lyrics_language }}</p>
+                                                            <p><strong>Explicit Content:</strong> {{ $track->explicit_content }}</p>
+                                                        </div>
+                                                        <div class="col-xl-6 col-12">
+                                                            <h5>Contributor</h5>
+                                                            <p><strong>Primary Artist:</strong> {{$track->track_primary_artist }}</p>
+                                                            <p><strong>Featuring Artist:</strong> {{ $track->track_featuring_artist }}</p>
+                                                            <p><strong>Remixer:</strong> {{$track->track_remixer }}</p>
+                                                            <p><strong>Song Writer:</strong> {{$track->song_writer }}</p>
+                                                            <p><strong>Producer:</strong> {{ $track->track_producer }}</p>
+                                                        </div>
+                                                        <div class="col-xl-6 col-12">
+                                                            <h5>Composer</h5>
+                                                            <p><strong>Composer Name:</strong> {{ $track->composer_name }}</p>
+                                                            <p><strong>Label Name:</strong> {{ $track->track_label_name }}</p>
+                                                            <p><strong>ISRC:</strong> {{ $track->isrc }}</p>
+                                                        </div>
+                                                        <div class="col-xl-6 col-12">
+                                                            <h5>Master Right</h5>
+                                                            <p><strong>Primary Performers:</strong> {{ $track->track_performers }}</p>
+                                                            <p><strong>Publisher Name:</strong> {{ $track->pname }}</p>
+                                                            <p><strong>C Name:</strong> {{ $track->cname }}</p>
+                                                            <p><strong>Ownership for the sound recording:</strong> {{ $track->ownership_for_sound_rec }}</p>
+                                                            <p><strong>Country of Recording:</strong> {{$track->country_of_rec }}</p>
+                                                            <p><strong>Nationality of Original Copyright Owner:</strong> {{ $track->nationality }}</p>
+                                                        </div>
+                                                    </div>
 
-                                                        <h5>Contributor</h5>
-                                                        <p><strong>Primary Artist:</strong> {{$track->track_primary_artist }}</p>
-                                                        <p><strong>Featuring Artist:</strong> {{ $track->track_featuring_artist }}</p>
-                                                        <p><strong>Remixer:</strong> {{$track->track_remixer }}</p>
-                                                        <p><strong>Song Writer:</strong> {{$track->song_writer }}</p>
-                                                        <p><strong>Producer:</strong> {{ $track->track_producer }}</p>
-
-                                                        <h5>Composer</h5>
-                                                        <p><strong>Composer Name:</strong> {{ $track->composer_name }}</p>
-                                                        <p><strong>Label Name:</strong> {{ $track->track_label_name }}</p>
-                                                        <p><strong>ISRC:</strong> {{ $track->isrc }}</p>
-
-                                                        <h5>Master Right</h5>
-                                                        <p><strong>Primary Performers:</strong> {{ $track->track_performers }}</p>
-                                                        <p><strong>Publisher Name:</strong> {{ $track->pname }}</p>
-                                                        <p><strong>C Name:</strong> {{ $track->cname }}</p>
-                                                        <p><strong>Ownership for the sound recording:</strong> {{ $track->ownership_for_sound_rec }}</p>
-                                                        <p><strong>Country of Recording:</strong> {{$track->country_of_rec }}</p>
-                                                        <p><strong>Nationality of Original Copyright Owner:</strong> {{ $track->nationality }}</p>
                                                     @endif
                                                 </div>
                                             @endforeach
@@ -1056,11 +1076,11 @@
 
                                 @canany(['approve-release'])
                                   
-                                  <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'edittrack', 'summary'=>'edittrack'])}}" class="btn btn-primary mt-4">Edit</a>
+                                  <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'edittrack', 'summary'=>'edittrack'])}}" class="btn btn-primary saveBtn mt-4">Edit</a>
                                 @else
                                     @if($release->status == 0|| $release->status == 2)
                                     
-                                    <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'edittrack', 'summary'=>'edittrack'])}}" class="btn btn-primary mt-4">Edit</a>
+                                    <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'edittrack', 'summary'=>'edittrack'])}}" class="btn btn-primary saveBtn mt-4">Edit</a>
                                     @endif
   
                                 @endcanany
@@ -1068,26 +1088,28 @@
                             </div>
                         </div>
 
-                        <div class="card mb-4">
+                        <div class="card mb-4 platformsSummary">
                             <div class="card-body">
                                 <h5 class="card-title">PlatForms</h5>
                                 @if($release->platforms->isEmpty())
                                     <div class="alert alert-warning">Not Completed</div>
                                 @else
+                                <div class="row">
                                     @foreach($release->platforms as $platform)
-                                        <div class="col-6">
+                                        <div class="col-xl-2 col-lg-3 col-md-4 col-6">
                                             <p>{{ $platform->name }}</p>
                                         </div>
                                     @endforeach
+                                </div>
                                 @endif
 
                             @canany(['approve-release'])
                                   
-                                <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'platforms','summary'=>'platforms' ])}}" class="btn btn-primary mt-4">Edit</a>
+                                <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'platforms','summary'=>'platforms' ])}}" class="btn btn-primary saveBtn mt-4">Edit</a>
                               @else
                                   @if($release->status == 0|| $release->status == 2)
                                   
-                                  <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'platforms','summary'=>'platforms' ])}}" class="btn btn-primary mt-4">Edit</a>
+                                  <a href="{{route('releases.step2',['release_id'=>$release->id, 'level'=>'platforms','summary'=>'platforms' ])}}" class="btn btn-primary saveBtn mt-4">Edit</a>
                                   @endif
 
                               @endcanany
@@ -1115,7 +1137,7 @@
                         <input type="hidden" name="release_id" value="{{ $release->id }}" />
                         <input type="hidden" name="status" value="{{ $status }}" />
                         <div class="submitBTN">
-                            <button type="submit" class="btn btn-primary saveRelease">Submit Release</button>
+                            <button type="submit" class="btn btn-primary saveBtn saveRelease">Submit Release</button>
                         </div>
                     </form>
                 @endif
@@ -1127,6 +1149,40 @@
         </div>
     </div>
 </div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rejectModalLabel">Reason for Rejection</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <form method="POST" action="{{ route('releases.status.update') }}">
+                        @csrf
+                    @method('PUT')
+                    <input type="hidden" name="release_id" value="{{ $release->id }}" />
+                                    <!-- Button to set status to Draft -->
+                    <div class="mb-3">
+                        <label for="reason" class="form-label">Please provide a reason for rejection:</label>
+                        <textarea class="form-control" id="reason" name="reason" rows="3" value="{{ old('reason') }}" required></textarea>
+                        @if ($errors->has('reason'))
+                            <span class="text-danger">{{ $errors->first('reason') }}</span>
+                        @endif
+                    </div>
+                    <div class="col-12">
+                    <button type="submit" name="status" value="2" class="btn btn-warning" id="rejectButton">
+                                            Reject
+                    </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @endsection
 

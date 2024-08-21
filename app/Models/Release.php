@@ -19,6 +19,7 @@ class Release extends Model
         'primary_artist',
         'featuring_artist',
         'remixer',
+        'lyricist',
         'producer',
         'genre',
         'sub_genre',

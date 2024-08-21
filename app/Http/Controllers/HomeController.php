@@ -34,39 +34,36 @@ class HomeController extends Controller
             $releases = Release::with('tracks')->get();
             // Count total approved, pending, rejected, and incomplete for all users
             $totalRelease = Release::count();
-            $totalApproved = Release::where('status', 1)->count();
-            $totalPending = Release::where('status', 0)->count();
+            $totalApproved = Release::where('status', 3)->count();
+            $totalPending = Release::where('status', 1)->count();
             $totalRejected = Release::where('status', 2)->count();
-            $totalComplete = Release::where('form_status', 1)->count();
-            $totalIncomplete = Release::where('form_status', 0)->count();
+            $totalDelivered = Release::where('status', 4)->count();
+            $totalDraft = Release::where('status', 0)->count();
+            $totalTakedown = Release::where('status', 5)->count();
     
         } else {
            
             $releases = Release::where('user_id', $user_id)->with('tracks')->get();
             // Count total approved, pending, rejected, and incomplete for the authenticated user
             $totalRelease = Release::where('user_id', $user_id)->count();
-            $totalApproved = Release::where('user_id', $user_id)->where('status', 1)->count();
-            $totalPending = Release::where('user_id', $user_id)->where('status', 0)->count();
+            $totalApproved = Release::where('user_id', $user_id)->where('status', 3)->count();
+            $totalPending = Release::where('user_id', $user_id)->where('status', 1)->count();
             $totalRejected = Release::where('user_id', $user_id)->where('status', 2)->count();
-            $totalComplete = Release::where('user_id', $user_id)->where('form_status', 1)->count();
-            $totalIncomplete = Release::where('user_id', $user_id)->where('form_status', 0)->count();
+            $totalDelivered = Release::where('user_id', $user_id)->where('status', 4)->count();
+            $totalDraft = Release::where('user_id', $user_id)->where('status', 0)->count();
+            $totalTakedown = Release::where('user_id', $user_id)->where('status', 5)->count();
         }
         
 
         // Count total tracks across all releases
         $totalTracks = 0;
 
-        // Count total tracks from approved releases only
-        $totalTracksApproved = 0;
-
         foreach ($releases as $release) {
             $totalTracks += $release->tracks->count();
-
-            if ($release->status == 1) {
-                $totalTracksApproved += $release->tracks->count();
-            }
         }
-        return view('home', compact('totalRelease', 'totalApproved', 'totalPending', 'totalRejected', 'totalComplete', 'totalIncomplete', 'totalTracks', 'totalTracksApproved'));
+
+        
+        return view('home', compact('totalRelease', 'totalDraft','totalApproved', 'totalPending', 'totalRejected', 'totalDelivered','totalTakedown', 'totalTracks'));
                 
     }
 
@@ -124,7 +121,7 @@ class HomeController extends Controller
        
     }
 
-
+  
 
 
 

@@ -189,3 +189,73 @@ $(document).ready(function() {
         $('#products .item').removeClass('list-group-item').addClass('grid-group-item');
     });
 });
+
+$(document).ready(function() {
+    $('.list-pills-tab a').on('click', function(e) {
+        e.preventDefault();
+        window.location.href = $(this).attr('href');
+    });
+});
+
+
+$(document).ready(function() {
+    $('.dropdown-button').on('click', function() {
+        $('.dropdown-menu').toggle(); // Toggle the visibility of the dropdown menu
+    });
+
+    // Optional: Close the dropdown if clicking outside of it
+    $(document).on('click', function(e) {
+        if (!$(e.target).closest('.dropdown-button, .dropdown-menu').length) {
+            $('.dropdown-menu').hide(); // Hide the dropdown if the click is outside
+        }
+    });
+});
+
+
+$(document).ready(function() {
+    $('#rejectButton').on('click', function() {
+        $('#rejectModal').modal('show');
+    });
+
+    $('#rejectForm').on('submit', function(event) {
+        event.preventDefault();
+        
+        // Set the status to "2" for rejection
+        $('#statusField').val('2');
+        
+        // Get the reason and set it in the hidden input field
+        $('#reasonField').val($('#reason').val());
+
+        // Submit the main form
+        $('#mainForm').submit();
+    });
+});
+$(document).ready(function() {
+    $('#approveButton').on('click', function() {
+        // Set the status to "3" for approval
+        $('<input>').attr({
+            type: 'hidden',
+            name: 'status',
+            value: '3'
+        }).appendTo('form');
+
+        // Trigger form submission
+        $('form').submit();
+    });
+});
+$(document).ready(function() {
+    $('[data-bs-toggle="tooltip"]').tooltip();
+});
+
+$(document).ready(function() {
+    // Trigger file input click when "Upload Profile" is clicked
+    $('#triggerUpload').on('click', function() {
+        $('#upload').click();
+    });
+
+    // Display the file name when a file is selected
+    $('#upload').on('change', function() {
+        var fileName = $(this)[0].files[0].name;
+        $('#filename').text(fileName);
+    });
+});

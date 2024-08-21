@@ -29,7 +29,7 @@
                     <div class="mb-3 row">
                         <label for="email" class="col-md-4 col-form-label text-md-end text-start">Email Address</label>
                         <div class="col-md-6">
-                          <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}">
+                          <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" >
                             @if ($errors->has('email'))
                                 <span class="text-danger">{{ $errors->first('email') }}</span>
                             @endif
@@ -145,7 +145,7 @@
                                 <!-- Social link template -->
                                 <div class="social-link mb-2" style="display: none;">
                                     <div class="input-group">
-                                        <input type="text" class="form-control" name="social_links[name][]" placeholder="Social Link Name">
+                                        <input type="text" class="form-control" name="social_links[name][]" placeholder="Social Name">
                                         <input type="url" class="form-control" name="social_links[url][]" placeholder="Social Link URL">
                                         <button type="button" class="btn btn-danger remove-social-link">Remove</button>
                                     </div>

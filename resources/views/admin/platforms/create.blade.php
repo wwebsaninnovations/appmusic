@@ -1,8 +1,10 @@
 @extends('admin.layouts.app')
 
 @section('content')
+<div class="content-wrapper">
+    <div class="container">
 <div class="row justify-content-center mt-2">
-    <div class="col-md-8">
+    <div class="col-md-12">
         <div class="card">
             <div class="card-header">
               
@@ -17,14 +19,14 @@
             <form action="{{ route('platforms.store') }}" method="post">
                 @csrf
                 <div class="mb-3 row">
-                    <div class="col-md-8">
+                    <div class="col-md-6">
                         <input type="text" placeholder="Enter platform" class="form-control @error('name') is-invalid @enderror" id="title" name="name" value="{{ old('genre') }}">
                         @error('name')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="col-md-4 d-flex align-items-end">
-                        <button type="submit" class="btn btn-primary">Save</button>
+                    <div class="col-md-12 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary saveBtn">Save</button>
                     </div>
                 </div>
 
@@ -32,5 +34,7 @@
             </div>
         </div>
     </div>
-</div>    
+</div>
+</div>
+</div>       
 @endsection

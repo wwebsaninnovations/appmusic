@@ -1,3 +1,4 @@
+
 @extends('admin.layouts.app')
 
 @section('content')
@@ -9,10 +10,8 @@
 
             <div class="row">
                 <div class="col-lg-12 my-3">
-                   <div class="float-start">
-                       <a class="btn btn-primary mb-3" href="{{ route('releases.step1') }}">Create New Catalog</a>
-                   </div>
-                    <div class="float-end">
+                   
+                    <!-- <div class="float-end">
                         <div class="btn-group">
                             <button class="btn btn-info" id="list">
                                 <i class="bx bx-list-ul bx-sm"></i> List
@@ -21,20 +20,12 @@
                                 <i class="bx bx-grid-alt bx-sm"></i> Grid
                             </button>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
-            <div class="container">
-    <form method="GET" action="{{ route('releases.index') }}">
-        <div class="row">
-            <div class="col-md-12">
-                <input type="text" name="search" class="form-control" placeholder="Search Releases" value="{{ request()->query('search') }}">
-            </div>
-            <div class="col-md-12 mt-3">
-                <button type="submit" class="btn btn-primary">Search</button>
-            </div>
-        </div>
-    </form>
+        
+
+
             <!-- Display success message -->
             @if (session('success'))
                 <div class="alert alert-success">
@@ -42,136 +33,232 @@
                 </div>
             @endif
 
-            <ul class="list-pills-tab">
-    <li>
-        <a href="{{ route('releases.index') }}" 
-           class="{{ request()->query('status') === null ? 'active' : '' }}">
-            All ({{ $totalRelease }})
-        </a>
-    </li>
-    <li>
-        <a href="{{ route('releases.index', ['status' => 'draft']) }}" 
-           class="{{ request()->query('status') === 'draft' ? 'active' : '' }}">
-            Draft ({{ $totalDraft }} items)
-        </a>
-    </li>
-    <li>
-        <a href="{{ route('releases.index', ['status' => 'sent']) }}" 
-           class="{{ request()->query('status') === 'sent' ? 'active' : '' }}">
-            Sent ({{ $totalSent }} items)
-        </a>
-    </li>
-    <li>
-        <a href="{{ route('releases.index', ['status' => 'pending']) }}" 
-           class="{{ request()->query('status') === 'pending' ? 'active' : '' }}">
-            Pending ({{ $totalPending }} items)
-        </a>
-    </li>
-    <li>
-        <a href="{{ route('releases.index', ['status' => 'rejected']) }}" 
-           class="{{ request()->query('status') === 'rejected' ? 'active' : '' }}">
-            Rejected ({{ $totalRejected }} items)
-        </a>
-    </li>
-    <li>
-        <a href="{{ route('releases.index', ['status' => 'approved']) }}" 
-           class="{{ request()->query('status') === 'approved' ? 'active' : '' }}">
-            Approved ({{ $totalApproved }} items)
-        </a>
-    </li>
-    <li>
-        <a href="{{ route('releases.index', ['status' => 'secondary_qc']) }}" 
-           class="{{ request()->query('status') === 'secondary_qc' ? 'active' : '' }}">
-            Secondary QC ({{ $totalApproved }} items)
-        </a>
-    </li>
-    <li>
-        <a href="{{ route('releases.index', ['status' => 'delivered']) }}" 
-           class="{{ request()->query('status') === 'delivered' ? 'active' : '' }}">
-            Delivered (0 items)
-        </a>
-    </li>
-</ul>
+            <!-- <ul class="list-pills-tab">
+                <li>
+                    <a href="{{ route('releases.index') }}" 
+                    class="{{ request()->query('status') === null ? 'active' : '' }}">
+                        All ({{ $totalRelease }})
+                    </a>
+                </li>
+
+            </ul> -->
+                
+        <div class="dropdown-filter">
+
+            <div class="createCata-btn">
+                <a class="btn btn-primary mb-3" href="{{ route('releases.step1') }}" style="margin: 0 !important;">Create Catalog</a>
+            </div>
+            <div class="searchRelease">
+                <form method="GET" action="{{ route('releases.index') }}">
+                    <!-- <div class="row"> -->
+                        <div class="wrap-input">
+                            <input type="text" name="search" class="form-control" placeholder="Search Releases" value="{{ request()->query('search') }}">
+                            <button type="submit" class="btn btn-primary"><i class="menu-icon tf-icons bx bx-search"></i>
+                            </button>
+                        </div>
+                    <!-- </div> -->
+                </form>
+            </div>
+
+            <div class="right">
+                <ul class="searchLabel">
+                    <li><label class="dropdown-button-label">Filter by:</label></li>
+                    <li class="dropdown-button">
+                        {{ request()->query('status') === null ? 'All Releases' : ucfirst(request()->query('status')) }} <i class="bx bx-chevron-down"></i>
+                    </li>
+                </ul>
+                <ul class="list-pills-tab dropdown-menu">
+                    <li>
+                        <a href="{{ route('releases.index') }}" 
+                        data-status="all" 
+                        class="{{ request()->query('status') === null ? 'active' : '' }}">
+                            All ({{ $totalRelease }})
+                        </a>
+                    </li>
+                    <li>
+                         <a href="{{ route('releases.index', ['status' => 'draft']) }}" 
+                        class="{{ request()->query('status') === 'draft' ? 'active' : '' }}">
+                            Draft ({{ $totalDraft }} items)
+                        </a>
+
+                            </li>
+                     
+                            <li>
+                                <a href="{{ route('releases.index', ['status' => 'pending']) }}" 
+                                class="{{ request()->query('status') === 'pending' ? 'active' : '' }}">
+                                    Pending ({{ $totalPending }} items)
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('releases.index', ['status' => 'rejected']) }}" 
+                                class="{{ request()->query('status') === 'rejected' ? 'active' : '' }}">
+                                    Rejected ({{ $totalRejected }} items)
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('releases.index', ['status' => 'approved']) }}" 
+                                class="{{ request()->query('status') === 'approved' ? 'active' : '' }}">
+                                    Approved ({{ $totalApproved }} items)
+                                </a>
+                            </li>
+                     
+                            <li>
+                                <a href="{{ route('releases.index', ['status' => 'delivered']) }}" 
+                                class="{{ request()->query('status') === 'delivered' ? 'active' : '' }}">
+                                    Delivered ({{ $totalDelivered }} items)
+                                </a>
+                            </li>
+                            
+                            <li>
+                                <a href="{{ route('releases.index', ['status' => 'takedown']) }}" 
+                                class="{{ request()->query('status') === 'takedown' ? 'active' : '' }}">
+                                    Take Down ({{ $totalTakedown }} items)
+                                </a>
+                            </li>
+                    <!-- Add more list items as needed -->
+                </ul>
+            </div>
+        </div>
 
 
+        <div class="row">
+            <ul class="list-pills-tab custom_inline_style">
+                <li>
+                    <a href="{{ route('releases.index') }}" 
+                    data-status="all" 
+                    class="{{ request()->query('status') === null ? 'active' : '' }}">
+                        All ({{ $totalRelease }})
+                    </a>
+                </li>
+                    <li>
+                    <a href="{{ route('releases.index', ['status' => 'draft']) }}" 
+                    class="{{ request()->query('status') === 'draft' ? 'active' : '' }}">
+                        Draft ({{ $totalDraft }} items)
+                    </a>
+                </li>
+               
+                <li>
+                    <a href="{{ route('releases.index', ['status' => 'pending']) }}" 
+                    class="{{ request()->query('status') === 'pending' ? 'active' : '' }}">
+                        Pending ({{ $totalPending }} items)
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('releases.index', ['status' => 'rejected']) }}" 
+                    class="{{ request()->query('status') === 'rejected' ? 'active' : '' }}">
+                        Rejected ({{ $totalRejected }} items)
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('releases.index', ['status' => 'approved']) }}" 
+                    class="{{ request()->query('status') === 'approved' ? 'active' : '' }}">
+                        Approved ({{ $totalApproved }} items)
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('releases.index', ['status' => 'delivered']) }}" 
+                    class="{{ request()->query('status') === 'delivered' ? 'active' : '' }}">
+                        Delivered ({{ $totalDelivered }} items)
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="{{ route('releases.index', ['status' => 'takedown']) }}" 
+                    class="{{ request()->query('status') === 'takedown' ? 'active' : '' }}">
+                        Take Down ({{ $totalTakedown }} items)
+                    </a>
+                </li>
+            </ul>
+        </div>
 
+        
+        <div id="products" class="row view-group">
+            @forelse($releases as $release)
+                <div class="item  col-xs-3 col-lg-3">
+                    <div class="card">
+                        <div class="img-event">
 
+                        @php 
+                            $thumbsrc = "https://cms.karharimedia.com/dummy_image.jpg";
+                            if($release->thumbnail_path) {
+                                $thumbsrc = asset('storage/' . $release->thumbnail_path);
+                            }
+                        @endphp
 
+                        <a  href="{{ route('releases.step2', ['release_id' => $release->id, 'level' => 'summary']) }}">
+                        <img class="group list-group-image img-fluid" src="{{ $thumbsrc }}" alt="Product Image" /></a>
 
-            <div id="products" class="row view-group">
-                @forelse($releases as $release)
-                    <div class="item grid-group-item col-xs-4 col-lg-4">
-                        <div class="card">
-                            <div class="img-event">
-
-                            @php 
-                                $thumbsrc = "https://cms.karharimedia.com/dummy_image.jpg";
-                                if($release->thumbnail_path) {
-                                    $thumbsrc = asset('storage/' . $release->thumbnail_path);
-                                }
-                            @endphp
-
-                            <a  href="{{ route('releases.step2', ['release_id' => $release->id, 'level' => 'summary']) }}">
-                            <img class="group list-group-image img-fluid" src="{{ $thumbsrc }}" alt="Product Image" /></a>
-
-                            </div>
-                         
-                            <div class="card-body customBox">
-                                <h4 class="card-title"> <a  href="{{ route('releases.step2', ['release_id' => $release->id, 'level' => 'summary']) }}">
-                                {{ $release->release_name }}
-                                    </a></h4>
-                                <span class="badge bg-primary sts">{{ $release->format }}</span>
-                                @if($release->status == 0)
-                                    <span class="badge bg-warning sts">Pending</span>
-                                @elseif($release->status == 1)
-                                    <span class="badge bg-info sts">Sent</span>
-                                @elseif($release->status == 2)
-                                    <span class="badge bg-danger sts">Rejected</span>
-                                @else
+                        </div>
+                        
+                        <div class="card-body customBox">
+                            <h4 class="card-title"> <a  href="{{ route('releases.step2', ['release_id' => $release->id, 'level' => 'summary']) }}">
+                            {{ $release->release_name }}
+                                </a></h4>
+                            <span class="badge bg-primary sts">{{ $release->format }}</span>
+                            @if($release->status == 0)
+                                <span class="badge bg-warning sts">Draft</span>
+                            @elseif($release->status == 1)
+                                <span class="badge bg-info sts">Pending</span>
+                            @elseif($release->status == 2)
+                                <span class="badge bg-danger sts">Rejected</span>
+                            @elseif($release->status == 3)  
                                 <span class="badge bg-success sts">Approved</span>
-                                @endif
+                            @else
+                            <span class="badge bg-info sts">Delivered</span>
+                            @endif
+                    
+
+
+                            <div class="editAction">
                                 @canany(['approve-release'])
                                     <a class="badge bg-label-primary sts" href="{{ route('releases.step2', ['release_id' => $release->id, 'level' => 'summary']) }}">
-                                        Edit <i class="bx bx-edit-alt"></i>
+                                            <i class="bx bx-edit-alt"></i>
                                     </a>
                                 @else
                                     @if($release->status == 0|| $release->status == 2)
                                         <a class="badge bg-label-primary sts" href="{{ route('releases.step2', ['release_id' => $release->id, 'level' => 'summary']) }}">
-                                            Edit <i class="bx bx-edit-alt"></i>
+                                                <i class="bx bx-edit-alt"></i>
                                         </a>
                                     @else
                                         <a class="badge bg-label-primary sts" href="{{ route('releases.step2', ['release_id' => $release->id, 'level' => 'summary']) }}">
-                                            View  <i class="bx bx-show"></i>
+                                                <i class="bx bx-show"></i>
                                         </a>
                                     @endif
                                 @endcanany
 
                                 <a href="#" class="badge bg-label-danger sts" onclick="event.preventDefault(); document.getElementById('delete-form-{{ $release->id }}').submit();">
-                                    Remove <i class="bx bx-trash"></i>
+                                        <i class="bx bx-trash"></i>
                                 </a>
-
-                                <form id="delete-form-{{ $release->id }}" action="{{ route('releases.delete') }}" method="POST" style="display: none;">
-                                    @csrf
-                                    <input type="hidden" name="id" value="{{ $release->id }}">
-                                </form>
-                           
-                                
-                               
                             </div>
+                            <form id="delete-form-{{ $release->id }}" action="{{ route('releases.delete') }}" method="POST" style="display: none;">
+                                @csrf
+                                <input type="hidden" name="id" value="{{ $release->id }}">
+                            </form>
+                        
+                            
+                            
                         </div>
                     </div>
-                @empty
-                    <div class="col-12 text-center">
-                        <p>No items found</p>
-                    </div>
-                @endforelse
-            </div><!-- product div end-->
+                </div>
+            @empty
+            <div class="col-12 text-center">
+                <p class="notfound">
+                    <?php 
+                    if(isset($_GET['search'])){
+                        echo 'No matches found. Please try again.';
+                    }else{
+                        echo '<a class="btn btn-primary mb-3" href="'.route('releases.step1').'" style="margin: 0 !important;">Create First Catalog</a>';
+                    }
+                    ?>
+                    
+                </p>
+            </div>
 
-            {{ $releases->links() }}
-        </div>
-   <!-- </div>   -->
- <script>
+            @endforelse
+        </div><!-- product div end-->
 
+        {{ $releases->links() }}
+    
+   </div>  
 
-</script>
 @endsection

@@ -5,7 +5,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
-use App\Models\User;
+use App\Models\User; 
 
 class UserRolePermissionSeeder extends Seeder
 {
@@ -26,6 +26,8 @@ class UserRolePermissionSeeder extends Seeder
             'edit-release',
             'delete-release',
             'approve-release',
+            'delivered-release',
+            'take-down-release',
             'create-genre',
             'edit-genre',
             'delete-genre',
@@ -43,7 +45,7 @@ class UserRolePermissionSeeder extends Seeder
        }
     
         // Create roles
-        $superAdminRole = Role::create(['name' => 'Super Admin']);
+        $superAdminRole = Role::updateOrCreate(['name' => 'Super Admin']);
     
         //Asign Role to the user
         $permissions = Permission::pluck('id')->all();
@@ -55,7 +57,7 @@ class UserRolePermissionSeeder extends Seeder
             'name' => 'Tabrej', 
             'mobile' =>'8340106146',
             'password' => Hash::make('12345678'),
-            'client_id' => 100001
+            'client_id' => 100001,
 
         ]);
 

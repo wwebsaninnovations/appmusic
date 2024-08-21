@@ -1,8 +1,10 @@
 @extends('admin.layouts.app')
 
 @section('content')
+<div class="content-wrapper">
+    <div class="container">
 <div class="row justify-content-center">
-    <div class="col-md-10 mt-5 ">
+    <div class="col-md-12 mt-5 ">
         <div class="card">
             <div class="card-header">
                 <div class="float-start">
@@ -14,7 +16,6 @@
                 </div>
                 @endcan
             </div>
-
             <div class="card-body">
             @can('create-user')
                     <a href="{{ route('users.create') }}" class="btn btn-success btn-sm my-2"><i class="bi bi-plus-circle"></i> Add New User</a>
@@ -124,5 +125,7 @@
             </div>
         </div>
     </div>
+</div>
+</div>
 </div>
 @endsection

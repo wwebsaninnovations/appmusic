@@ -91,7 +91,6 @@
 @endauth
 
       <link rel="stylesheet"  type="text/css" href="{{ asset('assets/custom/css/custom.css') }}"/>
-      <link rel="stylesheet"  type="text/css" href="{{ asset('assets/custom/css/grid.css') }}"/>
 
 </head>
 <body class="{{$classDark}}">
@@ -119,24 +118,13 @@
     </div>
 
 
-    <div class="layout-overlay layout-menu-toggle"></div>
-        <div class="drag-target"></div>
-    </div>
-    
+<div class="layout-overlay layout-menu-toggle"></div>
+    <div class="drag-target"></div>
+</div>
+<!-- jQuery and other libraries -->
 
-    <!-- jQuery and other libraries -->
-<!-- <div class="floatcolorMode">
-    <ul>
-        <li class="menu-item">
-            <a id="theme-toggle" class="nav-link style-switcher-toggle hide-arrow menu-link" href="javascript:void(0);" onclick="changeTheme()">
-                <i class="bx bx-sm menu-icon tf-icons {{ Auth::user() && Auth::user()->theme_mode == 'dark' ? 'bx-sun' : 'bx-moon' }}"></i>
-            </a>
-        </li>
-    </ul>
-</div> -->
 
     <!-- Core JS -->
-
     <!-- build:js assets/vendor/js/core.js -->
 <!-- <script src="{{ asset('js/app.js') }}"></script>     -->
 <script src="{{ asset('assets/vendor/libs/jquery/jquery.js') }}"></script>
@@ -164,9 +152,6 @@
 <script src="{{ asset('assets/js/dashboards-analytics.js') }}"></script>
 <script src="{{ asset('assets/js/pages-auth.js') }}"></script>
 <script src="{{ asset('assets/custom/js/custom.js') }}"></script>
-<script src="{{ asset('assets/js/pages-account-settings-account.js') }}"></script>
-
-
 
   <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script> -->
@@ -353,7 +338,7 @@ $('#example').on('click', '.delete-btn', function (e) {
 });
 
 
-const myDropzone = new Dropzone('#dropzone-basic', {
+  const myDropzone = new Dropzone('#dropzone-basic', {
     thumbnailWidth: 200,
     paramName: "file",
     maxFilesize: 50, // in MB
@@ -434,9 +419,7 @@ const myDropzone = new Dropzone('#dropzone-basic', {
                 }
             });
         });
-    },
-    dictDefaultMessage: "Drag and drop your files here or click to upload",
-
+    }
 });
 
 
@@ -511,8 +494,7 @@ var dropzone = new Dropzone('#image-upload', {
                 }
             });
         });
-    },
-    dictDefaultMessage: "Drag and drop your files here or click to upload",
+    }
 });
 
 </script>

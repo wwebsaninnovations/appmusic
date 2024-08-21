@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('primary_artist')->nullable();
             $table->string('featuring_artist')->nullable();
             $table->string('remixer')->nullable();
+            $table->string('lyricist')->nullable();
             $table->string('producer')->nullable();
             $table->string('genre')->nullable();
             $table->string('sub_genre')->nullable();

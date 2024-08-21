@@ -5,9 +5,19 @@
                  <img src="{{asset('assets/img/avatars/logoKha.png')}}" width="150" />
               </span>
             </a>
-            <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
+            
+
+            <ul class="topmode">
+                <li class="menu-item">
+                    <a id="theme-toggle" class="nav-link style-switcher-toggle hide-arrow menu-link" href="javascript:void(0);" onclick="changeTheme()">
+                        <i class="bx bx-sm menu-icon tf-icons {{ Auth::user() && Auth::user()->theme_mode == 'dark' ? 'bx-sun' : 'bx-moon' }}"></i>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
               <i class="bx bx-chevron-left bx-sm align-middle"></i>
-            </a>
+            </a> -->
           </div>
 
           <div class="menu-inner-shadow"></div>
@@ -159,15 +169,11 @@
                 </a>
               </li>
        
-              <li class="menu-item ">
-                <a id="theme-toggle" class="nav-link style-switcher-toggle hide-arrow menu-link" href="javascript:void(0);" onclick="changeTheme()">
-                  <i class="bx bx-sm menu-icon tf-icons @if(Auth::user()->theme_mode =='dark') bx-sun @else bx-moon @endif"></i>Mode
-                </a>
-              </li>
+             
 
                 <li class="menu-item ">
                   <a class="nav-link style-switcher-toggle hide-arrow menu-link"  href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                      <i class="bx bx-power-off me-2"></i>
+                      <i class="bx bx-power-off me-3" style="font-size:18px;"></i>
                       <span class="align-middle">  {{ __('Log Out') }}</span>
                   </a>
                   <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">

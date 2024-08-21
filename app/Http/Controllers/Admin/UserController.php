@@ -8,6 +8,7 @@ use App\Models\Platform;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 
 
 class UserController extends Controller
@@ -137,6 +138,38 @@ class UserController extends Controller
             'platforms'  =>$platforms
         ]);
     }
+
+    public function updateProfileImage(Request $request, User $user)
+    {
+        // $request->validate([
+        //     'profile_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Validate the image
+        // ]);
+    
+        // echo "test";
+        // die();  
+        $currentImage = $request->input('currentImage');
+
+        if ($request->hasFile('profile_image')) {
+            $image = $request->file('profile_image');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('user'), $imageName);
+            $user->profile_image = $imageName;
+         
+
+            if ($currentImage && $currentImage !== $imageName) {
+                $oldImagePath = public_path('user/' . $currentImage);
+                if (File::exists($oldImagePath)) {
+                    File::delete($oldImagePath);
+                }
+            }
+    
+            $user->save();
+        }
+    
+        return redirect()->back()->withSuccess('Profile image updated successfully.');
+    }
+    
+
 
     public function update(Request $request, User $user)
     {

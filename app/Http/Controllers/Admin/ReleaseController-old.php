@@ -33,6 +33,8 @@ class ReleaseController extends Controller
      */
     public function index()
     {
+
+
         $user_id = Auth::user()->id;
         if(Auth::user()->hasRole('Super Admin')) {
             $releases = Release::with('tracks')->orderBy('created_at', 'desc')->paginate(5);
@@ -245,13 +247,7 @@ class ReleaseController extends Controller
 
         $user_id = Auth::user()->id;
         $release =  Release ::find($request->release_id);
-
-        // if($user_id != $music->user_id) {
-        //     abort(403, 'Unauthorized action!');
-        // }
-
         $validatedData = $request->validate([
-          
             'upc' => 'nullable|string|numeric',
             'release_code' => 'nullable|string|numeric',
             'meta_language' => 'required|string|max:255',
@@ -268,9 +264,6 @@ class ReleaseController extends Controller
             'pname_basic' => 'required|string|max:255|regex:/^\d{4}.*$/',
             'original_release_date' => ['required', new TodayOrPast],
             'sales_date' => ['required', new TodayOrFuture],
-            
-
-
         ],
         [
             'cname_basic.regex' => 'The cname must start with a 4-digit year followed by a string.',
